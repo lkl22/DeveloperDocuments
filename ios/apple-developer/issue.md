@@ -4,6 +4,8 @@
 
 ipa包已经上传到 iTunes Connect ，需要在iTunes Connect 中新建一个 **VERSION OR PLATFORM**，选择Build文件提交review
 
+---
+
 #### 修改App Store中显示的开发者名称
 
 **注意**：_个人的只能修改姓名，要改为公司的名称必须升级为公司账号（前提个人账户是公司创始人或联合创始人）_
