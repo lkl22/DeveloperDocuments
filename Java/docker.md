@@ -20,7 +20,7 @@ $ sudo yum remove docker \
                   docker-selinux \
                   docker-engine-selinux \
                   docker-engine
-                  
+
 # 安装一些必要的系统工具
 sudo yum install -y yum-utils device-mapper-persistent-data lvm2
 
@@ -70,6 +70,13 @@ For more examples and ideas, visit:
 ```
 
 由于本地没有hello-world这个镜像，所以会下载一个hello-world的镜像，并在容器内运行。
+
+### 删除 Docker CE
+
+```
+sudo yum remove docker-ce
+sudo rm -rf /var/lib/docker
+```
 
 
 
