@@ -42,5 +42,9 @@ cd AwesomeProject
 react-native run-android
 ```
 
+#### Demo
+
+[高仿美团客户端 React-Native版\(0.50.1\)](https://github.com/huanxsd/MeiTuan)
+
 
 

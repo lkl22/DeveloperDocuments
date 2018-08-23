@@ -6,5 +6,7 @@
 
 * tab导航栏 [react-native-scrollable-tab-view](https://github.com/happypancake/react-native-scrollable-tab-view)
 
+* 基于FlatList的上拉、下拉刷新组件 [react-native-refresh-list-view](https://github.com/huanxsd/react-native-refresh-list-view)
+
 
 
