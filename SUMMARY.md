@@ -24,6 +24,7 @@
     * [Issue](ios/apple-developer/issue.md)
 * [ReactNative](reactnative.md)
   * [Install](reactnative/install.md)
+  * [Dependencies](reactnative/dependencies.md)
 * [CI](ci.md)
   * [LinuxOS](ci/linuxos.md)
     * [System](ci/linuxos/system.md)
