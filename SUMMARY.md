@@ -74,6 +74,8 @@
     * [Tools](Java/idea/tools.md)
     * [Issue](Java/idea/issue.md)
   * [Docker](Java/docker.md)
+    * [Install](Java/docker/install.md)
+    * [Services](Java/docker/services.md)
   * [Sonatype Nexus](Java/sonatype-nexus.md)
 * [Web](web.md)
   * [Webpack](Web/webpack.md)
