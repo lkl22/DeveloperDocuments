@@ -100,4 +100,5 @@
     * [Truffle](blockchain/ethereum/truffle.md)
     * [Web3j](blockchain/ethereum/web3j.md)
 * [Go](go.md)
+  * [Data Type](go/data-type.md)
 
