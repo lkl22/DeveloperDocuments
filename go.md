@@ -8,9 +8,9 @@ windows下liteide代码智能补齐功能：
 
 1、windows环境变量配置：
 
-```
+```markdown
 GOROOT=D:\Go
-GOBIN=D:\Go\bin
+GOBIN=F:\GolangProjects\bin //生成bin文件的路径
 GOOS=windows
 GOARCH=amd64
 GOPATH=F:\GolangProjects;
