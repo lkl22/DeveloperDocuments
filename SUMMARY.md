@@ -26,6 +26,8 @@
 * [ReactNative](reactnative.md)
   * [Install](reactnative/install.md)
   * [Dependencies](reactnative/dependencies.md)
+  * [Deploy](reactnative/deploy.md)
+* Deploy
 * [CI](ci.md)
   * [LinuxOS](ci/linuxos.md)
     * [System](ci/linuxos/system.md)
@@ -99,6 +101,4 @@
     * [Solidity](blockchain/ethereum/solidity.md)
     * [Truffle](blockchain/ethereum/truffle.md)
     * [Web3j](blockchain/ethereum/web3j.md)
-* [Go](go.md)
-  * [Data Type](go/data-type.md)
 
