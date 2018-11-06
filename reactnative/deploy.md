@@ -14,3 +14,7 @@
 
 ![](/assets/ReactNative/code_push_add_app.png)
 
+> code-push deployment ls &lt;appName&gt; -k
+
+查看部署的key
+
