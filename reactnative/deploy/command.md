@@ -1,3 +1,22 @@
+#### app管理
+
+```
+Usage: code-push app <command>
+
+Commands:
+  add     Add a new app to your account
+  remove  Remove an app from your account
+  rm      Remove an app from your account
+  rename  Rename an existing app
+  list    Lists the apps associated with your account
+  ls      Lists the apps associated with your account
+
+Options:
+  -v, --version  Show version number  [boolean]
+```
+
+### 部署指令
+
 ```
 Usage: code-push deployment <command>
 
@@ -14,6 +33,7 @@ Commands:
 
 Options:
   -v, --version  Show version number  [boolean]
+
 ```
 
 ```
@@ -32,6 +52,9 @@ Options:
   --format             Output format to display the release history with ("json" or "table")  [string] [default: "table"]
   --displayAuthor, -a  Specifies whether to display the release author  [boolean] [default: false]
   -v, --version        Show version number  [boolean]
+```
+
+```
 
 ```
 
