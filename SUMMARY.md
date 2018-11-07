@@ -27,7 +27,7 @@
   * [Install](reactnative/install.md)
   * [Dependencies](reactnative/dependencies.md)
   * [Deploy](reactnative/deploy.md)
-* Deploy
+    * [Command](reactnative/deploy/command.md)
 * [CI](ci.md)
   * [LinuxOS](ci/linuxos.md)
     * [System](ci/linuxos/system.md)
