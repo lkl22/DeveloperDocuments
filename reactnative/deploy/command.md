@@ -83,7 +83,6 @@ Examples:
   release-react MyApp ios                                           Releases the React Native iOS project in the current working directory to the "MyApp" app's "Staging" deployment
   release-react MyApp android -d Production -k ~/.ssh/codepush_rsa  Releases the React Native Android project in the current working directory to the "MyApp" app's "Production" deployment, signed with the "codepush_rsa" private key
   release-react MyApp windows --dev                                 Releases the development bundle of the React Native Windows project in the current working directory to the "MyApp" app's "Staging" deployment
-
 ```
 
 

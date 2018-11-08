@@ -18,5 +18,11 @@
 
 查看部署的key
 
+#### 4、发布更新到CodePush
+
+> code-push release-react &lt;appName&gt; &lt;platform&gt; \[options\]
+
+-t 指定目标的apk版本，build.gradle中配置的 versionName，CodePush要求是三位的
+
 
 
