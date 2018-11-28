@@ -13,6 +13,7 @@
     * [Emmagee](android/test/emmagee.md)
   * [NDK](android/ndk.md)
     * [Install](android/ndk/install.md)
+    * [FFmpeg](android/ndk/ffmpeg.md)
   * [Issue](android/issue.md)
 * [IOS](ios.md)
   * [Apple Developer](ios/apple-developer.md)
