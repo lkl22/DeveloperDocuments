@@ -1,4 +1,4 @@
 # Generated files
 _book/
-
-
+*.iml
+.idea
