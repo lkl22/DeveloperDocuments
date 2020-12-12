@@ -1,4 +1,4 @@
-#### Download sdk
+## Download sdk
 
 [https://developer.android.com/studio/index.html](https://developer.android.com/studio/index.html)
 
@@ -6,13 +6,13 @@
 >
 > unzip [sdk-tools-linux-3859397.zip](https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip)  ./android-sdk
 
-#### Config
+## Config
 
 _Force all connections to use http rather than https._
 
 > ./android-sdk/tools/sdkmanager --update --no\_https
 
-#### Install
+## Install
 
 * 查看
 
@@ -29,7 +29,7 @@ sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout
 sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
 ```
 
-#### Issue
+## Issue
 
 _Warning: File /root/.android/repositories.cfg could not be loaded._
 

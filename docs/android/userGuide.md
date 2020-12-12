@@ -1,0 +1,6 @@
+# User Guide
+
+* [Configure your build](userGuide/buildConfigure.md)
+  * [设置应用 ID](userGuide/buildConfigure/setApplicationId.md)
+  * [配置构建变体](userGuide/buildConfigure/configureBuildVariants.md)
+      

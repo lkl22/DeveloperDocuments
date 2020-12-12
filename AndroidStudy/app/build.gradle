@@ -1,0 +1,20 @@
+apply plugin: 'com.android.application'
+apply from: project.file('../GradleConfig/common-build.gradle')
+apply from: project.file('../GradleConfig/common-build.gradle')
+
+android {
+    defaultConfig {
+        applicationId "com.lkl.androidstudy"
+        versionCode VERSION_CODE as int
+        versionName VERSION_NAME
+    }
+}
+
+dependencies {
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.1.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.1.0'
+
+    implementation project(":Media")
+}
