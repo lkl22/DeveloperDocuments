@@ -37,6 +37,7 @@
 * [CI](docs/ci.md)
   * [LinuxOS](docs/ci/linuxos.md)
     * [System](docs/ci/linuxos/system.md)
+    * [Shell](docs/ci/linuxos/shell.md)
     * [JDK](docs/ci/linuxos/jdk.md)
     * [Maven](docs/ci/linuxos/maven.md)
     * [Tomcat](docs/ci/linuxos/tomcat.md)

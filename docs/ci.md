@@ -1,5 +1,6 @@
 * [LinuxOS](ci/linuxos.md)
   * [System](ci/linuxos/system.md)
+  * [Shell](ci/linuxos/shell.md)
   * [JDK](ci/linuxos/jdk.md)
   * [Maven](ci/linuxos/maven.md)
   * [Tomcat](ci/linuxos/tomcat.md)
