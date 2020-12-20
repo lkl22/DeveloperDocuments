@@ -12,6 +12,8 @@
   * [获取字符串长度](#获取字符串长度)
   * [提取子字符串](#提取子字符串)
   * [查找子字符串](#查找子字符串)
+* [Shell test 命令](#Shelltest命令)
+  * [数值测试](#数值测试)
 * [参考文献](#参考文献)
 
 ## <a name="Shell变量">Shell 变量</a>
@@ -161,8 +163,9 @@ echo ${#string} #输出 4
 ### <a name="提取子字符串">提取子字符串</a>
 以下实例从字符串第 2 个字符开始截取 4 个字符：
 ```shell script
-string="runoob is a great site"
-echo ${string:1:4} # 输出 unoo
+abc:~ likunlun$ string="runoob is a great site"
+abc:~ likunlun$ echo ${string:1:4}
+unoo
 ```
 
 > 注意：第一个字符的索引值为 0。
@@ -175,6 +178,20 @@ echo `expr index "$string" io`  # 输出 4
 ```
 
 > 注意： 以上脚本中 ` 是反引号，而不是单引号 '，不要看错了哦。
+
+## <a name="Shelltest命令">Shell test 命令</a>
+Shell中的 test 命令用于检查某个条件是否成立，它可以进行数值、字符和文件三个方面的测试。
+
+### <a name="数值测试">数值测试</a>
+
+|参数	|说明
+|---    |---
+|-eq	|等于则为真
+|-ne	|不等于则为真
+|-gt	|大于则为真
+|-ge	|大于等于则为真
+|-lt	|小于则为真
+|-le	|小于等于则为真
 
 ## <a name="参考文献">参考文献</a>
 
