@@ -5,6 +5,8 @@
     * [Configure your build](docs/android/userGuide/buildConfigure.md)
       * [设置应用 ID](docs/android/userGuide/buildConfigure/setApplicationId.md)
       * [配置构建变体](docs/android/userGuide/buildConfigure/configureBuildVariants.md)
+    * [App Bundle](docs/android/userGuide/appBundle.md)
+      * [Play Feature Delivery](docs/android/userGuide/appBundle/playFeatureDelivery.md) 
   * [Tools](docs/android/tools.md)
     * [Adb](docs/android/tools/adb.md)
     * [SDK](docs/android/tools/sdk.md)
