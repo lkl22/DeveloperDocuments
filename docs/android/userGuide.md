@@ -7,3 +7,4 @@
   * [Play Feature Delivery](userGuide/appBundle/playFeatureDelivery.md) 
 * [ProGuard](userGuide/proGuard.md)
   * [Quick Start](userGuide/proGuard/quickStart.md)
+  * [Configuration](userGuide/proGuard/configuration.md)

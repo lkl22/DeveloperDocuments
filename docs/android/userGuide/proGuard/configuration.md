@@ -1,0 +1,3 @@
+# Configuration
+
+* [Usage](configurationUsage.md)
