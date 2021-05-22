@@ -4,6 +4,7 @@
 
 * [Input/Output Options](#InputOutputOptions)
 * [Keep Options](#KeepOptions)
+* [Keep Option Modifiers](#KeepOptionModifiers)
 
 ## <a name="InputOutputOptions">Input/Output Options<a/>
 
@@ -22,6 +23,23 @@ Option | Desc
 -target version | 指定要在已处理的类文件中设置的版本号。 版本号可以是1.0，...，1.9或更新的短数字5，...，12之一。<br/><br/>默认情况下，类文件的版本号保持不变。<br/><br/>例如，您可能需要将类文件升级到Java6。ProGuard更改其版本号并对其进行预验证。 您也可以将类文件降级到Java 8之前的版本。ProGuard更改其版本号并向后移植Java 8构造。<br/><br/>如果分别添加了向后移植的库 net.sourceforge.streamsupport 和 org.threeten 作为输入，则ProGuard通常不会向后移植Java运行时中的更改，除了 Java 8 stream API 和 Java 8 date API 之外。
 -forceprocessing | 指定处理输入，即使输出看起来是最新的也是如此。<br/><br/>最新测试基于指定输入，输出和配置文件或目录的日期戳的比较。
 
-## <a name="Keep Options">Keep Options<a/>
+## <a name="KeepOptions">Keep Options<a/>
+
+Option | Desc
+---|---
+-keep [,[modifier](#KeepOptionModifiers),...] class_specification | 指定要保留为代码 entry points 的类和类成员（字段和方法）。 例如，为了保留应用程序，您可以指定 main 类及其 main 方法。<br/><br/>为了处理库，您应该指定所有可公开访问的元素。
+-keepclassmembers [,[modifier](#KeepOptionModifiers),...] class_specification | 指定要保留的类成员，它们的类也被保留。<br/><br/>例如，您可能想要保留实现Serializable接口的所有序列化字段和类的方法。
+-keepclasseswithmembers [,[modifier](#KeepOptionModifiers),...] class_specification | 在存在所有指定的类成员的条件下，指定要保留的类和类成员。<br/><br/>例如，您可能希望保留所有具有main方法的应用程序，而不必显式列出它们。
+-keepnames class_specification | 
+
+## <a name="KeepOptionModifiers">Keep Option Modifiers<a/>
+
+Modifier | Desc
+---|---
+includedescriptorclasses | 指定-keep选项保留的方法和字段的类型描述符中的所有类也应保留。<br/><br/>这在保留 native 方法名称时通常很有用，以确保 native 方法的参数类型也不会重命名。然后，它们的签名将保持完全不变，并与 native 库兼容。
+includecode | 指定-keep选项保留的方法的代码属性也应保留，即可能不会被优化或混淆。<br/><br/>这对于已优化或混淆的类通常很有用，以确保在优化过程中未修改其代码。
+allowshrinking | 指定-keep选项中指定的 entry points 可以缩小，即使必须保留这些 entry points 也可以。<br/><br/>也就是说，可以在压缩步骤中删除 entry points ，但是，如果有必要，则可能不会对其进行优化或混淆。
+allowoptimization | 指定可以优化-keep选项中指定的 entry points ，即使必须保留这些 entry points 也是如此。 也就是说，可以在优化步骤中更改 entry points ，但不能将其删除或混淆。<br/><br/>此修饰符仅在实现不寻常的要求时有用。
+allowobfuscation | 指定-keep选项中指定的 entry points 可能会被混淆，即使必须保留这些 entry points 也是如此。 即， entry points 可以在混淆步骤中重命名，但是它们可能不会被删除或优化。 <br/><br/>此修饰符仅在实现不寻常的要求时有用。
 
 

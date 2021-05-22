@@ -22,19 +22,19 @@ ProGuard要求指定输入jar的library jars（或aars，wars，ears，zips，ap
 
 ## Entry points
 
-为了确定必须保留的代码以及可以丢弃或混淆的代码，您必须为代码指定一个或多个入口点。这些入口点通常是具有main methods, applets, midlets, activities, etc。
+为了确定必须保留的代码以及可以丢弃或混淆的代码，您必须为代码指定一个或多个 entry points 。这些 entry points 通常是具有main methods, applets, midlets, activities, etc。
 
 * 在**压缩步骤**中，ProGuard从这些种子开始，然后递归确定所使用的类和类成员。 所有其他类和类成员将被丢弃。
 
-* 在**优化步骤**中，ProGuard进一步优化了代码。除其他优化外，可以将非入口点的类和方法设为私有，静态或 final，可以删除未使用的参数，某些方法可能会被内联。
+* 在**优化步骤**中，ProGuard进一步优化了代码。除其他优化外，可以将非 entry points 的类和方法设为私有，静态或 final，可以删除未使用的参数，某些方法可能会被内联。
 
-* 在**混淆步骤**中，ProGuard重命名不是入口点的类和类成员。 在整个过程中，保留入口点可确保仍可以使用其原始名称来访问它们。
+* 在**混淆步骤**中，ProGuard重命名不是 entry points 的类和类成员。 在整个过程中，保留 entry points 可确保仍可以使用其原始名称来访问它们。
 
-* **预验证步骤**是不必知道入口点的唯一步骤。
+* **预验证步骤**是不必知道 entry points 的唯一步骤。
 
 ## 反射 Reflection
 
-反射（Reflection） and 自检（introspection）对于任何自动处理代码都存在特定的问题。在ProGuard中，**必须将代码中动态创建或调用的类或类成员（即，按名称）也指定为入口点**。例如，Class.forName()可以在运行时引用任何类。通常无法计算必须保留哪些类（其原始名称），因为例如可以从配置文件中读取这些类名称。因此，您必须在ProGuard配置中使用 **-keep 选项**指定它们。
+反射（Reflection） and 自检（introspection）对于任何自动处理代码都存在特定的问题。在ProGuard中，**必须将代码中动态创建或调用的类或类成员（即，按名称）也指定为 entry points。** 例如，Class.forName()可以在运行时引用任何类。通常无法计算必须保留哪些类（其原始名称），因为例如可以从配置文件中读取这些类名称。因此，您必须在ProGuard配置中使用 **-keep 选项**指定它们。
 
 但是，ProGuard已经为您检测并处理以下情况：
 
