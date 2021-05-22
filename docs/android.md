@@ -7,6 +7,7 @@
   * [App Bundle](android/userGuide/appBundle.md)
     * [Play Feature Delivery](android/userGuide/appBundle/playFeatureDelivery.md) 
   * [ProGuard](android/userGuide/proGuard.md)
+    * [Quick Start](android/userGuide/proGuard/quickStart.md)
 * [Tools](android/tools.md)
   * [Adb](android/tools/adb.md)
   * [SDK](android/tools/sdk.md)
