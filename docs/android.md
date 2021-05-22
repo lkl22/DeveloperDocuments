@@ -4,6 +4,9 @@
   * [Configure your build](android/userGuide/buildConfigure.md)
     * [设置应用 ID](android/userGuide/buildConfigure/setApplicationId.md)
     * [配置构建变体](android/userGuide/buildConfigure/configureBuildVariants.md)
+  * [App Bundle](android/userGuide/appBundle.md)
+    * [Play Feature Delivery](android/userGuide/appBundle/playFeatureDelivery.md) 
+  * [ProGuard](android/userGuide/proGuard.md)
 * [Tools](android/tools.md)
   * [Adb](android/tools/adb.md)
   * [SDK](android/tools/sdk.md)
@@ -16,8 +19,8 @@
 * [NDK](android/ndk.md)
   * [Install](android/ndk/install.md)
   * [FFmpeg](android/ndk/ffmpeg.md)
-* [Modules](../AndroidStudy/Modules/README.md)
-  * [Media](../AndroidStudy/Modules/Media/README.md)
+* [Modules](AndroidStudy/Modules/README.md)
+  * [Media](AndroidStudy/Modules/Media/README.md)
 * [Issue](android/issue.md)
 
 
