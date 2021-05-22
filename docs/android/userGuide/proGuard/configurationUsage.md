@@ -31,7 +31,9 @@ Option | Desc
 -keep [,[modifier](#KeepOptionModifiers),...] [class_specification](#ClassSpecifications) | 指定要保留为代码 entry points 的类和类成员（字段和方法）。 例如，为了保留应用程序，您可以指定 main 类及其 main 方法。<br/><br/>为了处理库，您应该指定所有可公开访问的元素。
 -keepclassmembers [,[modifier](#KeepOptionModifiers),...] [class_specification](#ClassSpecifications) | 指定要保留的类成员，它们的类也被保留。<br/><br/>例如，您可能想要保留实现Serializable接口的所有序列化字段和类的方法。
 -keepclasseswithmembers [,[modifier](#KeepOptionModifiers),...] [class_specification](#ClassSpecifications) | 在存在所有指定的类成员的条件下，指定要保留的类和类成员。<br/><br/>例如，您可能希望保留所有具有main方法的应用程序，而不必显式列出它们。
--keepnames [class_specification](#ClassSpecifications) | **-keep,allowshrinking class_specification** 的缩写<br/><br/>指定要保留名称的类和类成员（如果在压缩阶段未删除它们）。<br/><br/>例如，您可能想要保留实现Serializable接口的类的所有类名，以便处理后的代码与任何原始序列化的类保持兼容。 完全不使用的类仍可以删除。 仅在混淆时适用。
+-keepnames [class_specification](#ClassSpecifications) | **-keep, allowshrinking class_specification** 的缩写<br/><br/>指定要保留名称的类和类成员（如果在压缩阶段未删除它们）。<br/><br/>例如，您可能想要保留实现Serializable接口的类的所有类名，以便处理后的代码与任何原始序列化的类保持兼容。 完全不使用的类仍可以删除。 仅在混淆时适用。
+-keepclassmembernames [class_specification](#ClassSpecifications) | **-keepclassmembers, allowshrinking class_specification** 的缩写<br/><br/>指定要保留名称的类成员（如果在压缩阶段未删除它们）。 <br/><br/>例如，在处理由JDK 1.2或更早版本编译的库时，您可能想保留合成 class$ 方法的名称，因此混淆器可以在处理使用处理后的库的应用程序时再次检测到它（尽管ProGuard本身不需要这）。仅在混淆时适用。
+
 
 
 ## <a name="KeepOptionModifiers">Keep Option Modifiers<a/>
@@ -75,7 +77,7 @@ class关键字指的是任何接口或类。 interface关键字将匹配项限�
 ？| **匹配类名称中的任何单个字符，但不匹配包分隔符**。 <br/><br/>例如，“ com.example.Test？” 匹配 “ com.example.Test1” 和 “ com.example.Test2”，但不匹配“ com.example.Test12”。
 \* | **与不包含包分隔符的类名的任何部分匹配**。 <br/><br/>例如，“ com.example.*Test*” 匹配“ com.example.Test” 和 “ com.example.YourTestApplication”，但不匹配 “ com.example.mysubpackage.MyTest”。 <br/>或者，更一般而言，“ com.example.*” 匹配 “ com.example” 中的所有类，但不匹配其子包中的所有类。
 \*\* | **匹配类名的任何部分，可能包含任意数量的包分隔符**。 <br/><br/>例如，“ **.Test” 匹配除根包以外的所有包中的所有Test类。 <br/>或者，“ com.example.\**” 与 “ com.example” 及其子包中的所有类匹配。
-<n> | **在相同选项中匹配第n个匹配的通配符**。 <br/><br/>例如，“ com.example.*Foo<1>” 与 “ com.example.BarFooBar” 匹配。
+\<n> | **在相同选项中匹配第n个匹配的通配符**。 <br/><br/>例如，“ com.example.*Foo<1>” 与 “ com.example.BarFooBar” 匹配。
 
 为了获得更大的灵活性，类名实际上可以是用逗号分隔的类名列表，并带有可选的 ! 否定符，就像文件名过滤器一样。 这种表示法看起来不太像Java，因此应适度使用。 为了方便和向后兼容，类名*表示任何类，无论其包如何。
 
