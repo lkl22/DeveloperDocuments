@@ -73,8 +73,8 @@ class关键字指的是任何接口或类。 interface关键字将匹配项限�
 通配符（WILDCARD） |	含义（MEANING）
 ---|---
 ？| **匹配类名称中的任何单个字符，但不匹配包分隔符**。 <br/><br/>例如，“ com.example.Test？” 匹配 “ com.example.Test1” 和 “ com.example.Test2”，但不匹配“ com.example.Test12”。
-* | **与不包含包分隔符的类名的任何部分匹配**。 <br/><br/>例如，“ com.example.*Test*” 匹配“ com.example.Test” 和 “ com.example.YourTestApplication”，但不匹配 “ com.example.mysubpackage.MyTest”。 <br/>或者，更一般而言，“ com.example.*” 匹配 “ com.example” 中的所有类，但不匹配其子包中的所有类。
-** | **匹配类名的任何部分，可能包含任意数量的包分隔符**。 <br/><br/>例如，“ **.Test” 匹配除根包以外的所有包中的所有Test类。 <br/>或者，“ com.example.\**” 与 “ com.example” 及其子包中的所有类匹配。
+\* | **与不包含包分隔符的类名的任何部分匹配**。 <br/><br/>例如，“ com.example.*Test*” 匹配“ com.example.Test” 和 “ com.example.YourTestApplication”，但不匹配 “ com.example.mysubpackage.MyTest”。 <br/>或者，更一般而言，“ com.example.*” 匹配 “ com.example” 中的所有类，但不匹配其子包中的所有类。
+\*\* | **匹配类名的任何部分，可能包含任意数量的包分隔符**。 <br/><br/>例如，“ **.Test” 匹配除根包以外的所有包中的所有Test类。 <br/>或者，“ com.example.\**” 与 “ com.example” 及其子包中的所有类匹配。
 <n> | **在相同选项中匹配第n个匹配的通配符**。 <br/><br/>例如，“ com.example.*Foo<1>” 与 “ com.example.BarFooBar” 匹配。
 
 为了获得更大的灵活性，类名实际上可以是用逗号分隔的类名列表，并带有可选的 ! 否定符，就像文件名过滤器一样。 这种表示法看起来不太像Java，因此应适度使用。 为了方便和向后兼容，类名*表示任何类，无论其包如何。
@@ -90,7 +90,7 @@ extends and implements 通常用于使用通配符来限制类。 它们当前�
 \<init>	| matches any constructor.
 \<fields> |	matches any field.
 \<methods> |	matches any method.
-*	| matches any field or method.
+\*	| matches any field or method.
 
 > 请注意，上述通配符没有返回类型。 仅\<init>通配符具有参数列表。
 
@@ -99,7 +99,7 @@ extends and implements 通常用于使用通配符来限制类。 它们当前�
 通配符（WILDCARD） |	含义（MEANING）
 ---|---
 ? | 匹配方法名称中的任何单个字符。
-* | 匹配方法名称的任何部分。
+\* | 匹配方法名称的任何部分。
 \<n> | 在相同选项中匹配第n个匹配的通配符。
 
 描述符中的类型可以包含以下通配符：
@@ -108,9 +108,9 @@ extends and implements 通常用于使用通配符来限制类。 它们当前�
 ---|---
 ％ | 匹配任何 primitive 类型（“boolean”，“int” 等，但不匹配 “void”）。
 ？ | 匹配类名称中的任何单个字符。
-* | 与不包含包分隔符的类名的任何部分匹配。
-** | 匹配类名的任何部分，可能包含任意数量的包分隔符。
-*** | 匹配任何类型（primitive or non-primitive, array or non-array）。
+\* | 与不包含包分隔符的类名的任何部分匹配。
+\*\* | 匹配类名的任何部分，可能包含任意数量的包分隔符。
+\*\*\* | 匹配任何类型（primitive or non-primitive, array or non-array）。
 ... | 匹配任意数量的任何类型的参数。
 \<n> | 在相同选项中匹配第n个匹配的通配符。
 
