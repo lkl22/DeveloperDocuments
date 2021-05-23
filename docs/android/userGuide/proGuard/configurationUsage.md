@@ -7,6 +7,7 @@
 * [File Names](#FileNames)
 * [File Filters](#FileFilters)
 * [Filters](#Filters)
+* [Overview of Keep Options](#OverviewofKeepOptions)
 * [Keep Option Modifiers](#KeepOptionModifiers)
 * [Class Specifications](#ClassSpecifications)
 
@@ -92,6 +93,23 @@ ProGuard提供了带有过滤器的选项，用于配置的许多不同方面：
 
 例如，`"!foobar,*bar"` 与所有以 `bar` 结尾的名称匹配，但 `foobar` 除外。
 
+## <a name="OverviewofKeepOptions">Overview of Keep Options<a/>
+
+起初，用于压缩和混淆的各种 `-keep` 选项可能看起来有些混乱，但实际上它们背后有一个模式。 下表总结了它们之间的关系：
+
+KEEP	| FROM BEING REMOVED OR RENAMED	| FROM BEING RENAMED
+---|---|---
+Classes and class members	|-keep	|-keepnames
+Class members only	|-keepclassmembers	|-keepclassmembernames
+Classes and class members, if class members present	|-keepclasseswithmembers	|-keepclasseswithmembernames
+
+这些-keep选项中的每一个当然都跟有应对其应用的类和类成员（字段和方法）的规范。
+
+如果不确定所需要的选项，则可能应该简单地使用 `-keep`。 这将确保在压缩步骤中未删除指定的类和类成员，并且在混淆步骤中未将其重命名。
+
+> 如果指定一个没有类成员的类，则ProGuard仅保留该类及其无参数的构造函数作为 entry points。 它可能仍会删除，优化或模糊其其他类成员。
+>
+> 如果指定方法，则ProGuard仅将方法保留为 entry points。 它的代码仍然可以进行优化和调整。
 
 ## <a name="KeepOptionModifiers">Keep Option Modifiers<a/>
 
