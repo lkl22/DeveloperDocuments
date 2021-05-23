@@ -5,6 +5,7 @@
 * [Input/Output Options](#InputOutputOptions)
 * [Keep Options](#KeepOptions)
 * [File Names](#FileNames)
+* [File Filters](#FileFilters)
 * [Keep Option Modifiers](#KeepOptionModifiers)
 * [Class Specifications](#ClassSpecifications)
 
@@ -55,6 +56,23 @@ ProGuard接受各种文件名和目录名的绝对路径和相对路径。 相�
 带有特殊字符（如空格和括号）的名称必须用单引号或双引号引起来。 **名称列表中的每个文件名都必须单独引用**。 请注意，在命令行上使用引号本身时可能需要转义，以避免被shell吞噬。
 
 例如，在命令行上，您可以使用 `'-injars "my program.jar":"/your directory/your program.jar"'` 之类的选项。
+
+## <a name="FileFilters">File Filters<a/>
+
+与常规过滤器一样，文件过滤器是逗号分隔的文件名列表，其中可以包含通配符。 只有具有匹配文件名的文件才被读取（对于 输入jars 而言）或被写入（对于 输出jars 而言）。 支持以下通配符：
+
+通配符（WILDCARD） |	含义（MEANING）
+---|---
+？ | 匹配文件名中的任何单个字符。
+\* | 匹配文件名中不包含目录分隔符的任何部分。
+\*\* | 匹配文件名的任何部分，可能包含任意数量的目录分隔符。
+
+例如，`"java/**.class,javax/**.class"` 与 `java` 和 `javax` 中的所有类文件匹配。
+
+此外，文件名之前可以带有感叹号“!”。 进一步尝试从与后续文件名匹配的文件名中排除该文件名。
+
+例如，`"!**.gif,images/**"` 匹配images目录中的所有文件，但gif文件除外。
+
 
 
 
