@@ -4,6 +4,7 @@
 
 * [Processing different types of applications](#Processingdifferenttypesofapplications)
   * [A typical application](#Atypicalapplication)
+  * [A typical applet](#Atypicalapplet)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -47,3 +48,21 @@
 这些选项不是必需的。 它们只是通过执行多达3次优化遍历，以及对类成员和包名进行混淆处理，从而从输出jar中节省了一些额外的字节。
 
 通常，您可能需要一些其他选项来处理 native方法，回调方法，枚举，可序列化的类，Bean类，批注和资源文件。
+
+### <a name="Atypicalapplet">A typical applet<a/>
+
+这些选项可压缩，优化和混淆applet `com.example.MyApplet`：
+
+```
+-injars      in.jar
+-outjars     out.jar
+-libraryjars <java.home>/jmods/java.base.jmod(!**.jar;!module-info.class)
+
+-keep public class com.example.MyApplet
+```
+
+典型的applet方法将自动保留，因为 `com.example.MyApplet` 是 `rt.jar` 库中Applet类的扩展。
+
+如果适用，您应该添加用于处理 native方法，回调方法，枚举，可序列化类，Bean类，注释和资源文件的选项。
+
+
