@@ -5,6 +5,7 @@
 * [Input/Output Options](#InputOutputOptions)
 * [Keep Options](#KeepOptions)
 * [Shrinking Options](#ShrinkingOptions)
+* [Optimization Options](#OptimizationOptions)
 * [Preverification Options](#PreverificationOptions)
 * [General Options](#GeneralOptions)
 * [Class Paths](#ClassPaths)
@@ -53,6 +54,20 @@ Option | Desc
 -printusage [[filename](#FileNames)] | **指定列出输入类文件的无效代码**。<br/><br/>该列表将打印到标准输出或给定的文件中。<br/><br/>例如，您可以列出应用程序的未使用代码。 仅在压缩时适用。
 -whyareyoukeeping [class_specification](#ClassSpecifications) | 指定打印有关为什么在压缩步骤中保留给定类和类成员的详细信息。<br/><br/>如果您想知道为什么输出中存在某些给定的元素，这可能会很有用。 通常，可能有许多不同的原因。<br/><br/>对于每个指定的类和类成员，此选项将最短的方法链打印到指定的种子或入口点。 在当前的实现中，打印出的最短链有时可能包含循环扣除-这些未反映实际的压缩过程。 如果指定了-verbose选项，则跟踪将包括完整的字段和方法签名。 仅在压缩时适用。
 
+## <a name="OptimizationOptions">Optimization Options<a/>
+
+Option | Desc
+---|---
+-dontoptimize | 指定不优化输入类文件。<br/><br/>**默认情况下，ProGuard会优化所有代码**。 它内联并合并类和类成员，并在字节码级别优化所有方法。
+-optimizations optimization_filter | 在更细粒度的级别上指定要启用和禁用的优化。 <br/><br/>仅在优化时适用。 这是一个专家选项。
+-optimizationpasses n | `指定要执行的优化遍数`。<br/><br/>**默认情况下，执行一次优化**。 多次优化可能会导致进一步的改进。<br/><br/>如果在优化通过之后未发现任何改进，则优化将结束。 仅在优化时适用。
+-assumenosideeffects [class_specification](#ClassSpecifications) | 指定除了可能返回值之外，没有任何副作用的方法。<br/><br/>例如，方法 `System.currentTimeMillis()` 返回一个值，但没有任何副作用。 如果可以确定未使用返回值，则ProGuard可以在优化步骤中删除对此类方法的调用。<br/><br/>ProGuard将分析您的程序代码以自动找到此类方法。 它不会分析库代码，因此此选项可能有用。 例如，您可以指定方法 `System.currentTimeMillis()`，以便删除对它的任何空闲调用。 一定要小心，您也可以使用该选项删除日志记录代码。 请注意，ProGuard将选项应用于指定方法的整个层次结构。 仅在优化时适用。 一般而言，做出假设可能很危险； 您可以轻松地破坏已处理的代码。 仅当您知道自己在做什么时才使用此选项！
+-assumenoexternalsideeffects [class_specification](#ClassSpecifications) | 指定没有任何副作用的方法，除了可能在调用它们的实例上没有副作用之外。<br/><br/>该语句比 `-assumenosideeffects` 弱，因为它允许对参数或堆产生副作用。<br/><br/>例如，`StringBuffer＃append` 方法具有副作用，但没有外部副作用。 在删除日志记录代码时，这也很有用，也可以删除任何相关的字符串连接代码。 仅在优化时适用。<br/><br/>做出假设可能很危险； 您可以轻松地破坏已处理的代码。 仅当您知道自己在做什么时才使用此选项！
+-assumenoescapingparameters [class_specification](#ClassSpecifications) | 指定不允许其引用参数转义到堆的方法。<br/><br/>此类方法可以使用，修改或返回参数，但不能直接或间接将其存储在任何字段中。<br/><br/>例如，方法 `System.arrayCopy` 不会让其引用参数转义，但是方法 `System.setSecurityManager` 会转义。<br/><br/>仅在优化时适用。 做出假设可能很危险； 您可以轻松地破坏已处理的代码。 仅当您知道自己在做什么时才使用此选项！
+-assumenoexternalreturnvalues [class_specification](#ClassSpecifications) | 指定在调用时不返回堆中已经存在的引用值的方法。<br/><br/>例如，`ProcessBuilder＃start` 返回一个Process引用值，但这是一个尚未出现在堆上的新实例。 仅在优化时适用。<br/><br/>做出假设可能很危险； 您可以轻松地破坏已处理的代码。 仅当您知道自己在做什么时才使用此选项！
+-assumevalues [class_specification](#ClassSpecifications) | 为 primitive 字段和方法指定固定值或值范围。<br/><br/>例如，您可以通过在版本常量中指定受支持的范围来针对给定的Android SDK版本优化您的应用。 然后，ProGuard可以优化较早版本的代码路径。<br/><br/>做出假设可能很危险； 您可以轻松地破坏已处理的代码。 仅当您知道自己在做什么时才使用此选项！
+-allowaccessmodification | 指定在处理过程中可以扩大类和类成员的访问修饰符。 这可以改善优化步骤的结果。<br/><br/>例如，当内联 `public getter` 时，可能也必须将访问的字段 public。 尽管Java的二进制兼容性规范正式不要求这样做（参见Java语言规范，第三版，第13.4.6节），但某些虚拟机在处理代码方面会遇到问题。<br/><br/>仅在优化时（以及对 `-repackageclasses` 选项进行混淆时）适用。<br/><br/>反指示：在处理要用作库的代码时，您可能不应该使用此选项，因为在API中设计为不公开的类和类成员可能会公开。
+-mergeinterfacesaggressively | 指定即使接口的实现类未实现所有接口方法，也可以合并接口。<br/><br/>这样可以通过减少类的总数来减小输出的大小。<br/><br/>请注意，即使Java语言不允许使用（cfr。Java语言规范，第三版，第8.1.4节），Java的二进制兼容性规范也允许此类构造（cfr。Java语言规范，第三版，第13.5.3节））。 仅在优化时适用。<br/><br/> **特别提醒**：**设置此选项可能会降低某些JVM上已处理代码的性能**，因为高级的即时编译往往倾向于使用更少的实现类来支持更多的接口。 更糟糕的是，某些JVM可能无法处理生成的代码。 尤其：<br/><br/>当一个类中遇到超过256个 `Miranda` 方法（没有实现的接口方法）时，Sun的JRE 1.3可能会引发InternalError。
 
 
 ## <a name="PreverificationOptions">Preverification Options<a/>
