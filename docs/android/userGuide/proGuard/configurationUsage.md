@@ -4,6 +4,7 @@
 
 * [Input/Output Options](#InputOutputOptions)
 * [Keep Options](#KeepOptions)
+* [Class Paths](#ClassPaths)
 * [File Names](#FileNames)
 * [File Filters](#FileFilters)
 * [Filters](#Filters)
@@ -15,12 +16,12 @@
 
 Option | Desc
 ---|---
-@ filename | Short for '-include filename'.
--include filename | 从给定的文件名中递归读取配置选项。
+@ [filename](#FileNames) | Short for '-include [filename](#FileNames)'.
+-include [filename](#FileNames) | 从给定的文件名中递归读取配置选项。
 -basedirectory directoryname | 在这些配置参数或此配置文件中，为所有后续相对文件名指定基本目录。
--injars class_path | 指定要处理的应用程序的输入jar（或apk，aab，ars，wars，ears，jmods，zip或目录）。<br/><br/>这些jars中的类文件将被处理并写入输出jars中。<br/><br/>默认情况下，所有非类文件都将被复制而不会更改。 请注意任何临时文件（例如由IDE创建的临时文件），尤其是当您直接从目录中读取输入文件时。 可以过滤类路径中的条目，如过滤器部分所述。<br/><br/>为了提高可读性，可以使用多个-injars选项指定类路径条目。
--outjars class_path | 指定输出jar的名称（或apk，aab，ars，wars，ears，jmods，zip或目录）。<br/><br/>前面的 -injars 选项的处理后的输入将被写入命名的jar。<br/><br/>这使您可以将一组输入jar的内容收集到对应的一组输出jar中。 此外，可以过滤输出条目，如过滤器部分所述。 然后，将每个已处理的类文件或资源文件通过一组匹配的过滤器写入输出jar组中的第一个输出条目。 <br/><br/>**您必须避免让输出文件覆盖任何输入文件**。<br/><br/>为了提高可读性，可以使用多个-outjars选项指定类路径条目。 如果没有任何-outjars选项，则不会写入任何jar。
--libraryjars class_path | 指定要处理的应用程序的库jar（或apk，aab，aars，wars，ears，jmods，zips，目录）。<br/><br/>这些jar中的文件将不包含在输出jar中。<br/><br/>指定的库jar至少应包含由应用程序类文件扩展的类文件。尽管只存在被调用的库类文件，但是它们的存在可以改善优化步骤的结果，尽管它们不需要存在。可以过滤类路径中的条目，如过滤器部分所述。<br/><br/>为了提高可读性，可以使用多个-libraryjars选项指定类路径条目。<br/><br/>请注意，在查找库类时，不会考虑为运行ProGuard设置的引导路径和类路径。这意味着您必须明确指定代码将使用的运行时jar。尽管这看起来很麻烦，但是它允许您处理针对不同运行时环境的应用程序。例如，您只需指定适当的运行时jar，就可以处理J2SE应用程序以及JME midlet或Android应用程序。
+-injars [class_path](#ClassPaths) | 指定要处理的应用程序的输入jar（或apk，aab，ars，wars，ears，jmods，zip或目录）。<br/><br/>这些jars中的类文件将被处理并写入输出jars中。<br/><br/>默认情况下，所有非类文件都将被复制而不会更改。 请注意任何临时文件（例如由IDE创建的临时文件），尤其是当您直接从目录中读取输入文件时。 可以过滤类路径中的条目，如过滤器部分所述。<br/><br/>为了提高可读性，可以使用多个-injars选项指定类路径条目。
+-outjars [class_path](#ClassPaths) | 指定输出jar的名称（或apk，aab，ars，wars，ears，jmods，zip或目录）。<br/><br/>前面的 -injars 选项的处理后的输入将被写入命名的jar。<br/><br/>这使您可以将一组输入jar的内容收集到对应的一组输出jar中。 此外，可以过滤输出条目，如过滤器部分所述。 然后，将每个已处理的类文件或资源文件通过一组匹配的过滤器写入输出jar组中的第一个输出条目。 <br/><br/>**您必须避免让输出文件覆盖任何输入文件**。<br/><br/>为了提高可读性，可以使用多个-outjars选项指定类路径条目。 如果没有任何-outjars选项，则不会写入任何jar。
+-libraryjars [class_path](#ClassPaths) | 指定要处理的应用程序的库jar（或apk，aab，aars，wars，ears，jmods，zips，目录）。<br/><br/>这些jar中的文件将不包含在输出jar中。<br/><br/>指定的库jar至少应包含由应用程序类文件扩展的类文件。尽管只存在被调用的库类文件，但是它们的存在可以改善优化步骤的结果，尽管它们不需要存在。可以过滤类路径中的条目，如过滤器部分所述。<br/><br/>为了提高可读性，可以使用多个-libraryjars选项指定类路径条目。<br/><br/>请注意，在查找库类时，不会考虑为运行ProGuard设置的引导路径和类路径。这意味着您必须明确指定代码将使用的运行时jar。尽管这看起来很麻烦，但是它允许您处理针对不同运行时环境的应用程序。例如，您只需指定适当的运行时jar，就可以处理J2SE应用程序以及JME midlet或Android应用程序。
 -skipnonpubliclibraryclasses | 指定在读取库jar时跳过非公共类，以加快处理速度并减少ProGuard的内存使用量。<br/><br/>默认情况下，ProGuard会读取非公共和公共库类。 但是，非公共类通常不相关，只要它们不影响输入jar中的实际程序代码即可。 然后忽略它们可以加快ProGuard的速度，而不会影响输出。 不幸的是，某些库，包括最近的JSE运行时库，都包含由公共库类扩展的非公共库类。 然后，您将无法使用此选项。<br/><br/>如果由于设置了此选项而无法找到 classes，则ProGuard将打印警告。
 -dontskipnonpubliclibraryclasses | 指定不忽略非公共库类。 从4.5版开始，这是默认设置。
 -dontskipnonpubliclibraryclassmembers | 指定不忽略包可见的库类成员（字段和方法）。<br/><br/>默认情况下，ProGuard在解析库类时会跳过这些类成员，因为程序类通常不会引用它们。 但是，有时程序类与库类位于相同的程序包中，并且它们确实引用其程序包可见的类成员。 在这些情况下，实际读取类成员可能很有用，以确保所处理的代码保持一致。
@@ -42,6 +43,68 @@ Option | Desc
 -printseeds [[filename](#FileNames)] | **指定输出详尽列出与各种-keep选项匹配的类和类成员**。<br/><br/>该列表将打印到标准输出或给定的文件中。<br/><br/>该列表对于验证是否确实找到了预期的类成员很有用，尤其是在您使用通配符的情况下。<br/><br/>例如，您可能要列出所有应用程序或所保留的所有小程序。
 
 
+
+## <a name="ClassPaths">Class Paths<a/>
+
+ProGuard接受类路径以指定输入文件和输出文件。类路径由条目组成，这些条目由传统的路径分隔符分隔（例如，在Unix上为 `“:”`，在Windows平台上为 `“;”`）。 在重复的情况下，条目的顺序决定了它们的优先级。
+
+每个 input entry 可以是：
+
+* 一个 `类文件` 或 `资源文件`，
+* 一个包含以上任何内容的 `apk` 文件，
+* 一个 `jar` 文件，其中包含上述任何内容，
+* 包含以上任何内容的 `aar` 文件，
+* 包含以上任何内容的 `war` 文件，
+* 包含以上任何内容的 `ear` 文件，
+* 包含以上任何内容的 `jmod` 文件，
+* 包含以上任何内容的 `zip` 文件，
+* `目录（结构）`，包含上述任何内容。
+
+**直接指定的类文件和资源文件的路径将被忽略**，因此类文件通常应为jar文件，aar文件，war文件，ear文件，zip文件或目录的一部分。 此外，类文件的路径在归档文件或目录中不应包含任何其他目录前缀。
+
+每个 output entry 可以是：
+
+* 一个 `apk` 文件，其中将收集所有类文件和资源文件。
+* 一个 `jar` 文件，其中将收集以上所有内容，
+* 一个 `aar` 文件，其中将收集以上所有信息，
+* `war` 文件，将收集以上所有内容，
+* `ear` 文件，收集上述所有内容，
+* 一个 `jmod` 文件，其中将收集以上所有内容，
+* 一个 `zip` 文件，其中将收集以上所有内容，
+* 一个 `目录`，其中将收集以上所有内容。
+
+编写 `output entries` 时，ProGuard通常以合理的方式打包结果，并根据需要重新构造 `input entries`。 将所有内容写入 `output entries` 是最简单的选择：输出目录将包含 `input entries` 的完整重构。但是打包几乎可以是任意复杂的：您可以处理整个应用程序，并将其连同其文档一起打包在zip文件中，然后再次将其写成zip文件。 “示例”部分显示了一些重组输出档案的方法。
+
+可以按照下面有关 [文件名](#FileNames) 的部分中的说明指定文件和目录。
+
+另外，ProGuard还提供了根据其完整的相对文件名来过滤类路径条目及其内容的可能性。 每个类路径条目后面都可以跟随括号之间的多达8种 [文件过滤器](#FileFilters) 类型，并用分号分隔：
+
+* A filter for all `jmod` names that are encountered（遇到）,
+* A filter for all `aar` names that are encountered,
+* A filter for all `apk` names that are encountered,
+* A filter for all `zip` names that are encountered,
+* A filter for all `ear` names that are encountered,
+* A filter for all `war` names that are encountered,
+* A filter for all `jar` names that are encountered,
+* A filter for all `class` file names and `resource` file names that are encountered.
+
+如果指定的过滤器少于8个，则假定它们是后一个过滤器。 任何空的过滤器都将被忽略。 更正式地讲，过滤后的类路径条目如下所示：
+
+```
+classpathentry([[[[[[[jmodfilter;]aarfilter;]apkfilter;]zipfilter;]earfilter;]warfilter;]jarfilter;]filefilter)
+```
+
+方括号 `“[]”` 表示其内容是可选的。
+
+例如，`"rt.jar(java/**.class,javax/**.class)"` 匹配 `rt.jar` 内 `java` 和 `javax` 目录中的所有类文件。
+
+例如，`"input.jar(!**.gif,images/**)"` 匹配 `input.jar` 内 `images` 目录中的所有文件，但 `gif` 文件除外。
+
+> 不管输入中的嵌套级别如何，都将不同的过滤器应用于所有相应的文件类型； 它们是正交的。
+
+例如，`"input.war(lib/**.jar,support/**.jar;**.class,**.gif)"` 仅考虑 `input.war` 中 `lib` 和 `support` 目录中的jar文件，而不考虑任何其他jar文件。 然后，它匹配遇到的所有类文件和gif文件。
+
+过滤器几乎允许无数种包装和重新包装的可能性。 “示例”部分提供了一些其他示例，用于过滤输入和输出。
 
 ## <a name="FileNames">File Names<a/>
 
