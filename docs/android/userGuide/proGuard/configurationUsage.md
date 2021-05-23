@@ -4,6 +4,7 @@
 
 * [Input/Output Options](#InputOutputOptions)
 * [Keep Options](#KeepOptions)
+* [Preverification Options](#PreverificationOptions)
 * [General Options](#GeneralOptions)
 * [Class Paths](#ClassPaths)
 * [File Names](#FileNames)
@@ -44,6 +45,14 @@ Option | Desc
 -printseeds [[filename](#FileNames)] | **指定输出详尽列出与各种-keep选项匹配的类和类成员**。<br/><br/>该列表将打印到标准输出或给定的文件中。<br/><br/>该列表对于验证是否确实找到了预期的类成员很有用，尤其是在您使用通配符的情况下。<br/><br/>例如，您可能要列出所有应用程序或所保留的所有小程序。
 
 
+
+## <a name="PreverificationOptions">Preverification Options<a/>
+
+Option | Desc
+---|---
+-dontpreverify | 指定不预先验证已处理的类文件。<br/><br/>默认情况下，如果类文件针对Java Micro Edition或Java 6或更高版本，则将进行预验证。 对于Java Micro Edition，需要进行预验证，因此，如果指定此选项，则将需要在已处理的代码上运行外部预验证器。<br/><br/>对于Java 6，预验证是可选的，但从Java 7开始，它是必需的。 仅当针对Android时才没有必要，因此您可以将其关闭以减少处理时间。
+-microedition | 指定已处理的类文件针对Java Micro Edition。<br/><br/>然后，预验证器将添加适当的StackMap属性，该属性与Java Standard Edition的默认StackMapTable属性不同。 例如，如果您正在处理Midlet，则将需要此选项。
+-android | 指定已处理的类文件针对Android平台。<br/><br/>然后，ProGuard确保某些功能与Android兼容。 例如，如果要处理Android应用程序，则应指定此选项。
 
 ## <a name="GeneralOptions">General Options<a/>
 
