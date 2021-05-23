@@ -4,6 +4,7 @@
 
 * [Input/Output Options](#InputOutputOptions)
 * [Keep Options](#KeepOptions)
+* [Shrinking Options](#ShrinkingOptions)
 * [Preverification Options](#PreverificationOptions)
 * [General Options](#GeneralOptions)
 * [Class Paths](#ClassPaths)
@@ -43,6 +44,14 @@ Option | Desc
 -keepclasseswithmembernames [class_specification](#ClassSpecifications) | **-keepclasseswithmembers,allowshrinking class_specification** 的缩写<br/><br/>指定要保留其名称的类和类成员，条件是所有指定的类成员在压缩阶段之后都存在。<br/><br/>例如，您可能希望保留所有 native 方法名称及其类的名称，以便处理后的代码仍可以与 native 库代码链接。 完全不使用的 native 方法仍然可以删除。<br/><br/>如果使用了类文件，但没有使用其 native 方法，则其名称仍会被混淆。 仅在混淆时适用。
 -if [class_specification](#ClassSpecifications) | 指定激活后续的keep选项必须存在的类和类成员（-keep，-keepclassmembers等）。<br/><br/>条件和随后的keep选项可以共享通配符和对通配符的引用。<br/><br/>例如，可以使用Dagger和Butterknife之类的框架，在项目中存在具有相关名称的类的情况下保留类。
 -printseeds [[filename](#FileNames)] | **指定输出详尽列出与各种-keep选项匹配的类和类成员**。<br/><br/>该列表将打印到标准输出或给定的文件中。<br/><br/>该列表对于验证是否确实找到了预期的类成员很有用，尤其是在您使用通配符的情况下。<br/><br/>例如，您可能要列出所有应用程序或所保留的所有小程序。
+
+## <a name="ShrinkingOptions">Shrinking Options<a/>
+
+Option | Desc
+---|---
+-dontshrink | 指定不压缩输入。<br/><br/>默认情况下，ProGuard会压缩代码：删除所有未使用的类和类成员。 它仅保留各种 `-keep` 选项列出的选项，以及它们直接或间接依赖的选项。<br/><br/>它还会在每个优化步骤之后应用压缩步骤，因为某些优化可能会删除更多类和类成员。
+-printusage [[filename](#FileNames)] | **指定列出输入类文件的无效代码**。<br/><br/>该列表将打印到标准输出或给定的文件中。<br/><br/>例如，您可以列出应用程序的未使用代码。 仅在压缩时适用。
+-whyareyoukeeping [class_specification](#ClassSpecifications) | 指定打印有关为什么在压缩步骤中保留给定类和类成员的详细信息。<br/><br/>如果您想知道为什么输出中存在某些给定的元素，这可能会很有用。 通常，可能有许多不同的原因。<br/><br/>对于每个指定的类和类成员，此选项将最短的方法链打印到指定的种子或入口点。 在当前的实现中，打印出的最短链有时可能包含循环扣除-这些未反映实际的压缩过程。 如果指定了-verbose选项，则跟踪将包括完整的字段和方法签名。 仅在压缩时适用。
 
 
 
