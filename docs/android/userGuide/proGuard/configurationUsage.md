@@ -4,6 +4,7 @@
 
 * [Input/Output Options](#InputOutputOptions)
 * [Keep Options](#KeepOptions)
+* [General Options](#GeneralOptions)
 * [Class Paths](#ClassPaths)
 * [File Names](#FileNames)
 * [File Filters](#FileFilters)
@@ -43,6 +44,18 @@ Option | Desc
 -printseeds [[filename](#FileNames)] | **指定输出详尽列出与各种-keep选项匹配的类和类成员**。<br/><br/>该列表将打印到标准输出或给定的文件中。<br/><br/>该列表对于验证是否确实找到了预期的类成员很有用，尤其是在您使用通配符的情况下。<br/><br/>例如，您可能要列出所有应用程序或所保留的所有小程序。
 
 
+
+## <a name="GeneralOptions">General Options<a/>
+
+Option | Desc
+---|---
+-verbose | 指定在处理期间写出更多信息。 <br/><br/>如果程序因异常终止，则此选项将打印出整个堆栈跟踪，而不仅仅是异常信息。
+-dontnote [[class_filter](#Filters)] | 指定不打印有关配置中潜在错误或遗漏的 notes，例如类名中的错字或可能有用的缺失选项。<br/><br/>可选过滤器是一个正则表达式； ProGuard不会打印有关名称匹配的类的 notes。
+-dontwarn [[class_filter](#Filters)] | 指定根本不告警未解决的引用和其他重要问题。<br/><br/>可选过滤器是一个正则表达式； ProGuard不会打印有关名称匹配的类的警告。 **忽视警告可能很危险**。<br/><br/>例如，如果确实需要未解析的类或类成员进行处理，则处理后的代码将无法正常运行。 仅当您知道自己在做什么时才使用此选项！
+-ignorewarnings | 指定打印有关未解决的引用和其他重要问题的任何警告，但是在任何情况下都将继续处理。<br/><br/>**忽视警告可能很危险**。<br/><br/>例如，如果确实需要未解析的类或类成员进行处理，则处理后的代码将无法正常运行。 仅当您知道自己在做什么时才使用此选项！
+-printconfiguration [[filename](#FileNames)] | 指定写出已解析的整个配置，包括所包含的文件和替换的变量。<br/><br/>该结构将打印到标准输出或给定的文件中。 有时这对于调试配置或将XML配置转换为更具可读性的格式很有用。
+-dump [[filename](#FileNames)] | 指定在进行任何处理后写出类文件的内部结构。<br/><br/>该结构将打印到标准输出或给定的文件中。<br/><br/>例如，您可能想要写出给定jar文件的内容，而无需进行任何处理。
+-addconfigurationdebugging | 指定使用调试语句对处理后的代码进行检测，这些调试语句打印出有关缺少ProGuard配置的建议。<br/><br/>**如果您的处理后的代码崩溃，因为它仍然缺少一些用于反射的配置，这对于在运行时获取实用提示非常有用**。<br/><br/>例如，代码可能正在使用GSON库序列化类，您可能需要对其进行一些配置。 通常，您只需将控制台中的建议复制/粘贴到您的配置文件中即可。<br/><br/>反指示：**不要在发行版本中使用此选项，因为它将混淆信息添加到已处理的代码中**。
 
 ## <a name="ClassPaths">Class Paths<a/>
 
