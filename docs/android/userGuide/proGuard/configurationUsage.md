@@ -6,6 +6,7 @@
 * [Keep Options](#KeepOptions)
 * [File Names](#FileNames)
 * [File Filters](#FileFilters)
+* [Filters](#Filters)
 * [Keep Option Modifiers](#KeepOptionModifiers)
 * [Class Specifications](#ClassSpecifications)
 
@@ -73,7 +74,23 @@ ProGuard接受各种文件名和目录名的绝对路径和相对路径。 相�
 
 例如，`"!**.gif,images/**"` 匹配images目录中的所有文件，但gif文件除外。
 
+## <a name="Filters">Filters<a/>
 
+ProGuard提供了带有过滤器的选项，用于配置的许多不同方面：文件，目录，类，包，属性，优化等的名称。
+
+过滤器是一个逗号分隔的名称列表，其中可以包含通配符。 只有与列表中的项目匹配的名称才能通过过滤器。 支持的通配符取决于使用过滤器的名称的类型，但是以下通配符是典型的：
+
+通配符（WILDCARD） |	含义（MEANING）
+---|---
+？ | 匹配名称中的任何单个字符。
+\* | 匹配名称的不包含软件包分隔符或目录分隔符的任何部分。
+\*\* | 匹配名称的任何部分，可能包含任意数量的包分隔符或目录分隔符。
+
+例如，`"foo,*bar"` 匹配名称 `foo` 和所有以 `bar` 结尾的名称。
+
+此外，名称前可以带有一个否定符号 “！”。 将该名称排除在与后续名称匹配的进一步尝试中。 因此，如果名称与过滤器中的项目匹配，则根据该项目是否具有否定符，立即接受或拒绝该名称。 如果名称与项目不匹配，则针对下一个项目进行测试，依此类推。 如果不匹配任何项目，则根据最后一个项目是否带有否定符来接受或拒绝。
+
+例如，`"!foobar,*bar"` 与所有以 `bar` 结尾的名称匹配，但 `foobar` 除外。
 
 
 ## <a name="KeepOptionModifiers">Keep Option Modifiers<a/>
