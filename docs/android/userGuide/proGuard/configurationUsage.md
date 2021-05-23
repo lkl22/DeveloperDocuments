@@ -6,6 +6,7 @@
 * [Keep Options](#KeepOptions)
 * [Shrinking Options](#ShrinkingOptions)
 * [Optimization Options](#OptimizationOptions)
+* [Obfuscation Options](#ObfuscationOptions)
 * [Preverification Options](#PreverificationOptions)
 * [General Options](#GeneralOptions)
 * [Class Paths](#ClassPaths)
@@ -69,6 +70,29 @@ Option | Desc
 -allowaccessmodification | 指定在处理过程中可以扩大类和类成员的访问修饰符。 这可以改善优化步骤的结果。<br/><br/>例如，当内联 `public getter` 时，可能也必须将访问的字段 public。 尽管Java的二进制兼容性规范正式不要求这样做（参见Java语言规范，第三版，第13.4.6节），但某些虚拟机在处理代码方面会遇到问题。<br/><br/>仅在优化时（以及对 `-repackageclasses` 选项进行混淆时）适用。<br/><br/>反指示：在处理要用作库的代码时，您可能不应该使用此选项，因为在API中设计为不公开的类和类成员可能会公开。
 -mergeinterfacesaggressively | 指定即使接口的实现类未实现所有接口方法，也可以合并接口。<br/><br/>这样可以通过减少类的总数来减小输出的大小。<br/><br/>请注意，即使Java语言不允许使用（cfr。Java语言规范，第三版，第8.1.4节），Java的二进制兼容性规范也允许此类构造（cfr。Java语言规范，第三版，第13.5.3节））。 仅在优化时适用。<br/><br/> **特别提醒**：**设置此选项可能会降低某些JVM上已处理代码的性能**，因为高级的即时编译往往倾向于使用更少的实现类来支持更多的接口。 更糟糕的是，某些JVM可能无法处理生成的代码。 尤其：<br/><br/>当一个类中遇到超过256个 `Miranda` 方法（没有实现的接口方法）时，Sun的JRE 1.3可能会引发InternalError。
 
+## <a name="ObfuscationOptions">Obfuscation Options<a/>
+
+Option | Desc
+---|---
+-dontobfuscate | 指定不混淆输入类文件。<br/><br/>默认情况下，ProGuard对代码进行混淆：它为类和类成员分配新的简短随机名称。 它删除仅对调试有用的内部属性，例如源文件名，变量名和行号。
+-printmapping [[filename](#FileNames)] | 指定为已重命名的类和类成员打印从旧名称到新名称的映射。<br/><br/>映射将打印到标准输出或给定文件。<br/><br/>例如，随后的增量混淆或如果您想再次理解混淆的堆栈跟踪，则需要使用它。 仅在混淆时适用。
+-applymapping [filename](#FileNames) | 指定重用在ProGuard的先前混淆运行中打印出的给定名称映射。 映射文件中列出的类和类成员将收到与它们一起指定的名称。 未提及的类和类成员将获得新名称。 映射可以引用输入类以及库类。<br/><br/>**此选项对于增量混淆（即处理现有代码段的附件或小补丁）很有用**。 如果代码的结构发生了根本变化，则ProGuard可能会打印出警告，指出应用映射会引起冲突。<br/><br/>您可以通过在两个混淆运行中指定选项 `-useuniqueclassmembernames` 来降低这种风险。 只允许一个映射文件。 仅在混淆时适用。
+-obfuscationdictionary [filename](#FileNames) | 指定一个文本文件，所有有效词都将从该文本文件中用作混淆的字段和方法名称。<br/><br/>默认情况下，短名称（如“ a”，“ b”等）用作混淆名称。<br/><br/>例如，使用混淆字典，您可以指定保留关键字列表或带有外来字符的标识符的列表。 ＃符号后的空格，标点符号，重复的单词和注释将被忽略。<br/><br/>注意，混淆字典很难改善混淆。 编译器可以自动替换它们，并且可以通过使用更简单的名称再次进行混淆来完全消除这种影响。 最有用的应用程序是指定类文件中通常已经存在的字符串（例如“代码”），从而将类文件的大小减小一点。 仅在混淆时适用。
+-classobfuscationdictionary [filename](#FileNames) | 指定一个文本文件，所有有效单词都用作混淆的类名。<br/><br/>混淆处理词典类似于选项 `-obfuscationdictionary`。 仅在混淆时适用。
+-packageobfuscationdictionary [filename](#FileNames) | 指定一个文本文件，该文件中的所有有效词均用作混淆的程序包名称。<br/><br/>混淆处理词典类似于选项 `-obfuscationdictionary`。 仅在混淆时适用。
+-overloadaggressively | 指定在混淆时应用主动重载。<br/><br/>只要Java字节码要求的参数和返回类型不同（而不只是Java语言要求的参数），多个字段和方法就可以使用相同的名称。<br/><br/>此选项可以使处理后的代码更小（更难理解）。 仅在混淆时适用。
+-useuniqueclassmembernames | 指定将相同的混淆名称分配给具有相同名称的类成员，将不同的混淆名称分配给具有不同名称的类成员（对于每个给定的类成员签名）。如果没有该选项，则可以将更多的类成员映射到相同的短名称，例如“ a”，“ b”等。<br/><br/>因此，该选项会略微增加生成的代码的大小，但可以确保在后续的增量混淆步骤中始终可以遵守已保存的混淆名称映射。<br/><br/>例如，考虑两个不同的接口，其中包含具有相同名称和签名的方法。 如果没有此选项，这些方法可能会在第一个混淆步骤中获得不同的混淆名称。 如果随后添加了包含实现两个接口的类的补丁，则ProGuard将必须在增量混淆步骤中为两个方法强制使用相同的方法名称。 原始的混淆代码被更改，以保持结果代码的一致性。 在初始混淆步骤中使用此选项，将不再需要这样的重命名。<br/><br/>此选项仅在混淆时适用。 实际上，如果您打算执行增量混淆处理，则可能要完全避免压缩和优化，因为这些步骤可能会删除或修改代码中对以后增量混淆必不可少的部分。
+-dontusemixedcaseclassnames | 指定在混淆时不生成大小写混合的类名。<br/><br/>**默认情况下，混淆的类名可以包含大写字符和小写字符的混合**。 这将创建完全可接受且可用的 jars。<br/><br/>仅当在不区分大小写的文件系统（例如Windows）的平台上解压缩jar时，解压工具才可以让名称相似的类文件相互覆盖。 解压缩后会自毁代码！ 真正想在Windows上解压缩jar的开发人员可以使用此选项关闭此行为。 结果，混淆的 jars 将变得稍大。 仅在混淆时适用。
+-keeppackagenames [[package_filter](#Filters)] | 指定**不混淆给定的程序包名称**。<br/><br/>可选的过滤器是软件包名称的逗号分隔列表。 软件包名称可以包含？，\*和\*\*通配符，并且可以在其前面加上否定符 !。 仅在混淆时适用。
+-flattenpackagehierarchy [package_name] | 指定通过将所有重命名的程序包移动到单个给定的父程序包中来对其进行重新打包。<br/><br/>不带参数或带有空字符串（''）的软件包将被移入根软件包。 此选项是进一步混淆程序包名称的一个示例。 它可以使处理后的代码更小，更易理解。 仅在混淆时适用。
+-repackageclasses [package_name] | 指定通过将所有重命名的类文件移动到单个给定的包中来重新打包它们。<br/><br/>不带参数或带空字符串（''）的包将被完全删除。 该选项将覆盖 `-flattenpackagehierarchy` 选项。 这是进一步混淆软件包名称的另一个示例。 它可以使处理后的代码更小，更难以理解。<br/><br/>它废弃使用的名称是 `-defaultpackage`。 仅在混淆时适用。<br/><br/>特别提醒：如果将类移动到其他位置，则在其包目录中查找资源文件的类将不再正常工作。如有疑问，请不要使用此选项以保持包原封不动。<br/><br/>注意：在Android上，不应使用空字符串命名activities, views等类。<br/><br/>Android运行时会自动在XML文件中的无软件包名称前加上应用程序软件包名称或android.view。<br/><br/>这是不可避免的，但在这种情况下会中断应用程序。
+-keepattributes [attribute_filter] | 指定要保留的所有可选属性。 可以使用一个或多个 `-keepattributes` 指令指定属性。<br/><br/>可选过滤器是逗号分隔的Java虚拟机和ProGuard支持的属性名称列表。 属性名称可以包含？，\*和\*\*通配符，并且可以在其前面加上否定符 !。<br/><br/>例如，在处理库时，至少应保留 `Exceptions`，`InnerClasses` 和 `Signature` 属性。 您还应该保留 `SourceFile` 和 `LineNumberTable` 属性，以产生有用的混淆堆栈跟踪。 最后，如果您的代码依赖注解，则可能需要保留注解。 仅在混淆时适用。
+-keepparameternames | 指定保留参数名称和保留的方法类型。<br/><br/>此选项实际上保留调试属性 `LocalVariableTable` 和 `LocalVariableTypeTable` 的精简版本。<br/><br/>在处理库时，它可能很有用。 某些IDE可以使用这些信息来帮助使用该库的开发人员，例如提供工具提示或自动完成功能。 仅在混淆时适用。
+-renamesourcefileattribute [string] | 指定要放入类文件的 `SourceFile` 属性（和 `SourceDir` 属性）中的常量字符串。<br/><br/>请注意，必须首先显示该属性，因此还必须使用 `-keepattributes` 指令显式地保留该属性。 例如，您可能希望处理过的库和应用程序生成有用的混淆堆栈跟踪。 仅在混淆时适用。
+-keepkotlinmetadata | 指定处理 `kotlin.Metadata` 注解（如果存在）。<br/><br/>当前仅支持其内容的压缩和混淆。 如果启用此选项，则应从优化中排除包含此类注解的类。
+-adaptclassstrings [[class_filter](#Filters)] | 指定与类名相对应的字符串常量也应该被混淆。<br/><br/>如果没有过滤器，则将修改与类名称相对应的所有字符串常量。 使用过滤器时，仅混淆与过滤器匹配的类中的字符串常量。<br/><br/>例如，如果您的代码包含大量引用类的硬编码字符串，并且您不想保留其名称，则可能要使用此选项。 主要适用于混淆时，尽管在压缩步骤中也会自动保留相应的类。
+-adaptresourcefilenames [[file_filter](#FileFilters)] | 根据相应类文件（如果有）的混淆名称指定要重命名的资源文件。<br/><br/>如果没有过滤器，则将与类文件对应的所有资源文件重命名。 使用过滤器，仅将匹配的文件重命名。<br/><br/>例如，请参阅处理资源文件。 仅在混淆时适用。
+-adaptresourcefilecontents [[file_filter](#FileFilters)] | 指定要更新其内容的资源文件和 native 库。<br/><br/>资源文件中提到的任何类名都将根据相应类的混淆名（如果有的话）进行重命名。<br/><br/>基于对应的 native 方法（如果有）的混淆名称，重命名 native 库中的任何函数名称。<br/><br/>如果没有过滤器，则所有资源文件的内容都会更新。 使用过滤器，仅更新匹配的文件。 资源文件使用UTF-8编码进行解析和写入。<br/><br/>有关示例，请参阅处理资源文件。 仅在混淆时适用。<br/><br/>注意事项：您可能只想将此选项应用于文本文件和 native 库，因为将常规二进制文件解析和改编为文本文件可能会导致意外问题。 因此，请确保指定足够窄的过滤器。
 
 ## <a name="PreverificationOptions">Preverification Options<a/>
 
