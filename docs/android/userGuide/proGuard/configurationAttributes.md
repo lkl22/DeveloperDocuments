@@ -8,7 +8,7 @@ ProGuard的混淆步骤会删除执行代码通常不需要的属性。 使用 `
 
 通配符（WILDCARD） |	含义（MEANING）
 ---|---
-？ | 匹配属性名称中的任何单个字符。
+? | 匹配属性名称中的任何单个字符。
 \* | 与属性名称的任何部分匹配。
 
 带有感叹号 “!” 的属性名称 在进一步尝试与过滤器中后续属性名称匹配时被排除在外。 确保正确指定过滤器，因为不会检查它们是否存在潜在的错别字。
@@ -49,3 +49,20 @@ RuntimeInvisibleParameterAnnotations<br/>(Java 5 or higher) | **指定在编译�
 RuntimeVisibleTypeAnnotations<br/>(Java 8 or higher) | 指定在运行时对于通用类型，指令等可见的注解。<br/><br/>编译器和注解处理器可以使用这些注解。 代码可以通过反射来访问它们。
 RuntimeInvisibleTypeAnnotations<br/>(Java 8 or higher) | 指定在编译时对于通用类型，指令等可见的注解。<br/><br/>编译器和注解处理器可以使用这些注解。
 AnnotationDefault<br/>(Java 5 or higher) | **指定注解的默认值**。
+
+## 基本属性（Essential attributes）
+
+ProGuard会自动保留以下基本属性，并在必要时进行处理：
+
+Attribute | Desc
+---|---
+ConstantValue | 指定常量整数，浮点数，类，字符串等。
+Code | 指定方法的实际字节码。
+StackMap<br/>(Java Micro Edition) | 提供预验证信息。 Java虚拟机可以在加载类时使用此信息来加快验证步骤。
+StackMapTable<br/>(Java 6 or higher) | 提供预验证信息。 Java虚拟机可以在加载类时使用此信息来加快验证步骤。
+BootstrapMethods<br/>(Java 7 or higher) | 指定引导动态方法调用的方法。
+Module<br/>(Java 9 or higher) | 指定模块的依赖关系。
+ModuleMainClass<br/>(Java 9 or higher) | 指定模块的 main 类。
+ModulePackages<br/>(Java 9 or higher) | 指定模块的软件包。
+NestHost<br/>(Java 11 or higher) | 指定嵌套的宿主类，例如外部类。
+NestMembers<br/>(Java 11 or higher) | 指定嵌套的成员，例如内部类。
