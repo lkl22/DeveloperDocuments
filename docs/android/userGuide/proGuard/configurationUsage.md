@@ -4,6 +4,7 @@
 
 * [Input/Output Options](#InputOutputOptions)
 * [Keep Options](#KeepOptions)
+* [File Names](#FileNames)
 * [Keep Option Modifiers](#KeepOptionModifiers)
 * [Class Specifications](#ClassSpecifications)
 
@@ -33,6 +34,27 @@ Option | Desc
 -keepclasseswithmembers [,[modifier](#KeepOptionModifiers),...] [class_specification](#ClassSpecifications) | 在存在所有指定的类成员的条件下，指定要保留的类和类成员。<br/><br/>例如，您可能希望保留所有具有main方法的应用程序，而不必显式列出它们。
 -keepnames [class_specification](#ClassSpecifications) | **-keep, allowshrinking class_specification** 的缩写<br/><br/>指定要保留名称的类和类成员（如果在压缩阶段未删除它们）。<br/><br/>例如，您可能想要保留实现Serializable接口的类的所有类名，以便处理后的代码与任何原始序列化的类保持兼容。 完全不使用的类仍可以删除。 仅在混淆时适用。
 -keepclassmembernames [class_specification](#ClassSpecifications) | **-keepclassmembers, allowshrinking class_specification** 的缩写<br/><br/>指定要保留名称的类成员（如果在压缩阶段未删除它们）。 <br/><br/>例如，在处理由JDK 1.2或更早版本编译的库时，您可能想保留合成 class$ 方法的名称，因此混淆器可以在处理使用处理后的库的应用程序时再次检测到它（尽管ProGuard本身不需要这）。仅在混淆时适用。
+-keepclasseswithmembernames [class_specification](#ClassSpecifications) | **-keepclasseswithmembers,allowshrinking class_specification** 的缩写<br/><br/>指定要保留其名称的类和类成员，条件是所有指定的类成员在压缩阶段之后都存在。<br/><br/>例如，您可能希望保留所有 native 方法名称及其类的名称，以便处理后的代码仍可以与 native 库代码链接。 完全不使用的 native 方法仍然可以删除。<br/><br/>如果使用了类文件，但没有使用其 native 方法，则其名称仍会被混淆。 仅在混淆时适用。
+-if [class_specification](#ClassSpecifications) | 指定激活后续的keep选项必须存在的类和类成员（-keep，-keepclassmembers等）。<br/><br/>条件和随后的keep选项可以共享通配符和对通配符的引用。<br/><br/>例如，可以使用Dagger和Butterknife之类的框架，在项目中存在具有相关名称的类的情况下保留类。
+-printseeds [[filename](#FileNames)] | **指定输出详尽列出与各种-keep选项匹配的类和类成员**。<br/><br/>该列表将打印到标准输出或给定的文件中。<br/><br/>该列表对于验证是否确实找到了预期的类成员很有用，尤其是在您使用通配符的情况下。<br/><br/>例如，您可能要列出所有应用程序或所保留的所有小程序。
+
+
+
+## <a name="FileNames">File Names<a/>
+
+ProGuard接受各种文件名和目录名的绝对路径和相对路径。 相对路径解释如下：
+
+1. 相对于基本目录（如果已设置），否则
+2. 相对于在其中指定配置文件的位置（如果有），否则
+3. 相对于工作目录。
+
+名称可以包含Java系统属性（或使用Ant时的Ant属性），并用尖括号 “<” 和 “>” 定界。 这些属性将自动替换为其相应的值。
+
+例如，_<java.home>/lib/rt.jar_ 会自动扩展为 _/usr/local/java/jdk/jre/lib/rt.jar_。 同样，<user.home> 扩展到用户的主目录，而 <user.dir> 扩展到当前工作目录。
+
+带有特殊字符（如空格和括号）的名称必须用单引号或双引号引起来。 **名称列表中的每个文件名都必须单独引用**。 请注意，在命令行上使用引号本身时可能需要转义，以避免被shell吞噬。
+
+例如，在命令行上，您可以使用 `'-injars "my program.jar":"/your directory/your program.jar"'` 之类的选项。
 
 
 
