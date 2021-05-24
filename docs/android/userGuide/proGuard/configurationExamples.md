@@ -5,6 +5,9 @@
 * [Processing different types of applications](#Processingdifferenttypesofapplications)
   * [A typical application](#Atypicalapplication)
   * [A typical applet](#Atypicalapplet)
+  * [A typical midlet](#Atypicalmidlet)
+  * [A typical Java Card applet](#AtypicalJavaCardapplet)
+  * [A typical xlet](#Atypicalxlet)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -64,5 +67,71 @@
 典型的applet方法将自动保留，因为 `com.example.MyApplet` 是 `rt.jar` 库中Applet类的扩展。
 
 如果适用，您应该添加用于处理 native方法，回调方法，枚举，可序列化类，Bean类，注释和资源文件的选项。
+
+### <a name="Atypicalmidlet">A typical midlet<a/>
+
+这些选项可压缩，优化，混淆和预验证Midlet `com.example.MyMIDlet`：
+
+```ProGuard
+-injars      in.jar
+-outjars     out.jar
+-libraryjars /usr/local/java/wtk2.5.2/lib/midpapi20.jar
+-libraryjars /usr/local/java/wtk2.5.2/lib/cldcapi11.jar
+-overloadaggressively
+-repackageclasses ''
+-allowaccessmodification
+-microedition
+
+-keep public class com.example.MyMIDlet
+```
+
+请注意，我们现在如何针对 `midpapi20.jar` 和 `cldcapi11.jar` 的**Java Micro Edition**运行时环境，而不是**Java Standard Edition**运行时环境 `rt.jar`。 您可以通过选择适当的jar来定位其他JME环境。
+
+典型的 `midlet` 方法将自动保留，因为 `com.example.MyMIDlet` 是 `midpapi20.jar` 库中 `MIDlet` 类的扩展。
+
+`-microedition `选项可确保类文件已针对 **Java Micro Edition** 进行了预验证，从而生成了紧凑的 `StackMap` 属性。 不再需要运行外部预验证器。
+
+如果确实在不区分大小写的归档系统的平台（例如Windows）上使用外部预验证工具，请务必小心。 由于此工具将处理过的 jars 解压，因此您应该使用ProGuard的 `-dontusemixedcaseclassnames` 选项。
+
+如果适用，您应该添加用于处理 native 方法和资源文件的选项。
+
+> 注意，您仍然必须在相应的 `jad` 文件中调整 Midlet jar的大小。 ProGuard不会为您做到这一点。
+
+### <a name="AtypicalJavaCardapplet">A typical Java Card applet<a/>
+
+这些选项可压缩，优化和混淆 Java Card applet `com.example.MyApplet`：
+
+```
+-injars      in.jar
+-outjars     out.jar
+-libraryjars /usr/local/java/javacard2.2.2/lib/api.jar
+-dontwarn    java.lang.Class
+-overloadaggressively
+-repackageclasses ''
+-allowaccessmodification
+
+-keep public class com.example.MyApplet
+```
+
+该配置与Midlet的配置非常相似，不同之处在于，该配置现在针对 **Java Card** 运行时环境。 这个环境没有 `java.lang.Class`，所以我们告诉ProGuard不要担心。
+
+### <a name="Atypicalxlet">A typical xlet<a/>
+
+这些选项可压缩，优化和混淆 xlet `com.example.MyXlet`：
+
+```
+-injars      in.jar
+-outjars     out.jar
+-libraryjars /usr/local/java/jtv1.1/javatv.jar
+-libraryjars /usr/local/java/cdc1.1/lib/cdc.jar
+-libraryjars /usr/local/java/cdc1.1/lib/btclasses.zip
+-overloadaggressively
+-repackageclasses ''
+-allowaccessmodification
+
+-keep public class com.example.MyXlet
+```
+
+该配置与Midlet的配置非常相似，不同之处在于，该配置现在使用 `Java TV API` 面向 `CDC` 运行时环境。
 
 
