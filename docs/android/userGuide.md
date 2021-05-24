@@ -8,3 +8,4 @@
 * [ProGuard](userGuide/proGuard.md)
   * [Quick Start](userGuide/proGuard/quickStart.md)
   * [Configuration](userGuide/proGuard/configuration.md)
+  * [Tools - ReTrace](userGuide/proGuard/toolsReTrace.md)

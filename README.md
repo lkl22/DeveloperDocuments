@@ -10,6 +10,7 @@
     * [ProGuard](docs/android/userGuide/proGuard.md)
       * [Quick Start](docs/android/userGuide/proGuard/quickStart.md)
       * [Configuration](docs/android/userGuide/proGuard/configuration.md)
+      * [Tools - ReTrace](docs/android/userGuide/proGuard/toolsReTrace.md)
   * [Tools](docs/android/tools.md)
     * [Adb](docs/android/tools/adb.md)
     * [SDK](docs/android/tools/sdk.md)
