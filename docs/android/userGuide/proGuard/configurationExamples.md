@@ -8,6 +8,8 @@
   * [A typical midlet](#Atypicalmidlet)
   * [A typical Java Card applet](#AtypicalJavaCardapplet)
   * [A typical xlet](#Atypicalxlet)
+* [Processing common code constructs](#Processingcommoncodeconstructs)
+  * [Processing native methods](#Processingnativemethods)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -133,5 +135,21 @@
 ```
 
 该配置与Midlet的配置非常相似，不同之处在于，该配置现在使用 `Java TV API` 面向 `CDC` 运行时环境。
+
+## <a name="Processingcommoncodeconstructs">Processing common code constructs<a/>
+
+### <a name="Processingnativemethods">Processing native methods<a/>
+
+如果您的应用程序，小程序，servlet，库等包含 `native` 方法，则需要保留它们的名称和类的名称，以便它们仍可以链接到 native 库。 以下附加选项将确保：
+
+```
+-keepclasseswithmembernames,includedescriptorclasses class * {
+    native <methods>;
+}
+```
+
+注意使用 `-keepclasseswithmembernames`。 我们不想保留所有类或所有native方法。 我们只是想避免混淆相关名称。 修饰符 `includeescriptorclasses` 还可以确保返回类型和参数类型也不会重命名，因此整个签名仍与 native 库兼容。
+
+ProGuard不会查看您的 native 代码，因此不会自动保留 native 代码调用的类或类成员。 这些是entry points，您必须明确指定这些entry points。 
 
 
