@@ -10,6 +10,8 @@
   * [A typical xlet](#Atypicalxlet)
 * [Processing common code constructs](#Processingcommoncodeconstructs)
   * [Processing native methods](#Processingnativemethods)
+  * [Processing callback methods](#Processingcallbackmethods)
+  * [Processing enumeration classes](#Processingenumerationclasses)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -151,5 +153,29 @@
 注意使用 `-keepclasseswithmembernames`。 我们不想保留所有类或所有native方法。 我们只是想避免混淆相关名称。 修饰符 `includeescriptorclasses` 还可以确保返回类型和参数类型也不会重命名，因此整个签名仍与 native 库兼容。
 
 ProGuard不会查看您的 native 代码，因此不会自动保留 native 代码调用的类或类成员。 这些是entry points，您必须明确指定这些entry points。 
+
+### <a name="Processingcallbackmethods">Processing callback methods<a/>
+
+如果您的应用程序，小程序，servlet，库等包含从外部代码（native代码，脚本等）调用的回调方法，则您将需要保留它们，并且可能还保留它们的类。 它们只是代码的entry points，就像应用程序的 main 方法一样。 如果其他 `-keep` 选项未保留它们，则类似以下选项的内容将保留回调类和方法：
+
+```
+-keep class com.example.MyCallbackClass {
+    void myCallbackMethod(java.lang.String);
+}
+```
+
+**这样可以防止给定的类和方法被删除或重命名**。
+
+### <a name="Processingenumerationclasses">Processing enumeration classes<a/>
+
+如果您的应用程序，小程序，servlet，库等包含枚举类，则必须保留一些特殊方法。 Java 5中引入了枚举。java编译器将枚举转换为具有特殊结构的类。 值得注意的是，这些类包含一些静态方法的实现，运行时环境可以通过自省访问。 您必须明确指定这些内容，以确保它们不会被删除或混淆：
+
+```
+-keepclassmembers,allowoptimization enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+```
+
 
 
