@@ -10,6 +10,7 @@
   * [A typical xlet](#Atypicalxlet)
   * [A simple Android activity](#AsimpleAndroidactivity)
   * [A complete Android application](#AcompleteAndroidapplication)
+  * [A typical library](#Atypicallibrary)
 * [Processing common code constructs](#Processingcommoncodeconstructs)
   * [Processing native methods](#Processingnativemethods)
   * [Processing callback methods](#Processingcallbackmethods)
@@ -269,6 +270,58 @@ Notes:
 
 如果适用，您应该添加用于处理 native方法，回调方法，枚举和资源文件的选项。 您可能还需要添加选项以生成有用的堆栈跟踪并删除日志记录。 您可以在ProGuard发行版的 `examples/standalone/android.pro` 中找到完整的示例配置。
 
+### <a name="Atypicallibrary">A typical library<a/>
+
+这些选项可压缩，优化和混淆整个库，从而保留所有公共和受保护的类以及类成员，native 方法名称和序列化代码。 然后，该库的已处理版本仍可照原样使用，以基于其公共API开发代码。
+
+```proguard
+-injars       in.jar
+-outjars      out.jar
+-libraryjars  <java.home>/jmods/java.base.jmod(!**.jar;!module-info.class)
+-printmapping out.map
+
+-keep public class * {
+    public protected *;
+}
+
+-keepparameternames
+-renamesourcefileattribute SourceFile
+-keepattributes Signature,Exceptions,*Annotation*,
+                InnerClasses,PermittedSubclasses,EnclosingMethod,
+                Deprecated,SourceFile,LineNumberTable
+
+-keepclasseswithmembernames,includedescriptorclasses class * {
+    native <methods>;
+}
+
+-keepclassmembers,allowoptimization enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+```
+
+此配置应保留开发人员曾经想在库中访问的所有内容。 仅当动态调用了其他任何非公共类或方法时，才应使用附加的 `-keep` 选项来指定它们。
+
+* 必须具有“`Signature`”属性才能访问通用类型。
+* 必须保留“`Exceptions`”属性，以便编译器知道哪些异常方法可能抛出。
+* 各种“`*Annotations*`”属性包含任何注解，开发人员可能需要通过反射来访问它们。
+* 对于可以从库外部引用的任何内部类，也必须保留“`InnerClasses`”属性（或更确切地说，其源名称部分）。 否则，javac 编译器将无法找到内部类。
+* “`PermittedSubclasses`”属性定义了密封的类，开发人员无法进一步扩展。
+* “`EnclosingMethod`”属性标记在方法内部定义的类。
+* “`Deprecated`”属性标记了任何不推荐使用的类，字段或方法，这可能对开发人员很有用。
+* `-keepparameternames` 选项将参数名称保留在公共库方法的 “`LocalVariableTable`” 和 “`LocalVariableTypeTable`” 属性中。 某些IDE可以将这些名称提供给使用该库的开发人员。
+* 最后，我们保留“Deprecated”属性和用于生成有用的堆栈跟踪的属性。
+
+我们还添加了一些用于处理 native方法，枚举，可序列化的类和注解的选项，所有这些选项均在各自的示例中进行了讨论。
 
 
 
