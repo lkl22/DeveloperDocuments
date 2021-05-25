@@ -25,6 +25,7 @@
   * [Processing serializable classes](#Processingserializableclasses)
   * [Processing bean classes](#Processingbeanclasses)
   * [Processing annotations](#Processingannotations)
+  * [Processing database drivers](#Processingdatabasedrivers)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -682,4 +683,14 @@ ProGuard不会查看您的 native 代码，因此不会自动保留 native 代�
 ```
 -keepattributes EnclosingMethod
 ```
+
+### <a name="Processingdatabasedrivers">Processing database drivers<a/>
+
+数据库驱动程序是驱动程序接口的实现。 由于它们通常是动态创建的，因此您可能希望保留要作为 entry points 处理的所有实现：
+
+```
+-keep class * implements java.sql.Driver
+```
+
+如果要在代码中实例化驱动程序（不必自己实现任何驱动程序），则此选项还可以消除ProGuard打印出有关 `（java.sql.Driver）Class.forName` 构造的注解。
 
