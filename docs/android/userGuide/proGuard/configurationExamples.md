@@ -15,6 +15,7 @@
   * [All possible applets in the input jars](#Allpossibleappletsintheinputjars)
   * [All possible midlets in the input jars](#Allpossiblemidletsintheinputjars)
   * [All possible Java Card applets in the input jars](#AllpossibleJavaCardappletsintheinputjars)
+  * [All possible xlets in the input jars](#Allpossiblexletsintheinputjars)
 * [Processing common code constructs](#Processingcommoncodeconstructs)
   * [Processing native methods](#Processingnativemethods)
   * [Processing callback methods](#Processingcallbackmethods)
@@ -418,6 +419,31 @@ Notes:
 我们只是保留所有实现 `Applet` 接口的类。
 
 `-printseeds` 选项打印出将保留哪些小程序。
+
+### <a name="Allpossiblexletsintheinputjars">All possible xlets in the input jars<a/>
+
+这些选项可压缩，优化和混淆 `in.jar` 中的所有公共 `xlet`：
+
+```
+-injars      in.jar
+-outjars     out.jar
+-libraryjars /usr/local/java/jtv1.1/javatv.jar
+-libraryjars /usr/local/java/cdc1.1/lib/cdc.jar
+-libraryjars /usr/local/java/cdc1.1/lib/btclasses.zip
+-overloadaggressively
+-repackageclasses ''
+-allowaccessmodification
+-printseeds
+
+-keep public class * implements javax.tv.xlet.Xlet
+```
+
+我们只是保留所有实现 `Xlet` 接口的类。
+
+`-printseeds` 选项打印出将保留哪些 `xlet`。
+
+
+
 
 
 
