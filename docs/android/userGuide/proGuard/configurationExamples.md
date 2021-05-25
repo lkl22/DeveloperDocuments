@@ -26,6 +26,9 @@
   * [Processing bean classes](#Processingbeanclasses)
   * [Processing annotations](#Processingannotations)
   * [Processing database drivers](#Processingdatabasedrivers)
+  * [Processing ComponentUI classes](#ProcessingComponentUIclasses)
+* [Processing common libraries](#Processingcommonlibraries)
+  * [Processing RMI code](#ProcessingRMIcode)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -694,3 +697,36 @@ ProGuard不会查看您的 native 代码，因此不会自动保留 native 代�
 
 如果要在代码中实例化驱动程序（不必自己实现任何驱动程序），则此选项还可以消除ProGuard打印出有关 `（java.sql.Driver）Class.forName` 构造的注解。
 
+### <a name="ProcessingComponentUIclasses">Processing ComponentUI classes<a/>
+
+Swing UI的外观被实现为 `ComponentUI` 类的扩展。 由于某种原因，它们必须包含一个静态方法 `createUI`，`Swing API`使用自省功能调用该方法。 因此，您应始终将方法保留为 entry point，例如：
+
+```
+-keep class * extends javax.swing.plaf.ComponentUI {
+    public static javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent);
+}
+```
+
+此选项还保留类本身。
+
+## <a name="Processingcommonlibraries">Processing common libraries<a/>
+
+### <a name="ProcessingRMIcode">Processing RMI code<a/>
+
+据报道，处理RMI代码最简单的方法是先使用ProGuard处理代码，然后调用 `rmic` 工具。 如果无法做到这一点，您可能想尝试以下方法：
+
+```
+-keepattributes Exceptions
+
+-keep interface * extends java.rmi.Remote {
+    <methods>;
+}
+
+-keep class * implements java.rmi.Remote {
+    <init>(java.rmi.activation.ActivationID, java.rmi.MarshalledObject); {: #activation}
+}
+```
+
+第一个 `-keep` 选项保留所有的 Remote 接口及其方法。 第二个保留所有实现以及它们的特定RMI构造函数（如果有）。
+
+还必须保留 `Exceptions` 属性，因为RMI处理代码会进行自省以检查方法签名是否兼容。
