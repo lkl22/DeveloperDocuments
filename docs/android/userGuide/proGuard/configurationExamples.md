@@ -24,6 +24,7 @@
   * [Processing enumeration classes](#Processingenumerationclasses)
   * [Processing serializable classes](#Processingserializableclasses)
   * [Processing bean classes](#Processingbeanclasses)
+  * [Processing annotations](#Processingannotations)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -666,4 +667,19 @@ ProGuard不会查看您的 native 代码，因此不会自动保留 native 代�
 
 `***`通配符匹配任何类型（primitive or non-primitive, array or non-array）。 具有'int'参数的方法与作为列表的属性匹配。
 
+### <a name="Processingannotations">Processing annotations<a/>
+
+如果您的应用程序，小程序，Servlet，库等使用注解，则可能需要将其保留在处理后的输出中。 注解由对代码的执行没有直接影响的属性表示。 但是，可以通过自省来检索其值，从而使开发人员可以相应地调整执行行为。 默认情况下，ProGuard将注解属性视为可选属性，并在混淆步骤中将其删除。 如果需要它们，则必须明确指定：
+
+```
+-keepattributes *Annotation*
+```
+
+为简便起见，我们指定一个通配符属性名称，该名称将与 `RuntimeVisibleAnnotations`，`RuntimeInvisibleAnnotations`，`RuntimeVisibleParameterAnnotations`，`RuntimeInvisibleParameterAnnotations` 和 `AnnotationDefault` 匹配。 根据所处理代码的目的，您可以优化此选择，例如不保留运行时不可见的注解（仅在编译时使用）。
+
+某些代码可能会进一步使用自省来找出匿名内部类的封装方法。 在这种情况下，还必须保留相应的属性：
+
+```
+-keepattributes EnclosingMethod
+```
 
