@@ -11,6 +11,8 @@
   * [A simple Android activity](#AsimpleAndroidactivity)
   * [A complete Android application](#AcompleteAndroidapplication)
   * [A typical library](#Atypicallibrary)
+  * [All possible applications in the input jars](#Allpossibleapplicationsintheinputjars)
+  * [All possible applets in the input jars](#Allpossibleappletsintheinputjars)
 * [Processing common code constructs](#Processingcommoncodeconstructs)
   * [Processing native methods](#Processingnativemethods)
   * [Processing callback methods](#Processingcallbackmethods)
@@ -274,7 +276,7 @@ Notes:
 
 这些选项可压缩，优化和混淆整个库，从而保留所有公共和受保护的类以及类成员，native 方法名称和序列化代码。 然后，该库的已处理版本仍可照原样使用，以基于其公共API开发代码。
 
-```proguard
+```proGuard
 -injars       in.jar
 -outjars      out.jar
 -libraryjars  <java.home>/jmods/java.base.jmod(!**.jar;!module-info.class)
@@ -322,6 +324,48 @@ Notes:
 * 最后，我们保留“Deprecated”属性和用于生成有用的堆栈跟踪的属性。
 
 我们还添加了一些用于处理 native方法，枚举，可序列化的类和注解的选项，所有这些选项均在各自的示例中进行了讨论。
+
+### <a name="Allpossibleapplicationsintheinputjars">All possible applications in the input jars<a/>
+
+这些选项可压缩，优化和混淆 `in.jar` 中的所有公共应用程序：
+
+```
+-injars      in.jar
+-outjars     out.jar
+-libraryjars <java.home>/jmods/java.base.jmod(!**.jar;!module-info.class)
+-printseeds
+
+-keepclasseswithmembers public class * {
+    public static void main(java.lang.String[]);
+}
+```
+
+注意使用 `-keepclasseswithmembers`。 我们不想保留所有类，仅保留具有 `main` 方法的所有类，以及那些方法。
+
+`-printseeds` 选项打印出将确切保留哪些类，因此我们确定知道将得到想要的东西。
+
+如果适用，您应该添加用于处理 native方法，回调方法，枚举，可序列化类，Bean类，注解和资源文件的选项。
+
+### <a name="Allpossibleappletsintheinputjars">All possible applets in the input jars<a/>
+
+这些选项可压缩，优化和混淆 `in.jar` 中的所有公共小程序：
+
+```
+-injars      in.jar
+-outjars     out.jar
+-libraryjars <java.home>/jmods/java.base.jmod(!**.jar;!module-info.class)
+-libraryjars <java.home>/jmods/java.desktop.jmod(!**.jar;!module-info.class)
+-printseeds
+
+-keep public class * extends java.applet.Applet
+```
+
+我们只是保留所有扩展 `Applet` 类的类。
+
+同样，`-printseeds` 选项打印出将保留哪些小程序。
+
+如果适用，您应该添加用于处理 native方法，回调方法，枚举，可序列化类，Bean类，注解和资源文件的选项。
+
 
 
 
