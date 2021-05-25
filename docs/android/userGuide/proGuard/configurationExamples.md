@@ -9,6 +9,7 @@
   * [A typical Java Card applet](#AtypicalJavaCardapplet)
   * [A typical xlet](#Atypicalxlet)
   * [A simple Android activity](#AsimpleAndroidactivity)
+  * [A complete Android application](#AcompleteAndroidapplication)
 * [Processing common code constructs](#Processingcommoncodeconstructs)
   * [Processing native methods](#Processingnativemethods)
   * [Processing callback methods](#Processingcallbackmethods)
@@ -164,6 +165,112 @@
 `-optimizations` 选项禁用 Dalvik 1.0 和 1.5 无法处理的一些算术简化。 请注意，Dalvik VM 也无法处理（静态字段）过度的过载。
 
 如果适用，您应该添加用于处理 native方法，回调方法，枚举，注解和资源文件的选项。
+
+### <a name="AcompleteAndroidapplication">A complete Android application<a/>
+
+> Android SDK（带有Ant，Gradle，Android Studio和Eclipse）的标准构建过程已经将ProGuard与所有正确的设置集成在一起。 您只需要通过取消注释Ant项目的文件project.properties中的“ proguard.config = .....”行或修改Gradle项目的build.gradle文件来启用ProGuard。 然后，您不需要以下任何配置。
+
+Notes:
+
+* 如果出现问题，您可能需要检查此行上列出的配置文件（proguard-project.txt，...）是否包含应用程序所需的设置。
+* Android SDK版本20及更高版本具有用于启用优化的其他配置文件：`${sdk.dir}/tools/proguard/proguard-android-optimize.txt`，而不是默认的 `${sdk.dir}/tools/proguard/proguard- android.txt`。
+* 构建过程已经在为您设置必要的程序jar，库jar和输出jar –不再指定它们。
+* 如果您收到有关缺少引用的类的警告：库引用缺少的类是很常见的。 请参阅“疑难解答”部分中的“警告：找不到引用的类”。
+
+有关更多信息，您可以查阅Android SDK中的官方[开发人员指南](http://developer.android.com/guide/developing/tools/proguard.html)。
+
+如果您是从头开始构建构建过程：这些选项将压缩，优化和混淆编译类和外部库中的所有公共`activities`, `services`, `broadcast receivers`, and `content providers`：
+
+```
+-injars      bin/classes
+-injars      bin/resources.ap_
+-injars      libs
+-outjars     bin/application.apk
+-libraryjars /usr/local/android-sdk/platforms/android-28/android.jar
+
+-android
+-dontpreverify
+-repackageclasses ''
+-allowaccessmodification
+-optimizations !code/simplification/arithmetic
+-keepattributes *Annotation*
+
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+
+-keep public class * extends android.view.View {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public void set*(...);
+}
+
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+
+-keepclassmembers class * extends android.content.Context {
+    public void *(android.view.View);
+    public void *(android.view.MenuItem);
+}
+
+-keepclassmembers class * implements android.os.Parcelable {
+    static ** CREATOR;
+}
+
+-keepclassmembers class **.R$* {
+    public static <fields>;
+}
+
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+```
+
+最重要的是，我们保留了应用程序的 `AndroidManifest.xml` 文件可能引用的所有基本类。 **如果清单文件包含其他类和方法，则可能还必须指定这些类和方法**。
+
+我们保留注解，因为它们可能被自定义RemoteView和各种框架使用。
+
+我们将使用典型的构造函数保留所有自定义View扩展和其他类，因为它们可能是从XML布局文件引用的。
+
+我们还将在自定义 `context` 扩展中保留 `onClick` 处理程序，因为它们可能是从XML布局文件引用的。
+
+我们还将所需的静态字段保留在Parcelable实现中，因为可以通过自省访问它们。
+
+我们保留自动生成的R类的引用内部类的静态字段，以防万一您的代码通过自省访问这些字段。 请注意，编译器已经内联了原始字段，因此ProGuard通常可以完全删除所有这些类（因为未引用这些类，因此它们不是必需的）。
+
+最后，我们保留带注解的 `Javascript` 接口方法，以便可以使用其原始名称导出和访问它们。 尚未注解的 `Javascript` 接口方法（在针对4.2之前的Android版本的代码中）仍需要手动保留。
+
+如果您使用其他Google API，则还必须指定这些API，例如：
+
+```
+-libraryjars /usr/local/java/android-sdk/extras/android/support/v4/android-support-v4.jar
+-libraryjars /usr/local/java/android-sdk/add-ons/addon-google_apis-google-21/libs/maps.jar
+```
+
+如果您使用的是Google的可选许可证验证库，则可以将其代码与自己的代码混淆。 您必须保留其 `ILicensingService` 接口才能使该库正常工作：
+
+```
+-keep public interface com.android.vending.licensing.ILicensingService
+```
+
+如果您使用的是Android兼容性库，则应添加以下行，以使ProGuard知道该库引用了所有API版本中均不可用的某些类是可以的：
+
+```
+-dontwarn android.support.**
+```
+
+如果适用，您应该添加用于处理 native方法，回调方法，枚举和资源文件的选项。 您可能还需要添加选项以生成有用的堆栈跟踪并删除日志记录。 您可以在ProGuard发行版的 `examples/standalone/android.pro` 中找到完整的示例配置。
+
+
+
 
 ## <a name="Processingcommoncodeconstructs">Processing common code constructs<a/>
 
