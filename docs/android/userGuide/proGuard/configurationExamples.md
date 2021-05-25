@@ -23,6 +23,7 @@
   * [Processing callback methods](#Processingcallbackmethods)
   * [Processing enumeration classes](#Processingenumerationclasses)
   * [Processing serializable classes](#Processingserializableclasses)
+  * [Processing bean classes](#Processingbeanclasses)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -633,6 +634,36 @@ ProGuard不会查看您的 native 代码，因此不会自动保留 native 代�
 
 这应该满足Java运行时反序列化代码中的反射。
 
-请注意，以上选项可能会保留比严格必要更多的类和类成员。 例如，大量的类可以实现序列化接口，但是实际上只有少数可以被序列化。 了解您的应用程序并调整配置通常会产生更紧凑的结果。
+请注意，以上选项可能会保留比严格必要更多的类和类成员。 例如，大量的类可以实现 `Serialization` 接口，但是实际上只有少数可以被序列化。 了解您的应用程序并调整配置通常会产生更紧凑的结果。
+
+### <a name="Processingbeanclasses">Processing bean classes<a/>
+
+如果您的应用程序，小程序，servlet，库等广泛使用bean类的自省功能来查找bean编辑器类或getter和setter方法，则配置可能会很麻烦。 除了确保Bean类名或getter和setter名称不变之外，您无能为力。 例如：
+
+```
+-keep public class com.example.MyBean {
+    public void setMyProperty(int);
+    public int getMyProperty();
+}
+
+-keep public class com.example.MyBeanEditor
+```
+
+如果要显式列出的元素太多，则类名和方法签名中的通配符可能会有所帮助。 此示例在包 `mybeans` 的类中保留所有可能的setter和getter：
+
+```
+-keep class mybeans.** {
+    void set*(***);
+    void set*(int, ***);
+
+    boolean is*();
+    boolean is*(int);
+
+    *** get*();
+    *** get*(int);
+}
+```
+
+`***`通配符匹配任何类型（primitive or non-primitive, array or non-array）。 具有'int'参数的方法与作为列表的属性匹配。
 
 
