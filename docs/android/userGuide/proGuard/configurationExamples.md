@@ -17,6 +17,7 @@
   * [All possible Java Card applets in the input jars](#AllpossibleJavaCardappletsintheinputjars)
   * [All possible xlets in the input jars](#Allpossiblexletsintheinputjars)
   * [All possible servlets in the input jars](#Allpossibleservletsintheinputjars)
+  * [Scala applications with the Scala runtime](#ScalaapplicationswiththeScalaruntime)
 * [Processing common code constructs](#Processingcommoncodeconstructs)
   * [Processing native methods](#Processingnativemethods)
   * [Processing callback methods](#Processingcallbackmethods)
@@ -465,7 +466,60 @@ Notes:
 
 如果适用，您应该添加用于处理 native方法，回调方法，枚举，可序列化类，Bean类，注解和资源文件的选项。
 
+### <a name="ScalaapplicationswiththeScalaruntime">Scala applications with the Scala runtime<a/>
 
+这些选项可压缩，优化和混淆 `in.jar` 中的所有公共 `Scala` 应用程序：
+
+```
+-injars      in.jar
+-injars      /usr/local/java/scala-2.9.1/lib/scala-library.jar
+-outjars     out.jar
+-libraryjars <java.home>/jmods/java.base.jmod(!**.jar;!module-info.class)
+
+-dontwarn scala.**
+
+-keepclasseswithmembers public class * {
+    public static void main(java.lang.String[]);
+}
+
+-keep class * implements org.xml.sax.EntityResolver
+
+-keepclassmembers class * {
+    ** MODULE$;
+}
+
+-keepclassmembernames class scala.concurrent.forkjoin.ForkJoinPool {
+    long eventCount;
+    int  workerCounts;
+    int  runControl;
+    scala.concurrent.forkjoin.ForkJoinPool$WaitQueueNode syncStack;
+    scala.concurrent.forkjoin.ForkJoinPool$WaitQueueNode spareStack;
+}
+
+-keepclassmembernames class scala.concurrent.forkjoin.ForkJoinWorkerThread {
+    int base;
+    int sp;
+    int runState;
+}
+
+-keepclassmembernames class scala.concurrent.forkjoin.ForkJoinTask {
+    int status;
+}
+
+-keepclassmembernames class scala.concurrent.forkjoin.LinkedTransferQueue {
+    scala.concurrent.forkjoin.LinkedTransferQueue$PaddedAtomicReference head;
+    scala.concurrent.forkjoin.LinkedTransferQueue$PaddedAtomicReference tail;
+    scala.concurrent.forkjoin.LinkedTransferQueue$PaddedAtomicReference cleanMe;
+}
+```
+
+该配置与处理应用程序基本相同，因为Scala被编译为普通的Java字节码。 但是，该示例也会处理Scala运行时库。 处理过的jar可以比原始代码小一个数量级，并且快几倍（例如，对于Scala代码示例）。
+
+`-dontwarn` 选项告诉ProGuard不要抱怨Scala运行时中的某些伪像，它是由scalac编译器编译的方式（至少在Scala 2.9.1和更早的版本中）。 请注意，应始终谨慎使用此选项。
+
+附加的 `-keep` 选项可确保不删除或重命名通过自省访问的某些类和某些字段。
+
+如果适用，您应该添加用于处理 native方法，回调方法，枚举，可序列化类，Bean类，注解和资源文件的选项。
 
 ## <a name="Processingcommoncodeconstructs">Processing common code constructs<a/>
 
