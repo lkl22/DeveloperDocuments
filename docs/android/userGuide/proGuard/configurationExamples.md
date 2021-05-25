@@ -8,6 +8,7 @@
   * [A typical midlet](#Atypicalmidlet)
   * [A typical Java Card applet](#AtypicalJavaCardapplet)
   * [A typical xlet](#Atypicalxlet)
+  * [A simple Android activity](#AsimpleAndroidactivity)
 * [Processing common code constructs](#Processingcommoncodeconstructs)
   * [Processing native methods](#Processingnativemethods)
   * [Processing callback methods](#Processingcallbackmethods)
@@ -137,6 +138,32 @@
 ```
 
 该配置与Midlet的配置非常相似，不同之处在于，该配置现在使用 `Java TV API` 面向 `CDC` 运行时环境。
+
+### <a name="AsimpleAndroidactivity">A simple Android activity<a/>
+
+这些选项可压缩，优化和混淆单个Android activity `com.example.MyActivity`：
+
+```
+-injars      bin/classes
+-outjars     bin/classes-processed.jar
+-libraryjars /usr/local/java/android-sdk/platforms/android-9/android.jar
+
+-android
+-dontpreverify
+-repackageclasses ''
+-allowaccessmodification
+-optimizations !code/simplification/arithmetic
+
+-keep public class com.example.MyActivity
+```
+
+我们以Android运行时为目标，并将activity作为 entry point。
+
+预验证与 dex编译器和 Dalvik VM 无关，因此我们可以使用 `-dontpreverify` 选项将其关闭。
+
+`-optimizations` 选项禁用 Dalvik 1.0 和 1.5 无法处理的一些算术简化。 请注意，Dalvik VM 也无法处理（静态字段）过度的过载。
+
+如果适用，您应该添加用于处理 native方法，回调方法，枚举，注解和资源文件的选项。
 
 ## <a name="Processingcommoncodeconstructs">Processing common code constructs<a/>
 
