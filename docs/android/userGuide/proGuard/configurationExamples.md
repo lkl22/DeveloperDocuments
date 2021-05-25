@@ -14,6 +14,7 @@
   * [All possible applications in the input jars](#Allpossibleapplicationsintheinputjars)
   * [All possible applets in the input jars](#Allpossibleappletsintheinputjars)
   * [All possible midlets in the input jars](#Allpossiblemidletsintheinputjars)
+  * [All possible Java Card applets in the input jars](#AllpossibleJavaCardappletsintheinputjars)
 * [Processing common code constructs](#Processingcommoncodeconstructs)
   * [Processing native methods](#Processingnativemethods)
   * [Processing callback methods](#Processingcallbackmethods)
@@ -397,6 +398,26 @@ Notes:
 
 > 注意，您仍然必须在相应的 jad 文件中调整 `Midlet jar` 的大小。 ProGuard不会为您做到这一点。 
 
+### <a name="AllpossibleJavaCardappletsintheinputjars">All possible Java Card applets in the input jars<a/>
+
+这些选项可压缩，优化和混淆 `in.jar` 中的所有公共 `Java Card` 小程序：
+
+```
+-injars      in.jar
+-outjars     out.jar
+-libraryjars /usr/local/java/javacard2.2.2/lib/api.jar
+-dontwarn    java.lang.Class
+-overloadaggressively
+-repackageclasses ''
+-allowaccessmodification
+-printseeds
+
+-keep public class * implements javacard.framework.Applet
+```
+
+我们只是保留所有实现 `Applet` 接口的类。
+
+`-printseeds` 选项打印出将保留哪些小程序。
 
 
 
