@@ -22,6 +22,7 @@
   * [Processing native methods](#Processingnativemethods)
   * [Processing callback methods](#Processingcallbackmethods)
   * [Processing enumeration classes](#Processingenumerationclasses)
+  * [Processing serializable classes](#Processingserializableclasses)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -560,5 +561,78 @@ ProGuard不会查看您的 native 代码，因此不会自动保留 native 代�
 }
 ```
 
+### <a name="Processingserializableclasses">Processing serializable classes<a/>
+
+更复杂的应用程序，小程序，Servlet，libraries等可能包含序列化的类。 根据使用方式的不同，可能需要特别注意：
+
+通常，序列化只是传输数据的一种手段，而无需长期存储。 压缩和混淆的类随后应继续正常运行，并具有以下附加选项：
+
+```
+    -keepclassmembers class * implements java.io.Serializable {
+        private static final java.io.ObjectStreamField[] serialPersistentFields;
+        private void writeObject(java.io.ObjectOutputStream);
+        private void readObject(java.io.ObjectInputStream);
+        java.lang.Object writeReplace();
+        java.lang.Object readResolve();
+    }
+```
+
+`-keepclassmembers` 选项可确保保留任何序列化方法。 通过使用此选项而不是基本的 `-keep` 选项，我们不会强制保留所有可序列化的类，而只是保留了实际使用的类的成员列表。
+
+有时，存储序列化的数据，然后在以后将其读回到可序列化类的更新版本中。 然后，必须注意这些类与它们的未处理版本和将来的处理版本保持兼容。 在这种情况下，相关类很可能具有 `serialVersionUID` 字段。 然后，以下选项应足以确保随时间推移的兼容性：
+
+```
+    -keepnames class * implements java.io.Serializable
+
+    -keepclassmembers class * implements java.io.Serializable {
+        static final long serialVersionUID;
+        private static final java.io.ObjectStreamField[] serialPersistentFields;
+        !static !transient <fields>;
+        private void writeObject(java.io.ObjectOutputStream);
+        private void readObject(java.io.ObjectInputStream);
+        java.lang.Object writeReplace();
+        java.lang.Object readResolve();
+    }
+```
+
+`serialVersionUID` 和 `serialPersistentFields` 行可确保保留这些字段（如果存在）。 `<fields>` 行保留所有非静态，非瞬态字段及其原始名称。 然后，对序列化过程和反序列化过程的内省将找到一致的名称。
+
+有时，序列化的数据必须保持兼容，但是所涉及的类缺少 `serialVersionUID` 字段。 我想象原始代码将很难维护，因为串行版本UID是根据可序列化类的功能列表计算出来的。 稍微更改类可能会更改计算的串行版本UID。 功能列表在Sun的Java对象序列化规范的流唯一标识符部分中指定。 以下指令至少应部分确保与原始类的兼容性：
+
+```
+    -keepnames class * implements java.io.Serializable
+
+    -keepclassmembers class * implements java.io.Serializable {
+        static final long serialVersionUID;
+        private static final java.io.ObjectStreamField[] serialPersistentFields;
+        !static !transient <fields>;
+        !private <fields>;
+        !private <methods>;
+        private void writeObject(java.io.ObjectOutputStream);
+        private void readObject(java.io.ObjectInputStream);
+        java.lang.Object writeReplace();
+        java.lang.Object readResolve();
+    }
+```
+
+新选项强制保留UID计算中涉及的元素。 另外，用户将必须手动指定可序列化类的所有接口（使用诸如“`-keep interface MyInterface`”之类的东西），因为在计算UID时也会使用这些名称。 一种快速但次优的选择是将所有接口都保留为 “`-keep interface *`”。
+
+在极少数情况下，您要在Java 8或更高版本中序列化lambda表达式，您需要保留一些方法并改编出现它们的类的硬编码名称：
+
+```
+    -keepclassmembers class * {
+        private static synthetic java.lang.Object $deserializeLambda$(java.lang.invoke.SerializedLambda);
+    }
+
+    -keepclassmembernames class * {
+        private static synthetic *** lambda$*(...);
+    }
+
+    -adaptclassstrings com.example.Test
+```
+
+这应该满足Java运行时反序列化代码中的反射。
+
+请注意，以上选项可能会保留比严格必要更多的类和类成员。 例如，大量的类可以实现序列化接口，但是实际上只有少数可以被序列化。 了解您的应用程序并调整配置通常会产生更紧凑的结果。
 
 
