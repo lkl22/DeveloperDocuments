@@ -13,6 +13,7 @@
   * [A typical library](#Atypicallibrary)
   * [All possible applications in the input jars](#Allpossibleapplicationsintheinputjars)
   * [All possible applets in the input jars](#Allpossibleappletsintheinputjars)
+  * [All possible midlets in the input jars](#Allpossiblemidletsintheinputjars)
 * [Processing common code constructs](#Processingcommoncodeconstructs)
   * [Processing native methods](#Processingnativemethods)
   * [Processing callback methods](#Processingcallbackmethods)
@@ -365,6 +366,36 @@ Notes:
 同样，`-printseeds` 选项打印出将保留哪些小程序。
 
 如果适用，您应该添加用于处理 native方法，回调方法，枚举，可序列化类，Bean类，注解和资源文件的选项。
+
+### <a name="Allpossiblemidletsintheinputjars">All possible midlets in the input jars<a/>
+
+这些选项可压缩，优化，混淆和预验证 `in.jar` 中的所有公共 `Midlet`：
+
+```
+-injars      in.jar
+-outjars     out.jar
+-libraryjars /usr/local/java/wtk2.5.2/lib/midpapi20.jar
+-libraryjars /usr/local/java/wtk2.5.2/lib/cldcapi11.jar
+-overloadaggressively
+-repackageclasses ''
+-allowaccessmodification
+-microedition
+-printseeds
+
+-keep public class * extends javax.microedition.midlet.MIDlet
+```
+
+我们只是保留所有扩展 `MIDlet` 类的类。
+
+`-microedition` 选项可确保类文件已针对 Java Micro Edition 进行了预验证，从而生成了紧凑的 `StackMap` 属性。 不再需要运行外部预验证器。
+
+如果确实在不区分大小写的归档系统的平台（例如Windows）上使用外部预验证工具，请务必小心。 由于此工具将处理过的 jars 解包，因此您应该使用ProGuard的 `-dontusemixedcaseclassnames` 选项。
+
+`-printseeds` 选项打印出将保留哪些 midlet。
+
+如果适用，您应该添加用于处理 native方法和资源文件的选项。
+
+> 注意，您仍然必须在相应的 jad 文件中调整 `Midlet jar` 的大小。 ProGuard不会为您做到这一点。 
 
 
 
