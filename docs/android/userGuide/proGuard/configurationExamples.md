@@ -16,6 +16,7 @@
   * [All possible midlets in the input jars](#Allpossiblemidletsintheinputjars)
   * [All possible Java Card applets in the input jars](#AllpossibleJavaCardappletsintheinputjars)
   * [All possible xlets in the input jars](#Allpossiblexletsintheinputjars)
+  * [All possible servlets in the input jars](#Allpossibleservletsintheinputjars)
 * [Processing common code constructs](#Processingcommoncodeconstructs)
   * [Processing native methods](#Processingnativemethods)
   * [Processing callback methods](#Processingcallbackmethods)
@@ -442,8 +443,27 @@ Notes:
 
 `-printseeds` 选项打印出将保留哪些 `xlet`。
 
+### <a name="Allpossibleservletsintheinputjars">All possible servlets in the input jars<a/>
 
+这些选项可压缩，优化和混淆 `in.jar` 中的所有公共 `servlet`：
 
+```
+-injars      in.jar
+-outjars     out.jar
+-libraryjars <java.home>/lib/rt.jar
+-libraryjars /usr/local/java/servlet/servlet.jar
+-printseeds
+
+-keep public class * implements javax.servlet.Servlet
+```
+
+保留所有 `servlet` 与保留所有小程序非常相似。 `Servlet API`不是标准运行时jar的一部分，因此我们将其指定为库。 不要忘记使用正确的路径名。
+
+然后，我们保留所有实现Servlet接口的类。 我们之所以使用Implements关键字，是因为在这种情况下它看起来更加熟悉，但是就ProGuard而言，它等效于extends。
+
+`-printseeds` 选项打印出将确切保留哪些 `servlet`。
+
+如果适用，您应该添加用于处理 native方法，回调方法，枚举，可序列化类，Bean类，注解和资源文件的选项。
 
 
 
