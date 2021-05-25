@@ -29,6 +29,7 @@
   * [Processing ComponentUI classes](#ProcessingComponentUIclasses)
 * [Processing common libraries](#Processingcommonlibraries)
   * [Processing RMI code](#ProcessingRMIcode)
+  * [Optimizing Gson code](#OptimizingGsoncode)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -730,3 +731,30 @@ Swing UI的外观被实现为 `ComponentUI` 类的扩展。 由于某种原因�
 第一个 `-keep` 选项保留所有的 Remote 接口及其方法。 第二个保留所有实现以及它们的特定RMI构造函数（如果有）。
 
 还必须保留 `Exceptions` 属性，因为RMI处理代码会进行自省以检查方法签名是否兼容。
+
+### <a name="OptimizingGsoncode">Optimizing Gson code<a/>
+
+ProGuard通过检测使用 `Gson` 库序列化了哪些 `domain` 类，然后通过更有效的硬编码序列化来替代基于反射的实现，来优化Gson代码。
+
+GSON优化默认情况下处于启用状态，不需要任何其他配置。 如果您禁用了优化，则GSON库仍然依赖于对其序列化的类的字段的反射。 然后，您需要保留无参数构造函数和序列化字段，以免对其进行删除，优化或混淆。 例如：
+
+```
+-keepclassmembers class com.example.SerializedClass {
+    <fields>;
+    <init>();
+}
+```
+
+创建配置时，可以指定选项 `-addconfigurationdebugging`，以在运行时获取有关必要设置的反馈。
+
+另外，您可以确保使用 `@SerializedName` 显式注解字段，以便可以混淆字段名称。 然后，您可以使用以下命令同时保留所有这些对象：
+
+```
+-keepclasseswithmembers,allowobfuscation,includedescriptorclasses class * {
+    @com.google.gson.annotations.SerializedName <fields>;
+}
+
+-keepclassmembers enum * {
+    @com.google.gson.annotations.SerializedName <fields>;
+}
+```
