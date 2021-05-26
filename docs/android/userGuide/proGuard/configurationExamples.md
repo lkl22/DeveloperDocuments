@@ -38,6 +38,7 @@
   * [Processing manifest files](#Processingmanifestfiles)
   * [Producing useful obfuscated stack traces](#Producingusefulobfuscatedstacktraces)
   * [Obfuscating package names](#Obfuscatingpackagenames)
+  * [Removing logging code](#Removingloggingcode)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -1014,3 +1015,62 @@ f
 ```
 
 请注意，并非所有级别的软件包名称混淆都可以被所有代码接受。 值得注意的是，您可能必须考虑到您的应用程序可能包含必须修改的资源文件。
+
+### <a name="Removingloggingcode">Removing logging code<a/>
+
+您可以让ProGuard删除日志记录代码。 诀窍是指定日志记录方法没有副作用-即使它们实际上有副作用，因为它们会写入控制台或日志文件。 ProGuard会如愿以偿，并删除调用（在优化步骤中），并删除日志类和方法本身（在压缩步骤中）。
+
+例如，此配置删除了Android日志记录方法的调用：
+
+```
+-assumenosideeffects class android.util.Log {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int v(...);
+    public static int i(...);
+    public static int w(...);
+    public static int d(...);
+    public static int e(...);
+}
+```
+
+通配符是匹配方法的所有版本的快捷方式。 注意不要使用 `*` 通配符来匹配所有方法，因为它还会匹配层次结构中更高级别的诸如 `wait()` 之类的方法。 删除这些调用通常会破坏您的代码。
+
+请注意，通常您无法删除使用 `System.out.println` 的日志记录代码，因为您将删除所有 `java.io.PrintStream＃println` 的调用，这可能会破坏您的应用程序。 您可以通过创建自己的日志记录方法来解决该问题，并让ProGuard删除这些方法。
+
+日志记录语句通常包含执行字符串连接的隐式调用。 在删除日志记录调用之后，它们不再起作用。 您还可以通过提供其他提示让ProGuard清理此类构造：
+
+```
+-assumenoexternalsideeffects class java.lang.StringBuilder {
+    public java.lang.StringBuilder();
+    public java.lang.StringBuilder(int);
+    public java.lang.StringBuilder(java.lang.String);
+    public java.lang.StringBuilder append(java.lang.Object);
+    public java.lang.StringBuilder append(java.lang.String);
+    public java.lang.StringBuilder append(java.lang.StringBuffer);
+    public java.lang.StringBuilder append(char[]);
+    public java.lang.StringBuilder append(char[], int, int);
+    public java.lang.StringBuilder append(boolean);
+    public java.lang.StringBuilder append(char);
+    public java.lang.StringBuilder append(int);
+    public java.lang.StringBuilder append(long);
+    public java.lang.StringBuilder append(float);
+    public java.lang.StringBuilder append(double);
+    public java.lang.String toString();
+}
+
+-assumenoexternalreturnvalues public final class java.lang.StringBuilder {
+    public java.lang.StringBuilder append(java.lang.Object);
+    public java.lang.StringBuilder append(java.lang.String);
+    public java.lang.StringBuilder append(java.lang.StringBuffer);
+    public java.lang.StringBuilder append(char[]);
+    public java.lang.StringBuilder append(char[], int, int);
+    public java.lang.StringBuilder append(boolean);
+    public java.lang.StringBuilder append(char);
+    public java.lang.StringBuilder append(int);
+    public java.lang.StringBuilder append(long);
+    public java.lang.StringBuilder append(float);
+    public java.lang.StringBuilder append(double);
+}
+```
+
+> 请谨慎指定您自己的假设，因为它们很容易破坏您的代码。
