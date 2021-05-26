@@ -36,6 +36,7 @@
 * [Further processing possibilities](#Furtherprocessingpossibilities)
   * [Processing resource files](#Processingresourcefiles)
   * [Processing manifest files](#Processingmanifestfiles)
+  * [Producing useful obfuscated stack traces](#Producingusefulobfuscatedstacktraces)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -889,4 +890,24 @@ Dagger2 不再依赖反射。 您不需要在那里保留任何类。
 ```
 
 过滤器将使ProGuard从第一个jar复制清单文件，并忽略第二个和第三个输入jar中的任何清单文件。 请注意，ProGuard将使jar中文件的顺序保持不变。 清单文件不一定要放在第一位。
+
+### <a name="Producingusefulobfuscatedstacktraces">Producing useful obfuscated stack traces<a/>
+
+这些选项使混淆的应用程序或库产生堆栈跟踪，以后仍可对其进行解密：
+
+```
+-printmapping out.map
+
+-renamesourcefileattribute SourceFile
+-keepattributes SourceFile,LineNumberTable
+```
+
+我们将保留所有源文件属性，但将其值替换为字符串 “`SourceFile`”。 我们可以使用任何字符串。 该字符串已经存在于所有类文件中，因此不会占用任何额外的空间。 如果您使用的是J++，则还需要保留“`SourceDir`”属性。
+
+我们还将保留所有方法的行号表。
+
+只要这两个属性都存在，则在打印出异常堆栈跟踪时，Java运行时环境将包括行号信息。
+
+仅当我们可以将混淆的名称映射回其原始名称时，此信息才有用，因此我们将映射保存到文件out.map中。 然后，ReTrace工具可以使用该信息来还原原始堆栈跟踪。
+
 
