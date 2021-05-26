@@ -37,6 +37,7 @@
   * [Processing resource files](#Processingresourcefiles)
   * [Processing manifest files](#Processingmanifestfiles)
   * [Producing useful obfuscated stack traces](#Producingusefulobfuscatedstacktraces)
+  * [Obfuscating package names](#Obfuscatingpackagenames)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -910,4 +911,106 @@ Dagger2 不再依赖反射。 您不需要在那里保留任何类。
 
 仅当我们可以将混淆的名称映射回其原始名称时，此信息才有用，因此我们将映射保存到文件out.map中。 然后，ReTrace工具可以使用该信息来还原原始堆栈跟踪。
 
+### <a name="Obfuscatingpackagenames">Obfuscating package names<a/>
 
+可以通过多种方式混淆软件包名称，从而增加混淆程度和紧凑性。 例如，考虑以下类：
+
+```
+mycompany.myapplication.MyMain
+mycompany.myapplication.Foo
+mycompany.myapplication.Bar
+mycompany.myapplication.extra.FirstExtra
+mycompany.myapplication.extra.SecondExtra
+mycompany.util.FirstUtil
+mycompany.util.SecondUtil
+```
+
+假设类名 `mycompany.myapplication.MyMain` 是配置保留的主要应用程序类。 所有其他的类名都可以被混淆。
+
+默认情况下，包含不能重命名的类的包也不被重命名，并且包层次结构被保留。 这样会导致混淆的类名如下：
+
+```
+mycompany.myapplication.MyMain
+mycompany.myapplication.a
+mycompany.myapplication.b
+mycompany.myapplication.a.a
+mycompany.myapplication.a.b
+mycompany.a.a
+mycompany.a.b
+```
+
+`-flattenpackagehierarchy` 选项通过将混淆后的软件包的软件包层次结构扁平化，进一步混淆了软件包名称：
+
+```
+-flattenpackagehierarchy 'myobfuscated'
+```
+
+然后，混淆的类名称如下所示：
+
+```
+mycompany.myapplication.MyMain
+mycompany.myapplication.a
+mycompany.myapplication.b
+myobfuscated.a.a
+myobfuscated.a.b
+myobfuscated.b.a
+myobfuscated.b.b
+```
+
+另外，`-repackageclasses` 选项通过将混淆的类组合到单个软件包中来混淆整个包装：
+
+```
+-repackageclasses 'myobfuscated'
+```
+
+然后，混淆的类名称如下所示：
+
+```
+mycompany.myapplication.MyMain
+mycompany.myapplication.a
+mycompany.myapplication.b
+myobfuscated.a
+myobfuscated.b
+myobfuscated.c
+myobfuscated.d
+```
+
+另外，指定 `-allowaccessmodification` 选项可以扩大类和类成员的访问权限，从而为重新打包所有混淆的类提供了机会：
+
+```
+-repackageclasses 'myobfuscated'
+-allowaccessmodification
+```
+
+然后，混淆的类名称如下所示：
+
+```
+mycompany.myapplication.MyMain
+myobfuscated.a
+myobfuscated.b
+myobfuscated.c
+myobfuscated.d
+myobfuscated.e
+myobfuscated.f
+```
+
+指定的目标软件包始终可以是根软件包。 例如：
+
+```
+-repackageclasses ''
+-allowaccessmodification
+```
+
+然后，混淆的类名是最短的名称：
+
+```
+mycompany.myapplication.MyMain
+a
+b
+c
+d
+e
+f
+```
+
+请注意，并非所有级别的软件包名称混淆都可以被所有代码接受。 值得注意的是，您可能必须考虑到您的应用程序可能包含必须修改的资源文件。
