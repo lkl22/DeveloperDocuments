@@ -30,6 +30,7 @@
 * [Processing common libraries](#Processingcommonlibraries)
   * [Processing RMI code](#ProcessingRMIcode)
   * [Optimizing Gson code](#OptimizingGsoncode)
+  * [Processing dependency injection](#Processingdependencyinjection)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -756,5 +757,23 @@ GSON优化默认情况下处于启用状态，不需要任何其他配置。 如
 
 -keepclassmembers enum * {
     @com.google.gson.annotations.SerializedName <fields>;
+}
+```
+
+### <a name="Processingdependencyinjection">Processing dependency injection<a/>
+
+如果您的应用程序使用JEE样式的依赖项注入，则应用程序容器将自动将资源类的实例分配给使用@Resource注解的字段和方法。 容器会进行内省，甚至直接访问私有类成员。 它通常根据类型名称和类成员名称来构造资源名称。 然后，我们必须避免删除或重命名此类类成员：
+
+```
+-keepclassmembers class * {
+    @javax.annotation.Resource *;
+}
+```
+
+Spring框架还有另一个类似的注解 `@Autowired`：
+
+```
+-keepclassmembers class * {
+    @org.springframework.beans.factory.annotation.Autowired *;
 }
 ```
