@@ -35,6 +35,7 @@
   * [Processing Butterknife code](#ProcessingButterknifecode)
 * [Further processing possibilities](#Furtherprocessingpossibilities)
   * [Processing resource files](#Processingresourcefiles)
+  * [Processing manifest files](#Processingmanifestfiles)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -874,4 +875,18 @@ Dagger2 不再依赖反射。 您不需要在那里保留任何类。
 
 在这种情况下，`-adaptresourcefilenames` 选项基于对应类文件（如果有）的混淆名称来重命名处理后的输出中的属性文件和图像文件。 `-adaptresourcefilecontents` 选项在属性文件和清单文件中查找类名称，并用混淆的名称（如果有）替换这些名称。 您可能需要调整过滤器以适合您的应用程序。
 
+### <a name="Processingmanifestfiles">Processing manifest files<a/>
+
+如上一节中所述，清单文件可以像普通资源文件一样对待。 ProGuard可以在文件中改编混淆的类名，但不会进行任何其他更改。 如果您还有其他需要，则应使用外部工具。 例如，如果清单文件包含签名信息，则在对jar进行处理后，应该再次对其进行签名。
+
+如果要将多个输入jar合并到一个输出jar中，则必须选择一个，通常通过指定过滤器：
+
+```
+-injars  in1.jar
+-injars  in2.jar(!META-INF/MANIFEST.MF)
+-injars  in3.jar(!META-INF/MANIFEST.MF)
+-outjars out.jar
+```
+
+过滤器将使ProGuard从第一个jar复制清单文件，并忽略第二个和第三个输入jar中的任何清单文件。 请注意，ProGuard将使jar中文件的顺序保持不变。 清单文件不一定要放在第一位。
 
