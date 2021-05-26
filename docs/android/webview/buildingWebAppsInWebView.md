@@ -7,6 +7,10 @@
 * [Using JavaScript in WebView](#UsingJavaScriptinWebView)
   * [Enabling JavaScript](#EnablingJavaScript)
   * [Binding JavaScript code to Android code](#BindingJavaScriptcodetoAndroidcode)
+* [Handling page navigation](#Handlingpagenavigation)
+  * [Navigating web page history](#Navigatingwebpagehistory)
+  * [Handling device configuration changes](#Handlingdeviceconfigurationchanges)
+* [Managing windows](#Managingwindows)
 
 如果要将Web应用程序（或只是网页）作为客户端应用程序的一部分交付，则可以使用 `WebView` 进行。 `WebView`类是`Android View`类的扩展，允许您将网页显示为活动布局的一部分。 它不包含完全开发的Web浏览器的任何功能，例如导航控件或地址栏。 默认情况下，WebView所做的只是显示一个网页。
 
@@ -159,4 +163,77 @@ webView.addJavascriptInterface(new WebAppInterface(this), "Android");
 
 **注意**：使用 `addJavascriptInterface()` 允许 `JavaScript` 控制您的 `Android` 应用。 这可能是非常有用的功能，也可能是危险的安全问题。 当 `WebView` 中的 `HTML` 不可信时（例如，部分或全部HTML由未知人员或进程提供），则攻击者可以包括执行您的客户端代码以及可能由攻击者选择的任何代码的HTML。 因此，除非编写了出现在 `WebView` 中的所有 `HTML` 和 `JavaScript`，否则不应使用 `addJavascriptInterface()`。 您还应该不允许用户在 `WebView` 中导航到非您自己的其他网页。 相反，应允许用户的默认浏览器应用程序打开外部链接-默认情况下，用户的Web浏览器将打开所有URL链接，因此，仅当您按以下部分所述处理页面导航时，请格外小心。
 
+## <a name="Handlingpagenavigation">Handling page navigation<a/>
+
+当用户单击 `WebView` 中网页上的链接时，默认行为是 `Android` 会启动处理 `URL` 的应用程序。 通常，默认的Web浏览器会打开并加载目标URL。 但是，您可以为 `WebView` 覆盖此行为，因此链接将在 `WebView` 中打开。 然后，您可以允许用户在由 `WebView` 维护的网页历史记录中前后浏览。
+
+> **注意**：出于安全原因，系统的浏览器应用程序不会与您的应用程序共享其应用程序数据。
+
+要打开用户单击的链接，请使用 `setWebViewClient()` 为您的 `WebView` 提供一个 `WebViewClient`。 例如：
+
+```java
+WebView myWebView = (WebView) findViewById(R.id.webview);
+myWebView.setWebViewClient(MyWebViewClient);
+```
+
+用户单击的所有链接都将加载到WebView中。
+
+如果要对单击链接的加载位置进行更多控制，请创建自己的 `WebViewClient`，该 `WebViewClient` overrides `shouldOverrideUrlLoading()`方法。 下面的示例假定 `MyWebViewClient` 是 `Activity` 的内部类。
+
+```java
+private class MyWebViewClient extends WebViewClient {
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+        if ("www.example.com".equals(request.getUrl().getHost())) {
+      // This is my website, so do not override; let my WebView load the page
+      return false;
+    }
+    // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
+    Intent intent = new Intent(Intent.ACTION_VIEW, request.getUrl());
+    startActivity(intent);
+    return true;
+  }
+}
+```
+
+然后为 `WebView` 创建此新 `WebViewClient` 的实例：
+
+```java
+WebView myWebView = (WebView) findViewById(R.id.webview);
+myWebView.setWebViewClient(new MyWebViewClient());
+```
+
+现在，当用户单击链接时，系统将调用 `shouldOverrideUrlLoading()`，该操作将检查URL主机是否与特定域匹配（如上定义）。 如果匹配，则该方法返回 false 以便不覆盖URL加载（它允许WebView照常加载URL）。 如果URL主机不匹配，则会创建一个Intent以启动用于处理URL的默认活动（解析为用户的默认Web浏览器）。
+
+### <a name="Navigatingwebpagehistory">Navigating web page history<a/>
+
+当您的 `WebView` 覆盖 `URL` 加载时，它会自动累积访问过的网页的历史记录。 您可以使用 `goBack()` 和 `goForward()` 在历史记录中前进和后退。
+
+例如，以下内容显示了“`Activity`”如何使用设备的“Back”按钮向后导航：
+
+```java
+@Override
+public boolean onKeyDown(int keyCode, KeyEvent event) {
+    // Check if the key event was the Back button and if there's history
+    if ((keyCode == KeyEvent.KEYCODE_BACK) && myWebView.canGoBack()) {
+        myWebView.goBack();
+        return true;
+    }
+    // If it wasn't the Back key or there's no web page history, bubble up to the default
+    // system behavior (probably exit the activity)
+    return super.onKeyDown(keyCode, event);
+}
+```
+
+如果实际上存在可供用户访问的网页历史记录，则 `canGoBack()` 方法将返回true。 同样，您可以使用 `canGoForward()` 检查是否存在 forward 历史记录。 如果您不执行此检查，则一旦用户到达历史记录的末尾，`goBack()` 或 `goForward()` 便不会执行任何操作。
+
+### <a name="Handlingdeviceconfigurationchanges">Handling device configuration changes<a/>
+
+在运行时期间，`Activity` 状态会在设备的配置发生更改时发生更改，例如，当用户旋转设备或关闭输入法编辑器（IME）时。 这些更改将导致破坏WebView对象的 Activity 并创建一个新的 Activity，这还将创建一个新的 `WebView` 对象，该对象将加载销毁对象的URL。 要修改 `Activity` 的默认行为，您可以更改其处理清单中方向变化的方式。 要了解有关在运行时处理配置更改的更多信息，请阅读[处理配置更改](https://developer.android.google.cn/guide/topics/resources/runtime-changes)。
+
+## <a name="Managingwindows">Managing windows<a/>
+
+默认情况下，打开新窗口的请求将被忽略。 无论是通过 `JavaScript` 还是通过链接中的 `target` 属性打开它们，都是如此。 您可以自定义 [WebChromeClient](https://developer.android.google.cn/reference/android/webkit/WebChromeClient)，以提供自己的行为来打开多个窗口。
+
+> **注意**：为了确保您的应用程序更安全，最好防止弹出窗口和新窗口打开。 实现此行为的最安全方法是将“true”传递给 `setSupportMultipleWindows()`，但不要覆盖 `setSupportMultipleWindows()` 所依赖的 `onCreateWindow()` 方法。 请注意，此逻辑阻止加载任何在其链接中使用 `target="_blank"` 的页面。
 
