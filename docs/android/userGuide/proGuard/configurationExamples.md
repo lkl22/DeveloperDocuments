@@ -32,6 +32,7 @@
   * [Optimizing Gson code](#OptimizingGsoncode)
   * [Processing dependency injection](#Processingdependencyinjection)
   * [Processing Dagger code](#ProcessingDaggercode)
+  * [Processing Butterknife code](#ProcessingButterknifecode)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -816,4 +817,44 @@ Spring框架还有另一个类似的注解 `@Autowired`：
 
 Dagger2 不再依赖反射。 您不需要在那里保留任何类。
 
+### <a name="ProcessingButterknifecode">Processing Butterknife code<a/>
 
+如果您的Android应用程序包含 `Butterknife` 来注入views，则您还需要几行配置，因为 `Butterknife` 依赖于反射在运行时将代码绑定在一起：
+
+```
+-keep @interface butterknife.*
+
+-keepclasseswithmembers class * {
+    @butterknife.* <fields>;
+}
+
+-keepclasseswithmembers class * {
+    @butterknife.* <methods>;
+}
+
+-keepclasseswithmembers class * {
+    @butterknife.On* <methods>;
+}
+
+-keep class **$$ViewInjector {
+    public static void inject(...);
+    public static void reset(...);
+}
+
+-keep class **$$ViewBinder {
+    public static void bind(...);
+    public static void unbind(...);
+}
+
+-if   class **$$ViewBinder
+-keep class <1>
+
+-keep class **_ViewBinding {
+    <init>(<1>, android.view.View);
+}
+
+-if   class **_ViewBinding
+-keep class <1>
+```
+
+这些设置保留 `Butterknife` 注解，带注解的字段和方法以及Butterknife通过反射访问的生成的类和方法。
