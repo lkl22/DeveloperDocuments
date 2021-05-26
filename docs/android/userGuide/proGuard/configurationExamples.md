@@ -33,6 +33,8 @@
   * [Processing dependency injection](#Processingdependencyinjection)
   * [Processing Dagger code](#ProcessingDaggercode)
   * [Processing Butterknife code](#ProcessingButterknifecode)
+* [Further processing possibilities](#Furtherprocessingpossibilities)
+  * [Processing resource files](#Processingresourcefiles)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -858,3 +860,18 @@ Dagger2 不再依赖反射。 您不需要在那里保留任何类。
 ```
 
 这些设置保留 `Butterknife` 注解，带注解的字段和方法以及Butterknife通过反射访问的生成的类和方法。
+
+## <a name="Furtherprocessingpossibilities">Further processing possibilities<a/>
+
+### <a name="Processingresourcefiles">Processing resource files<a/>
+
+如果您的应用程序，小程序，servlet，库等包含资源文件，则在对应用程序进行混淆时，可能有必要调整其名称和/或内容。 以下两个选项可以自动实现此目的：
+
+```
+-adaptresourcefilenames    **.properties,**.gif,**.jpg
+-adaptresourcefilecontents **.properties,META-INF/MANIFEST.MF
+```
+
+在这种情况下，`-adaptresourcefilenames` 选项基于对应类文件（如果有）的混淆名称来重命名处理后的输出中的属性文件和图像文件。 `-adaptresourcefilecontents` 选项在属性文件和清单文件中查找类名称，并用混淆的名称（如果有）替换这些名称。 您可能需要调整过滤器以适合您的应用程序。
+
+
