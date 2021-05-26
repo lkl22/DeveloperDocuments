@@ -13,6 +13,7 @@
       * [Tools - ReTrace](docs/android/userGuide/proGuard/toolsReTrace.md)
   * [Web-based content](docs/android/webBasedContent.md)
     * [Overview](docs/android/webview/overview.md)
+    * [Building web apps in WebView](docs/android/webview/buildingWebAppsInWebView.md)
   * [Tools](docs/android/tools.md)
     * [Adb](docs/android/tools/adb.md)
     * [SDK](docs/android/tools/sdk.md)
