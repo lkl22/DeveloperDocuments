@@ -31,6 +31,7 @@
   * [Processing RMI code](#ProcessingRMIcode)
   * [Optimizing Gson code](#OptimizingGsoncode)
   * [Processing dependency injection](#Processingdependencyinjection)
+  * [Processing Dagger code](#ProcessingDaggercode)
 
 
 ## <a name="Processingdifferenttypesofapplications">Processing different types of applications<a/>
@@ -777,3 +778,42 @@ Spring框架还有另一个类似的注解 `@Autowired`：
     @org.springframework.beans.factory.annotation.Autowired *;
 }
 ```
+
+### <a name="ProcessingDaggercode">Processing Dagger code<a/>
+
+您的Android应用程序可能正在使用Dagger库进行依赖项注入。
+
+`Dagger 1` 严重依赖反射，因此您可能需要一些其他配置以确保其继续运行。 DexGuard的默认配置已经保留了一些必需的类：
+
+```
+-keepclassmembers,allowobfuscation class * {
+    @dagger.** *;
+}
+
+-keep class **$$ModuleAdapter
+-keep class **$$InjectAdapter
+-keep class **$$StaticInjection
+
+-if   class **$$ModuleAdapter
+-keep class <1>
+
+-if   class **$$InjectAdapter
+-keep class <1>
+
+-if   class **$$StaticInjection
+-keep class <1>
+
+-keepnames class dagger.Lazy
+```
+
+这样，Dagger可以根据名称对组合相应的类对。
+
+此外，如果您的代码通过 `@Module(injects = { SomeClass.class }, ...)` 之类的注释将依赖项注入某些给定的类中，则还需要保留指定的名称：
+
+```
+-keep class com.example.SomeClass
+```
+
+Dagger2 不再依赖反射。 您不需要在那里保留任何类。
+
+
