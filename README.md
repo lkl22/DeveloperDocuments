@@ -18,6 +18,7 @@
     * [Adb](docs/android/tools/adb.md)
     * [SDK](docs/android/tools/sdk.md)
     * [Signing](docs/android/tools/signing.md)
+    * [Analyze your build with APK Analyzer](docs/android/tools/apkAnalyzer.md)
   * [Test](docs/android/test.md)
     * [Appium](docs/android/test/appium.md)
       * [Install](docs/android/test/appium/install.md)

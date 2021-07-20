@@ -14,6 +14,7 @@
   * [Adb](android/tools/adb.md)
   * [SDK](android/tools/sdk.md)
   * [Signing](android/tools/signing.md)
+  * [Analyze your build with APK Analyzer](android/tools/apkAnalyzer.md)
 * [Test](android/test.md)
   * [Appium](android/test/appium.md)
     * [Install](android/test/appium/install.md)
