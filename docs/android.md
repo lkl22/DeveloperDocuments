@@ -34,3 +34,5 @@
 
 开发工具：[https://developer.android.google.cn/studio/](https://developer.android.google.cn/studio/)
 
+配置构建: [https://developer.android.google.cn/studio/build?hl=zh_cn](https://developer.android.google.cn/studio/build?hl=zh_cn)
+
