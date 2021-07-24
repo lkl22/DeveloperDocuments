@@ -11,6 +11,7 @@
       * [Quick Start](docs/android/userGuide/proGuard/quickStart.md)
       * [Configuration](docs/android/userGuide/proGuard/configuration.md)
       * [Tools - ReTrace](docs/android/userGuide/proGuard/toolsReTrace.md)
+    * [缩减、混淆处理和优化应用](docs/android/userGuide/shrinkCode.md)
   * [Web-based content](docs/android/webBasedContent.md)
     * [Overview](docs/android/webview/overview.md)
     * [Building web apps in WebView](docs/android/webview/buildingWebAppsInWebView.md)
