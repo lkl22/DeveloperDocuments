@@ -13,6 +13,7 @@
 
 * [启用压缩、混淆和优化功能](#enable)
 * [R8 配置文件](#configuration-files)
+  * [添加其他配置](#add-configuration)
 
 ## <a name="enable">启用压缩、混淆和优化功能<a/>
 
@@ -48,13 +49,54 @@ android {
 
 R8 使用 ProGuard 规则文件来修改其默认行为并更好地了解应用的结构，比如充当应用代码入口点的类。虽然您可以修改其中一些规则文件，但某些规则可能由编译时工具（如 AAPT2）自动生成，或从应用的库依赖项继承而来。下表介绍了 R8 使用的 ProGuard 规则文件的来源。
 
+|来源	|位置	|说明
+|---|---|---
+|Android Studio	|<module-dir>/proguard-rules.pro|	当您使用 Android Studio 创建新模块时，Android Studio 会在该模块的根目录中创建 `proguard-rules.pro` 文件。<br/><br/>默认情况下，此文件不会应用任何规则。因此，请在此处添加您自己的 ProGuard 规则，比如自定义保留规则。
+|Android Gradle 插件	|由 Android Gradle 插件在编译时生成。	|Android Gradle 插件会生成 proguard-android-optimize.txt（其中包含了对大多数 Android 项目都有用的规则），并启用 @Keep* 注解。<br/><br/>默认情况下，使用 Android Studio 创建新模块时，模块级 build.gradle 文件会将此规则文件纳入到您的发布 build 中。<br/><br/>注意：虽然 Android Gradle 插件包含额外的预定义 ProGuard 规则文件，但建议您使用 proguard-android-optimize.txt。
+|库依赖项	|AAR 库：<library-dir>/proguard.txt<br/><br/>JAR 库：<library-dir>/META-INF/proguard/ | 如果某个 AAR 库是使用它自己的 ProGuard 规则文件发布的，并且您将该 AAR 库作为编译时依赖项纳入到项目中，那么 R8 在编译项目时会自动应用其规则。<br/><br/>如果 AAR 库需要某些保留规则才能正常运行，那么使用该库随附的规则文件将非常有用。也就是说，库开发者已经为您执行了问题排查步骤。<br/><br/>不过，请注意，**由于 ProGuard 规则是累加的，因此 AAR 库依赖项包含的某些规则无法移除，并且可能会影响对应用其他部分的编译**。例如，如果某个库包含停用代码优化功能的规则，该规则会针对整个项目停用优化功能。
+|Android 资源打包工具 2 (AAPT2)	|使用 minifyEnabled true 构建项目后：<module-dir>/build/intermediates/proguard-rules/debug/aapt_rules.txt	|AAPT2 会根据对应用清单中的类、布局及其他应用资源的引用，生成保留规则。例如，AAPT2 会为您在应用清单中注册为入口点的每个 Activity 添加一个保留规则。
+|自定义配置文件	|默认情况下，当您使用 Android Studio 创建新模块时，IDE 会创建 <module-dir>/proguard-rules.pro，以便您添加自己的规则。	|您可以添加其他配置，R8 会在编译时应用这些配置。
 
+如果您将 `minifyEnabled` 属性设为 true，R8 会将来自上述所有可用来源的规则组合在一起。在您排查 R8 问题时需要谨记这一点，因为其他编译时依赖项（如库依赖项）可能会引入您不了解的 R8 行为变化。
 
+> 如需输出 R8 在构建项目时应用的所有规则的完整报告，请将以下代码添加到模块的 `proguard-rules.pro` 文件中：
 
+```proguard
+// You can specify any path and filename.
+-printconfiguration ~/tmp/full-r8-config.txt
+```
 
+### <a name="add-configuration">添加其他配置<a/>
 
+当您使用 Android Studio 创建新项目或模块时，IDE 会创建一个 `<module-dir>/proguard-rules.pro` 文件，以便您添加自己的规则。此外，您还可以通过将相应文件添加到模块的 `build.gradle` 文件的 `proguardFiles` 属性中，从其他文件添加额外的规则。
 
+例如，您可以通过在相应的 `productFlavor` 代码块中再添加一个 `proguardFiles` 属性来添加每个构建变体专用的规则。以下 Gradle 文件会将 `flavor2-rules.pro` 添加到 `flavor2` 产品变种中。现在，`flavor2` 使用全部三个 ProGuard 规则，因为还应用了来自 `release` 代码块的规则。
 
+```groovy
+android {
+    ...
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles
+                getDefaultProguardFile('proguard-android-optimize.txt'),
+                // List additional ProGuard rules for the given build type here. By default,
+                // Android Studio creates and includes an empty rules file for you (located
+                // at the root directory of each module).
+                'proguard-rules.pro'
+        }
+    }
+    flavorDimensions "version"
+    productFlavors {
+        flavor1 {
+            ...
+        }
+        flavor2 {
+            proguardFile 'flavor2-rules.pro'
+        }
+    }
+}
+```
 
 
 
