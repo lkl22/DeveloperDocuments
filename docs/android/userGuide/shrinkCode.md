@@ -18,6 +18,11 @@
   * [自定义要保留的代码](#keep-code)
 * [移除原生库](#strip-native-libraries)
   * [原生代码崩溃支持](#native-crash-support)
+* [缩减资源](#shrink-resources)
+  * [自定义要保留的资源](#keep-resources)
+  * [启用严格引用检查](#strict-reference-checks)
+  * [移除未使用的备用资源](#unused-alt-resources)
+  * [合并重复资源](#merge-resources)
 * [参考文献](#参考文献)
 
 ## <a name="enable">启用压缩、混淆和优化功能<a/>
@@ -208,6 +213,111 @@ $ zip -r symbols.zip .
 > 注意：调试符号文件的大小上限为 300 MB。如果文件过大，可能是因为 .so 文件包含符号表（函数名称）以及 DWARF 调试信息（文件名和代码行）。无需使用这些内容即可对代码进行符号化处理。您可以通过运行以下命令将这些内容移除：
 > `$OBJCOPY --strip-debug lib.so lib.so.sym`
 > 其中，$OBJCOPY 指向您要移除的特定 ABI 版本（例如，ndk-bundle/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin/aarch64-linux-android-objcopy）。
+
+## <a name="shrink-resources">缩减资源<a/>
+
+资源缩减只有在与代码缩减配合使用时才能发挥作用。在代码缩减器移除所有不使用的代码后，资源缩减器便可确定应用仍要使用的资源，当您添加包含资源的代码库时尤其如此。您必须移除不使用的库代码，使库资源变为未引用资源，因而可由资源缩减器移除。
+
+如需启用资源缩减功能，请将 `build.gradle` 文件中的 `shrinkResources` 属性（若为代码缩减，则还包括 `minifyEnabled`）设为 `true`。例如：
+
+```groovy
+android {
+    ...
+    buildTypes {
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles
+                getDefaultProguardFile('proguard-android.txt'),
+                'proguard-rules.pro'
+        }
+    }
+}
+```
+
+如果您尚未使用用于缩减代码的 `minifyEnabled` 构建应用，请先尝试使用它，然后再启用 `shrinkResources`，因为您可能需要先修改 `proguard-rules.pro` 文件以保留动态创建或调用的类或方法，然后再开始移除资源。
+
+### <a name="keep-resources">自定义要保留的资源<a/>
+
+如果您有想要保留或舍弃的特定资源，请在项目中创建一个包含 `<resources>` 标记的 XML 文件，并在 `tools:keep` 属性中指定每个要保留的资源，在 `tools:discard` 属性中指定每个要舍弃的资源。**这两个属性都接受以逗号分隔的资源名称列表。您可以将星号字符用作通配符**。
+
+例如：
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@layout/l_used*_c,@layout/l_used_a,@layout/l_used_b*"
+    tools:discard="@layout/unused2" />
+```
+
+将该文件保存在项目资源中，例如，保存在 `res/raw/keep.xml` 中。构建系统不会将此文件打包到 APK 中。
+
+指定要舍弃的资源可能看似没有必要，因为您本可将它们删除，但在使用构建变体时，这样做可能很有用。例如，当您知道某个给定资源看似会在代码中使用（因此不会被缩减器移除），而实际不会用于给定构建变体时，就可以将所有资源放入通用项目目录中，然后为每个构建变体创建一个不同的 `keep.xml` 文件。构建工具也可能会将某个资源错误地识别为需要的资源，这可能是因为编译器会以内嵌方式添加资源 ID，而如若真正引用的资源 ID 恰巧与代码中的某个整数值相同，资源分析器可能会分辨不出两者的区别。
+
+### <a name="strict-reference-checks">启用严格引用检查<a/>
+
+通常，资源缩减器可以准确地判断是否使用了某个资源。不过，如果您的代码会调用 [Resources.getIdentifier()](https://developer.android.google.cn/reference/android/content/res/Resources#getIdentifier(java.lang.String,%20java.lang.String,%20java.lang.String))（或者您的任何库会执行此调用，例如 `AppCompat` 库便会执行此调用），这意味着您的代码将根据动态生成的字符串查询资源名称。当您启用严格引用检查时，资源缩减器在默认情况下会采取保护行为，将所有具有匹配名称格式的资源标记为可能已使用，无法移除。
+
+例如，以下代码会将所有带 `img_` 前缀的资源标记为已使用。
+
+```java
+String name = String.format("img_%1d", angle + 1);
+res = getResources().getIdentifier(name, "drawable", getPackageName());
+```
+
+资源缩减器还会查看代码中的所有字符串常量以及各种 `res/raw/` 资源，以查找格式类似于 `file:///android_res/drawable//ic_plus_anim_016.png` 的资源网址。如果它找到与此类似的字符串，或找到其他看似可用来构建与此类似的网址的字符串，则不会将它们移除。
+
+这些是默认情况下启用的安全缩减模式的示例。不过，您可以停用这种“防患于未然”的处理方式，指定资源缩减器只保留确定要使用的资源。为此，您可以将 `keep.xml` 文件中的 `shrinkMode` 设为 `strict`，如下所示：
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:shrinkMode="strict" />
+```
+
+如果您确实启用了严格缩减模式，并且您的代码也通过动态生成的字符串引用资源（如上所示），那么您必须使用 `tools:keep` 属性手动保留这些资源。
+
+### <a name="unused-alt-resources">移除未使用的备用资源<a/>
+
+Gradle 资源缩减器只会移除未由应用代码引用的资源，这意味着，它不会移除用于不同设备配置的[备用资源](https://developer.android.google.cn/guide/topics/resources/providing-resources#AlternativeResources)。如有必要，您可以使用 Android Gradle 插件的 `resConfigs` 属性移除应用不需要的备用资源文件。
+
+例如，如果您使用的是包含语言资源的库（如 AppCompat 或 Google Play 服务），那么您的 APK 中将包含这些库中消息的所有已翻译语言的字符串，而无论应用的其余部分是否翻译为相同的语言。如果您只想保留应用正式支持的语言，则可以使用 `resConfig` 属性指定这些语言。系统会移除未指定语言的所有资源。
+
+以下代码段展示了如何设置只保留英语和法语的语言资源：
+
+```groovy
+android {
+    defaultConfig {
+        ...
+        resConfigs "en", "fr"
+    }
+}
+```
+
+同样，您也可以通过构建多个 APK 并使每个 APK 对应不同的设备配置，自定义要包含在 APK 中的屏幕密度或 ABI 资源。
+
+### <a name="merge-resources">合并重复资源<a/>
+
+默认情况下，Gradle 还会合并同名的资源，如可能位于不同资源文件夹中的同名可绘制对象。这一行为不受 `shrinkResources` 属性控制，也无法停用，因为当多个资源与代码查询的名称匹配时，有必要利用这一行为避免错误。
+
+**只有在两个或更多个文件具有完全相同的资源名称、类型和限定符时，才会进行资源合并**。Gradle 会在重复项中选择它认为最合适的文件（根据下述优先顺序），并且只将这一个资源传递给 AAPT，以便在 APK 文件中分发。
+
+Gradle 会在以下位置查找重复资源：
+
+* 与主源代码集关联的主资源，一般位于 `src/main/res/` 中。
+* 变体叠加，来自构建类型和构建变种。
+* 库项目依赖项。
+
+Gradle 会按以下级联优先顺序合并重复资源：
+
+> 依赖项 → 主资源 → 构建变种 → 构建类型
+
+例如，如果某个重复资源同时出现在主资源和构建变种中，Gradle 会选择构建变种中的资源。
+
+如果完全相同的资源出现在同一源代码集中，Gradle 无法合并它们，并且会发出资源合并错误。如果您在 `build.gradle` 文件的 `sourceSet` 属性中定义了多个源代码集，就可能会发生这种情况。例如，如果 `src/main/res/` 和 `src/main/res2/` 包含完全相同的资源，就可能会发生这种情况。
+
+
+
 
 
 
