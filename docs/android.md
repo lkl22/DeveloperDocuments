@@ -37,3 +37,5 @@
 
 配置构建: [https://developer.android.google.cn/studio/build?hl=zh_cn](https://developer.android.google.cn/studio/build?hl=zh_cn)
 
+性能： [https://developer.android.google.cn/topic/performance/vitals](https://developer.android.google.cn/topic/performance/vitals)
+
