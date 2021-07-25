@@ -27,6 +27,9 @@
   * [解码经过混淆处理的堆栈轨迹](#decode-stack-trace)
 * [代码优化](#optimization)
   * [启用更积极的优化](#full-mode)
+* [排查 R8 问题](#troubleshoot)
+  * [生成移除的（或保留的）代码的报告](#usage)
+  * [排查资源缩减问题](#troubleshoot-resource-shrink)
 * [参考文献](#参考文献)
 
 ## <a name="enable">启用压缩、混淆和优化功能<a/>
@@ -382,9 +385,72 @@ android.enableR8.fullMode=true
 
 如果您在使用 R8 的“完整模式”时遇到任何问题，请参阅 [R8 常见问题解答页面](https://r8.googlesource.com/r8/+/refs/heads/master/compatibility-faq.md)，寻找可能的解决方案。
 
+## <a name="troubleshoot">排查 R8 问题<a/>
 
+本部分介绍在使用 R8 启用代码缩减、混淆和优化功能时排查问题的一些策略。如果您在下文中找不到相关问题的解决方案，您还应参阅 [R8 常见问题解答页面](https://r8.googlesource.com/r8/+/refs/heads/master/compatibility-faq.md)和 [ProGuard 的问题排查指南](https://www.guardsquare.com/en/products/proguard/manual/troubleshooting)。
 
+### <a name="usage">生成移除的（或保留的）代码的报告<a/>
 
+为了便于排查特定的 R8 问题，建议您查看 R8 从您的应用中移除的所有代码的报告。请针对要为其生成此报告的每个模块，将 `-printusage <output-dir>/usage.txt` 添加到您的自定义规则文件中。当您在启用 R8 的情况下构建应用时，R8 会按照您指定的路径和文件名输出报告。移除的代码的报告与以下输出类似：
+
+```
+androidx.drawerlayout.R$attr
+androidx.vectordrawable.R
+androidx.appcompat.app.AppCompatDelegateImpl
+    public void setSupportActionBar(androidx.appcompat.widget.Toolbar)
+    public boolean hasWindowFeature(int)
+    public void setHandleNativeActionModesEnabled(boolean)
+    android.view.ViewGroup getSubDecor()
+    public void setLocalNightMode(int)
+    final androidx.appcompat.app.AppCompatDelegateImpl$AutoNightModeManager getAutoNightModeManager()
+    public final androidx.appcompat.app.ActionBarDrawerToggle$Delegate getDrawerToggleDelegate()
+    private static final boolean DEBUG
+    private static final java.lang.String KEY_LOCAL_NIGHT_MODE
+    static final java.lang.String EXCEPTION_HANDLER_MESSAGE_SUFFIX
+...
+```
+
+如果您要查看 R8 根据项目的保留规则确定的入口点的报告，请将 `-printseeds <output-dir>/seeds.txt` 添加到您的自定义规则文件中。当您在启用 R8 的情况下构建应用时，R8 会按照您指定的路径和文件名输出报告。保留的入口点的报告与以下输出类似：
+
+```
+com.example.myapplication.MainActivity
+androidx.appcompat.R$layout: int abc_action_menu_item_layout
+androidx.appcompat.R$attr: int activityChooserViewStyle
+androidx.appcompat.R$styleable: int MenuItem_android_id
+androidx.appcompat.R$styleable: int[] CoordinatorLayout_Layout
+androidx.lifecycle.FullLifecycleObserverAdapter
+...
+```
+
+### <a name="troubleshoot-resource-shrink">排查资源缩减问题<a/>
+
+当您缩减资源时，Build  窗口会显示从 APK 中移除的资源的摘要。（您需要先点击窗口左侧的 `Toggle view` 图标 ，以显示 Gradle 输出的详细文本。）例如：
+
+```
+:android:shrinkDebugResources
+Removed unused resources: Binary resource data reduced from 2570KB to 1711KB: Removed 33%
+:android:validateDebugSigning
+```
+
+Gradle 还会在 `<module-name>/build/outputs/mapping/release/`（ProGuard 输出文件所在的文件夹）中创建一个名为 `resources.txt` 的诊断文件。此文件包含一些详细信息，比如，哪些资源引用了其他资源，哪些资源在使用，哪些资源被移除。
+
+例如，如需了解您的 APK 为何仍包含 `@drawable/ic_plus_anim_016`，请打开 `resources.txt` 文件并搜索该文件名。您可能会发现，有其他资源引用了它，如下所示：
+
+```
+16:25:48.005 [QUIET] [system.out] &#64;drawable/add_schedule_fab_icon_anim : reachable=true
+16:25:48.009 [QUIET] [system.out]     &#64;drawable/ic_plus_anim_016
+```
+
+您现在需要知道为什么可执行到 `@drawable/add_schedule_fab_icon_anim`，如果您向上搜索，就会发现`“The root reachable resources are:”`下列有该资源。这意味着存在对 `add_schedule_fab_icon_anim` 的代码引用（即在可执行到的代码中找到了其 R.drawable ID）。
+
+如果您使用的不是严格检查，当存在看似可用于为动态加载资源构建资源名称的字符串常量时，就可将资源 ID 标记为“可执行到”。在这种情况下，如果您在构建输出中搜索资源名称，可能会发现如下消息：
+
+```
+10:32:50.590 [QUIET] [system.out] Marking drawable:ic_plus_anim_016:2130837506
+    used because it format-string matches string pool constant ic_plus_anim_%1$d.
+```
+
+如果您看到一个这样的字符串，并且确定该字符串未用于动态加载给定资源，就可以使用 `tools:discard` 属性通知构建系统将其移除，具体如介绍如何自定义要保留的资源部分中所述。
 
 ## 参考文献
 
