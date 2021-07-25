@@ -14,6 +14,9 @@
 * [启用压缩、混淆和优化功能](#enable)
 * [R8 配置文件](#configuration-files)
   * [添加其他配置](#add-configuration)
+* [缩减代码](#shrink-code)
+  * [自定义要保留的代码](#keep-code)
+* [参考文献](#参考文献)
 
 ## <a name="enable">启用压缩、混淆和优化功能<a/>
 
@@ -51,11 +54,11 @@ R8 使用 ProGuard 规则文件来修改其默认行为并更好地了解应用�
 
 |来源	|位置	|说明
 |---|---|---
-|Android Studio	|<module-dir>/proguard-rules.pro|	当您使用 Android Studio 创建新模块时，Android Studio 会在该模块的根目录中创建 `proguard-rules.pro` 文件。<br/><br/>默认情况下，此文件不会应用任何规则。因此，请在此处添加您自己的 ProGuard 规则，比如自定义保留规则。
-|Android Gradle 插件	|由 Android Gradle 插件在编译时生成。	|Android Gradle 插件会生成 proguard-android-optimize.txt（其中包含了对大多数 Android 项目都有用的规则），并启用 @Keep* 注解。<br/><br/>默认情况下，使用 Android Studio 创建新模块时，模块级 build.gradle 文件会将此规则文件纳入到您的发布 build 中。<br/><br/>注意：虽然 Android Gradle 插件包含额外的预定义 ProGuard 规则文件，但建议您使用 proguard-android-optimize.txt。
-|库依赖项	|AAR 库：<library-dir>/proguard.txt<br/><br/>JAR 库：<library-dir>/META-INF/proguard/ | 如果某个 AAR 库是使用它自己的 ProGuard 规则文件发布的，并且您将该 AAR 库作为编译时依赖项纳入到项目中，那么 R8 在编译项目时会自动应用其规则。<br/><br/>如果 AAR 库需要某些保留规则才能正常运行，那么使用该库随附的规则文件将非常有用。也就是说，库开发者已经为您执行了问题排查步骤。<br/><br/>不过，请注意，**由于 ProGuard 规则是累加的，因此 AAR 库依赖项包含的某些规则无法移除，并且可能会影响对应用其他部分的编译**。例如，如果某个库包含停用代码优化功能的规则，该规则会针对整个项目停用优化功能。
-|Android 资源打包工具 2 (AAPT2)	|使用 minifyEnabled true 构建项目后：<module-dir>/build/intermediates/proguard-rules/debug/aapt_rules.txt	|AAPT2 会根据对应用清单中的类、布局及其他应用资源的引用，生成保留规则。例如，AAPT2 会为您在应用清单中注册为入口点的每个 Activity 添加一个保留规则。
-|自定义配置文件	|默认情况下，当您使用 Android Studio 创建新模块时，IDE 会创建 <module-dir>/proguard-rules.pro，以便您添加自己的规则。	|您可以添加其他配置，R8 会在编译时应用这些配置。
+|Android Studio	|\<module-dir>/proguard-rules.pro|	当您使用 Android Studio 创建新模块时，Android Studio 会在该模块的根目录中创建 `proguard-rules.pro` 文件。<br/><br/>默认情况下，此文件不会应用任何规则。因此，请在此处添加您自己的 ProGuard 规则，比如自定义保留规则。
+|Android Gradle 插件	|由 Android Gradle 插件在编译时生成。	|Android Gradle 插件会生成 proguard-android-optimize.txt（其中包含了对大多数 Android 项目都有用的规则），并启用 @Keep* 注解。<br/><br/>默认情况下，使用 Android Studio 创建新模块时，模块级 build.gradle 文件会将此规则文件纳入到您的发布 build 中。<br/><br/>注意：虽然 Android Gradle 插件包含额外的预定义 ProGuard 规则文件，但建议您使用 `proguard-android-optimize.txt`。
+|库依赖项	|AAR 库：\<library-dir>/proguard.txt<br/><br/>JAR 库：\<library-dir>/META-INF/proguard/ | 如果某个 AAR 库是使用它自己的 ProGuard 规则文件发布的，并且您将该 AAR 库作为编译时依赖项纳入到项目中，那么 R8 在编译项目时会自动应用其规则。<br/><br/>如果 AAR 库需要某些保留规则才能正常运行，那么使用该库随附的规则文件将非常有用。也就是说，库开发者已经为您执行了问题排查步骤。<br/><br/>不过，请注意，**由于 ProGuard 规则是累加的，因此 AAR 库依赖项包含的某些规则无法移除，并且可能会影响对应用其他部分的编译**。例如，如果某个库包含停用代码优化功能的规则，该规则会针对整个项目停用优化功能。
+|Android 资源打包工具 2 (AAPT2)	|使用 minifyEnabled true 构建项目后：\<module-dir>/build/intermediates/proguard-rules/debug/aapt_rules.txt	|AAPT2 会根据对应用清单中的类、布局及其他应用资源的引用，生成保留规则。例如，AAPT2 会为您在应用清单中注册为入口点的每个 Activity 添加一个保留规则。
+|自定义配置文件	|默认情况下，当您使用 Android Studio 创建新模块时，IDE 会创建 \<module-dir>/proguard-rules.pro，以便您添加自己的规则。	|您可以添加其他配置，R8 会在编译时应用这些配置。
 
 如果您将 `minifyEnabled` 属性设为 true，R8 会将来自上述所有可用来源的规则组合在一起。在您排查 R8 问题时需要谨记这一点，因为其他编译时依赖项（如库依赖项）可能会引入您不了解的 R8 行为变化。
 
@@ -98,21 +101,41 @@ android {
 }
 ```
 
+## <a name="shrink-code">缩减代码<a/>
 
+如果将 `minifyEnabled` 属性设为 true，系统会默认启用 R8 代码缩减功能。
 
+**代码缩减**（也称为“摇树优化”）是指移除 R8 确定在运行时不需要的代码的过程。此过程可以大大减小应用的大小，例如，当您的应用包含许多库依赖项，但只使用它们的一小部分功能时。
 
+为了缩减应用的代码，R8 首先会根据组合的配置文件集确定应用代码的所有入口点。这些入口点包括 Android 平台可用来打开应用的 Activity 或服务的所有类。从每个入口点开始，R8 会检查应用的代码来构建一张图表，列出应用在运行时可能会访问的所有方法、成员变量和其他类。系统会将与该图表没有关联的代码视为执行不到的代码，并可能会从应用中移除该代码。
 
+图 1 显示了一个具有运行时库依赖项的应用。R8 通过检查应用的代码，确定可以从 `MainActivity.class` 入口点执行到的 `foo()`、`faz()` 和 `bar()` 方法。不过，您的应用从未在运行时使用过 `OkayApi.class` 类或其 `baz()` 方法，因此 R8 会在缩减应用时移除该代码。
 
+![](shrinkCode/imgs/tree-shaking.png)
+图 1. 编译时，R8 会根据项目的组合保留规则构建一张图表，用于确定执行不到的代码。
 
+R8 通过项目的 R8 配置文件中的 `-keep` 规则确定入口点。也就是说，保留规则指定 R8 在缩减应用时不应舍弃的类，R8 将这些类视为应用的可能入口点。Android Gradle 插件和 AAPT2 会自动为您生成大多数应用项目（如应用的 Activity、视图和服务）所需的保留规则。不过，如果您需要使用其他保留规则来自定义此默认行为，请参阅介绍如何自定义要保留的代码的部分。
 
+如果您只想减小应用资源的大小，请跳到介绍如何缩减资源的部分。
 
+### <a name="keep-code">自定义要保留的代码<a/>
 
+在大多数情况下，如要让 R8 仅移除不使用的代码，使用默认的 ProGuard 规则文件 (`proguard-android-optimize.txt`) 就已足够。不过，在某些情况下，R8 很难做出正确判断，因而可能会移除应用实际上需要的代码。下面列举了几个示例，说明它在什么情况下可能会错误地移除代码：
 
+* 当应用通过 Java 原生接口 (JNI) 调用方法时
+* 当您的应用在运行时查询代码时（如使用反射）
 
+> 通过测试应用应该可以发现因错误移除代码而导致的错误，但您也可以通过[生成已移除代码的报告](#usage)检查移除了哪些代码。
 
+如需修复错误并强制 R8 保留某些代码，请在 ProGuard 规则文件中添加 `-keep` 代码行。例如：
 
+```proguard
+-keep public class MyClass
+```
 
+或者，您也可以为要保留的代码添加 `@Keep` 注解。在类上添加 `@Keep` 可按原样保留整个类。在方法或字段上添加该注释，将使该方法/字段（及其名称）以及类名称保持不变。请注意，只有在使用 `AndroidX` 注解库且您添加 Android Gradle 插件随附的 ProGuard 规则文件时，此注解才可用。有关详情，请参阅介绍如何启用缩减功能的部分。
 
+在使用 `-keep` 选项时，有许多注意事项；如需详细了解如何自定义规则文件，请参阅 ProGuard 手册。[问题排查](https://www.guardsquare.com/manual/troubleshooting/troubleshooting)部分简要介绍了移除代码后您可能会遇到的其他常见问题。
 
 
 
