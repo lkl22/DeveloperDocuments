@@ -23,6 +23,8 @@
   * [启用严格引用检查](#strict-reference-checks)
   * [移除未使用的备用资源](#unused-alt-resources)
   * [合并重复资源](#merge-resources)
+* [对代码进行混淆处理](#obfuscate)
+  * [解码经过混淆处理的堆栈轨迹](#decode-stack-trace)
 * [参考文献](#参考文献)
 
 ## <a name="enable">启用压缩、混淆和优化功能<a/>
@@ -315,6 +317,45 @@ Gradle 会按以下级联优先顺序合并重复资源：
 例如，如果某个重复资源同时出现在主资源和构建变种中，Gradle 会选择构建变种中的资源。
 
 如果完全相同的资源出现在同一源代码集中，Gradle 无法合并它们，并且会发出资源合并错误。如果您在 `build.gradle` 文件的 `sourceSet` 属性中定义了多个源代码集，就可能会发生这种情况。例如，如果 `src/main/res/` 和 `src/main/res2/` 包含完全相同的资源，就可能会发生这种情况。
+
+## <a name="obfuscate">对代码进行混淆处理<a/>
+
+混淆处理的目的是通过缩短应用的类、方法和字段的名称来缩减应用的大小。下面是使用 R8 进行混淆处理的一个示例：
+
+```
+androidx.appcompat.app.ActionBarDrawerToggle$DelegateProvider -> a.a.a.b:
+androidx.appcompat.app.AlertController -> androidx.appcompat.app.AlertController:
+    android.content.Context mContext -> a
+    int mListItemLayout -> O
+    int mViewSpacingRight -> l
+    android.widget.Button mButtonNeutral -> w
+    int mMultiChoiceItemLayout -> M
+    boolean mShowTitle -> P
+    int mViewSpacingLeft -> j
+    int mButtonPanelSideLayout -> K
+```
+
+虽然混淆处理不会从应用中移除代码，但如果应用的 DEX 文件将许多类、方法和字段编入索引，那么混淆处理将可以显著缩减应用的大小。不过，由于混淆处理会对代码的不同部分进行重命名，因此在执行某些任务（如检查堆栈轨迹）时需要使用额外的工具。如需了解混淆处理后的堆栈轨迹，请参阅下一个部分，其中介绍了如何解码经过混淆处理的堆栈轨迹。
+
+此外，如果您的代码依赖于应用的方法和类的可预测命名（例如，使用反射时），您应该将相应签名视为入口点并为其指定保留规则，如介绍如何[自定义要保留的代码](#keep-code)的部分中所述。这些保留规则会告知 R8 不仅要在应用的最终 DEX 中保留该代码，而且还要保留其原始命名。
+
+### <a name="decode-stack-trace">解码经过混淆处理的堆栈轨迹<a/>
+
+R8 对代码进行混淆处理后，理解堆栈轨迹的难度将会极大增加，因为类和方法的名称可能有变化。除了重命名之外，R8 还可能会更改出现在堆栈轨迹中的行号，以便在写入 DEX 文件时进一步缩减大小。幸运的是，R8 在每次运行时都会创建一个 `mapping.txt` 文件，其中列出了经过混淆处理的类、方法和字段的名称与原始名称的映射关系。此映射文件还包含用于将行号映射回原始源文件行号的信息。R8 会将此文件保存在 `<module-name>/build/outputs/mapping/<build-type>/` 目录中。
+
+> 注意：您每次构建项目时都会覆盖 R8 生成的 mapping.txt 文件，因此您每次发布新版本时都要注意保存一个该文件的副本。通过为每个发布 build 保留一个 mapping.txt 文件的副本，您可以在用户提交来自旧版应用的经过混淆处理的堆栈轨迹时，调试相关问题。
+
+为确保跟踪还原堆栈轨迹清楚明确，您应将以下保留规则添加到模块的 `proguard-rules.pro` 文件中：
+
+```
+-keepattributes LineNumberTable,SourceFile
+```
+
+需要 `LineNumberTable` 属性，以消除方法内经过优化的位置之间的歧义。如需获取在虚拟机或设备上的堆栈轨迹中输出的行号，则必须使用 `SourceFile` 属性。
+
+在 Google Play 上发布应用时，您可以上传每个 APK 版本对应的 `mapping.txt` 文件。然后，Google Play 会根据用户报告的问题对传入的堆栈轨迹进行去混淆处理，以便您可以在 Play 管理中心查看这些堆栈轨迹。如需了解详情，请参阅介绍如何[对崩溃堆栈轨迹进行去混淆处理](https://support.google.com/googleplay/android-developer/answer/6295281)的帮助中心文章。
+
+
 
 
 
