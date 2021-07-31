@@ -109,8 +109,8 @@ Google I/O 2016大会上推荐使用WebP格式图片，可以大大减少体积�
 
 * 对多语言进行优化
 * 对被 `shrinkResources` 优化掉的资源进行处理
-* 开启资源混淆
 * 对重复的资源进行优化
+* 开启资源混淆
 
 #### 语言压缩
 
@@ -246,7 +246,7 @@ variantData.outputs.each {
 
 推荐使用微信开源的资源混淆库 [AndResGuard](https://github.com/shwenzhang/AndResGuard)，具体使用方法请查看[安装包立减1M–微信Android资源混淆打包工具](https://mp.weixin.qq.com/s?__biz=MzAwNDY1ODY2OQ==&mid=208135658&idx=1&sn=ac9bd6b4927e9e82f9fa14e396183a8f#rd)
 
-
+如果使用的是bundle开发，需要换成字节跳动的 [AabResGuard](https://github.com/bytedance/AabResGuard)
 
 ## <a name="参考文献">参考文献<a/>
 
@@ -266,3 +266,4 @@ variantData.outputs.each {
 
 [深入探索 Android 包瘦身（下）——终篇](https://cloud.tencent.com/developer/article/1761745?from=article.detail.1512087)
 
+[AabResGuard: AAB 资源混淆工具](https://blog.csdn.net/ByteDanceTech/article/details/103856061)
