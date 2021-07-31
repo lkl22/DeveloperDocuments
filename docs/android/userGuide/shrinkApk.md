@@ -2,10 +2,11 @@
 
 apk大小直接影响用户下载，用户留存，下载流量，安装占用手机内存。
 
-* [分析工具 - Apk Analyzer](ApkAnalyzer)
-* [android压缩代码和资源](android压缩代码和资源)
-* [图片资源压缩](图片资源压缩)
-* [参考文献](参考文献)
+* [分析工具 - Apk Analyzer](#ApkAnalyzer)
+* [android压缩代码和资源](#android压缩代码和资源)
+* [图片资源压缩](#图片资源压缩)
+* [多语言压缩](#多语言压缩)
+* [参考文献](#参考文献)
 
 ## <a name="ApkAnalyzer">[分析工具 - Apk Analyzer](../tools/apkAnalyzer.md)<a/>
 
@@ -36,6 +37,22 @@ apk构成可以通过studio自带的工具分析，占用最大的文件，提�
 `WebP` WebP 是 Google 的一种可以同时提供有损压缩（像 JPEG 一样）和透明度（像 PNG 一样）的图片文件格式，不过与 JPEG 或 PNG 相比，这种格式可以提供更好的压缩。`Android 4.0（API 级别 14）`及更高版本支持有损 WebP 图片，`Android 4.3（API 级别 18）`及更高版本支持无损且透明的 `WebP` 图片。这种格式为网络图像提供了卓越的无损和有损压缩。 使用 `WebP`，开发人员可以创建更小，更丰富的图像。 `WebP` 无损图像文件平均比 `PNG` 小 26% 。 这些图像文件还支持透明度（也称为 `alpha` 通道），成本只有 22% 的字节。
 
 `WebP` 有损图像比同等 SSIM 质量指数下的 `JPG` 图像小 25-34% 。 对于可接受有损 RGB 压缩的场景，有损 `WebP` 还能支持透明度，产生的文件大小通常比 PNG 小 3 倍。
+
+## 多语言压缩
+
+在 app/build.gradle 添加
+
+```groovy
+android {
+    defaultConfig {
+        ...
+        //只保留中英文
+        resConfigs "en", "zh"
+    }
+}
+```
+
+我们只需要将需要的语言的翻译资源打包进 apk，通过配置可以将多余的字符串资源从 apk 中移除。
 
 
 

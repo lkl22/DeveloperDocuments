@@ -5,6 +5,9 @@ android {
     defaultConfig {
         versionCode 1
         versionName "1.0"
+
+        //只保留中英文
+        resConfigs "en"
     }
 }
 
