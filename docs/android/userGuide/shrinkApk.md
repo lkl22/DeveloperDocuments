@@ -13,10 +13,14 @@ apk大小直接影响用户下载，用户留存，下载流量，安装占用�
   * [移除无用代码、功能](#移除无用代码功能)
   * [移除无用的库、避免功能雷同的库](#移除无用的库避免功能雷同的库)
   * [android压缩代码和资源](#android压缩代码和资源)
+  * [缩减方法数](#缩减方法数)
 * [资源的优化](#资源的优化)
   * [图片资源压缩](#图片资源压缩)
-  * [语言压缩](#语言压缩)
-  * [开启资源压缩](#开启资源压缩)
+  * [resources.arsc 的优化](#resourcesarsc的优化)
+    * [语言压缩](#语言压缩)
+    * [开启资源压缩](#开启资源压缩)
+    * [重复资源优化](#重复资源优化)
+    * [资源混淆](#资源混淆)
 * [参考文献](#参考文献)
 
 ## <a name="ApkAnalyzer">[分析工具 - Apk Analyzer](../tools/apkAnalyzer.md)<a/>
@@ -99,7 +103,16 @@ Google I/O 2016大会上推荐使用WebP格式图片，可以大大减少体积�
 
 `WebP` 有损图像比同等 SSIM 质量指数下的 `JPG` 图像小 25-34% 。 对于可接受有损 RGB 压缩的场景，有损 `WebP` 还能支持透明度，产生的文件大小通常比 PNG 小 3 倍。
 
-### 语言压缩
+### <a name="resourcesarsc的优化">resources.arsc 的优化<a/>
+
+关于 `resources.arsc` 的优化，主要从以下一个方面来优化：
+
+* 对多语言进行优化
+* 对被 `shrinkResources` 优化掉的资源进行处理
+* 开启资源混淆
+* 对重复的资源进行优化
+
+#### 语言压缩
 
 在 app/build.gradle 添加
 
@@ -115,7 +128,7 @@ android {
 
 我们只需要将需要的语言的翻译资源打包进 apk，通过配置可以将多余的字符串资源从 apk 中移除。
 
-### 开启资源压缩
+#### 开启资源压缩
 
 Android的编译工具链中提供了一款资源压缩的工具，可以通过该工具来压缩资源，如果要启用资源压缩，可以在build.gradle文件中启用，例如：
 
@@ -132,14 +145,106 @@ android {
 }
 ```
 
-Android构建工具是通过 `ResourceUsageAnalyzer` 来检查哪些资源是无用的，当检查到无用的资源时会把该资源替换成预定义的版本。
+Android构建工具是通过 `ResourceUsageAnalyzer` 来检查哪些资源是无用的，当检查到无用的资源时会把该资源替换成预定义的小的虚拟文件。
 
-如果想知道哪些资源是无用的，可以通过资源压缩工具的输出日志文件${project.buildDir}/outputs/mapping/release/resources.txt来查看。例如：
+如果想知道哪些资源是无用的，可以通过资源压缩工具的输出日志文件 `${project.buildDir}/outputs/mapping/release/resources.txt` 来查看。例如：
 
 ![](./shrinkApk/imgs/mapping-resources.png)
 
 **资源压缩工具只是把无用资源替换为小的虚拟文件**，那我们如何删除这些无用资源呢？通常的做法是结合资源压缩工具的输出日志，找到这些资源并把它们进行删除。
 
+如果采用人工移除的方式会带来后期的维护成本，这里采用了一种比较取巧的方式，在 Android 构建工具执行 `package${flavorName}Task` 之前通过修改 `Compiled Resources` 来实现自动去除无用资源。
+
+使用流程如下：
+
+1. 收集资源包（`Compiled Resources`的简称）中被替换的预定义版本的资源名称，通过查看资源包（Zip格式）中每个 `ZipEntry` 的 `CRC-32 checksum` 来寻找被替换的预定义资源，预定义资源的 `CRC-32` 定义在 `ResourceUsageAnalyzer`，下面是它们的定义。
+2. 通过 [android-chunk-utils](https://github.com/madisp/android-chunk-utils) 把 `resources.arsc` 中对应的定义移除； 
+3. 删除资源包中对应的资源文件。
+
+#### 重复资源优化
+
+产生重复资源的原因是不同的人，在开发的时候没有注意资源的可重用，对于人数比较少，规范到位是可以避免的，但是对于业务比较多，就会造成资源的重复。那么，针对这种问题，我们该怎么优化呢？ 
+
+具体步骤如下：
+
+1. 通过资源包中的每个ZipEntry的CRC-32 checksum来筛选出重复的资源；
+2. 通过 [android-chunk-utils](https://github.com/madisp/android-chunk-utils) 修改 `resources.arsc`，把这些重复的资源都重定向到同一个文件上；
+3. 把其它重复的资源文件从资源包中删除。
+
+工具类代码片段：
+
+```groovy
+variantData.outputs.each {
+    def apFile = it.packageAndroidArtifactTask.getResourceFile();
+
+    it.packageAndroidArtifactTask.doFirst {
+        def arscFile = new File(apFile.parentFile, "resources.arsc");
+        JarUtil.extractZipEntry(apFile, "resources.arsc", arscFile);
+
+        def HashMap<String, ArrayList<DuplicatedEntry>> duplicatedResources = findDuplicatedResources(apFile);
+
+        removeZipEntry(apFile, "resources.arsc");
+
+        if (arscFile.exists()) {
+            FileInputStream arscStream = null;
+            ResourceFile resourceFile = null;
+            try {
+                arscStream = new FileInputStream(arscFile);
+
+                resourceFile = ResourceFile.fromInputStream(arscStream);
+                List<Chunk> chunks = resourceFile.getChunks();
+
+                HashMap<String, String> toBeReplacedResourceMap = new HashMap<String, String>(1024);
+
+                // 处理arsc并删除重复资源
+                Iterator<Map.Entry<String, ArrayList<DuplicatedEntry>>> iterator = duplicatedResources.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry<String, ArrayList<DuplicatedEntry>> duplicatedEntry = iterator.next();
+
+                    // 保留第一个资源，其他资源删除掉
+                    for (def index = 1; index < duplicatedEntry.value.size(); ++index) {
+                        removeZipEntry(apFile, duplicatedEntry.value.get(index).name);
+
+                        toBeReplacedResourceMap.put(duplicatedEntry.value.get(index).name, duplicatedEntry.value.get(0).name);
+                    }
+                }
+
+                for (def index = 0; index < chunks.size(); ++index) {
+                    Chunk chunk = chunks.get(index);
+                    if (chunk instanceof ResourceTableChunk) {
+                        ResourceTableChunk resourceTableChunk = (ResourceTableChunk) chunk;
+                        StringPoolChunk stringPoolChunk = resourceTableChunk.getStringPool();
+                        for (def i = 0; i < stringPoolChunk.stringCount; ++i) {
+                            def key = stringPoolChunk.getString(i);
+                            if (toBeReplacedResourceMap.containsKey(key)) {
+                                stringPoolChunk.setString(i, toBeReplacedResourceMap.get(key));
+                            }
+                        }
+                    }
+                }
+
+            } catch (IOException ignore) {
+            } catch (FileNotFoundException ignore) {
+            } finally {
+                if (arscStream != null) {
+                    IOUtils.closeQuietly(arscStream);
+                }
+
+                arscFile.delete();
+                arscFile << resourceFile.toByteArray();
+
+                addZipEntry(apFile, arscFile);
+            }
+        }
+    }
+}
+```
+
+通过这种方式可以有效减少重复资源对包体大小的影响，同时这种操作方式对各业务团队透明。
+
+#### 资源混淆
+
+推荐使用微信开源的资源混淆库 [AndResGuard](https://github.com/shwenzhang/AndResGuard)，具体使用方法请查看[安装包立减1M–微信Android资源混淆打包工具](https://mp.weixin.qq.com/s?__biz=MzAwNDY1ODY2OQ==&mid=208135658&idx=1&sn=ac9bd6b4927e9e82f9fa14e396183a8f#rd)
 
 
 
@@ -151,5 +256,13 @@ Android构建工具是通过 `ResourceUsageAnalyzer` 来检查哪些资源是无
 
 [创建 WebP 图片](https://developer.android.google.cn/studio/write/convert-webp?hl=zh_cn)
 
+[Android App瘦身实战](https://cloud.tencent.com/developer/article/1038569?from=article.detail.1512087)
+
 [Android性能优化（十）之App瘦身攻略](https://cloud.tencent.com/developer/article/1190955?from=article.detail.1512087)
+
+[Android App包瘦身优化实践](https://blog.csdn.net/liuhuiteng/article/details/107119226)
+
+[深入探索 Android 包瘦身（中）](https://mp.weixin.qq.com/s?__biz=Mzg2MTYzNzM5OA==&mid=2247509936&idx=1&sn=e717388dc78887f8e52250255fbb30c5&source=41#wechat_redirect)
+
+[深入探索 Android 包瘦身（下）——终篇](https://cloud.tencent.com/developer/article/1761745?from=article.detail.1512087)
 
