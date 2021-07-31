@@ -1,12 +1,13 @@
-package com.lkl.androidstudy
+package com.lkl.androidstudy.navigation
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.lkl.androidstudy.R
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.

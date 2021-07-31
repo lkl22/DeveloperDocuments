@@ -5,10 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.media.projection.MediaProjectionManager;
-
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,11 +24,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.lkl.media.R;
 import com.tbruyelle.rxpermissions3.RxPermissions;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 public class RecordActivity extends AppCompatActivity {
     private static final String TAG = "RecordActivity";
@@ -88,7 +81,7 @@ public class RecordActivity extends AppCompatActivity {
             layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
         }
         //设置行为选项
-        layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+        layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
         //设置悬浮窗的显示位置
         layoutParams.gravity = Gravity.LEFT;
         //设置x周的偏移量
@@ -159,7 +152,9 @@ public class RecordActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        windowManager.removeView(floatWindowView);
+        if (windowManager != null) {
+            windowManager.removeView(floatWindowView);
+        }
     }
 
     private void initClick() {
@@ -235,10 +230,10 @@ public class RecordActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // 在这里将BACK键模拟了HOME键的返回桌面功能（并无必要）
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            simulateHome();
-            return true;
-        }
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            simulateHome();
+//            return true;
+//        }
         return super.onKeyDown(keyCode, event);
     }
 
