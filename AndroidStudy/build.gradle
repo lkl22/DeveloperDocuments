@@ -1,4 +1,18 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+// 替换指定文件的部分内容
+static def replaceFileText(file, oldText, newText) {
+    String text = file.text.replaceAll(oldText, newText)
+    file.withPrintWriter { printWriter ->
+        printWriter.print(text)
+    }
+}
+
+gradle.startParameter.getTaskNames().each { taskName ->
+    println("startParameter TaskName -> " + taskName)
+    replaceFileText(new File("gradle.properties"), "textReplaceTest=test", "textReplaceTest=test1")
+}
+
 buildscript {
     ext.kotlin_version = "1.3.72"
     repositories {
