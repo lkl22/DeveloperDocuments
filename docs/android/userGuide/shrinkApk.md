@@ -8,6 +8,7 @@ apk大小直接影响用户下载，用户留存，下载流量，安装占用�
 * [资源的优化](#资源的优化)
   * [图片资源压缩](#图片资源压缩)
   * [语言压缩](#语言压缩)
+  * [开启资源压缩](#开启资源压缩)
 * [参考文献](#参考文献)
 
 ## <a name="ApkAnalyzer">[分析工具 - Apk Analyzer](../tools/apkAnalyzer.md)<a/>
@@ -63,7 +64,7 @@ Google I/O 2016大会上推荐使用WebP格式图片，可以大大减少体积�
 
 `WebP` 有损图像比同等 SSIM 质量指数下的 `JPG` 图像小 25-34% 。 对于可接受有损 RGB 压缩的场景，有损 `WebP` 还能支持透明度，产生的文件大小通常比 PNG 小 3 倍。
 
-## 语言压缩
+### 语言压缩
 
 在 app/build.gradle 添加
 
@@ -78,6 +79,31 @@ android {
 ```
 
 我们只需要将需要的语言的翻译资源打包进 apk，通过配置可以将多余的字符串资源从 apk 中移除。
+
+### 开启资源压缩
+
+Android的编译工具链中提供了一款资源压缩的工具，可以通过该工具来压缩资源，如果要启用资源压缩，可以在build.gradle文件中启用，例如：
+
+```groovy
+android {
+    ...
+    buildTypes {
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+```
+
+Android构建工具是通过 `ResourceUsageAnalyzer` 来检查哪些资源是无用的，当检查到无用的资源时会把该资源替换成预定义的版本。
+
+如果想知道哪些资源是无用的，可以通过资源压缩工具的输出日志文件${project.buildDir}/outputs/mapping/release/resources.txt来查看。例如：
+
+![](./shrinkApk/imgs/mapping-resources.png)
+
+**资源压缩工具只是把无用资源替换为小的虚拟文件**，那我们如何删除这些无用资源呢？通常的做法是结合资源压缩工具的输出日志，找到这些资源并把它们进行删除。
 
 
 

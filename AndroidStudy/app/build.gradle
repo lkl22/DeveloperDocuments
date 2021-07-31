@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply from: project.file('../GradleConfig/common-build.gradle')
-apply from: project.file('../GradleConfig/common-build.gradle')
 
 android {
     defaultConfig {
@@ -10,6 +9,14 @@ android {
 
         //只保留中英文
         resConfigs "en", "zh"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
     }
 }
 
@@ -21,5 +28,5 @@ dependencies {
 
     implementation project(":Media")
 
-    debugImplementation 'com.github.markzhai:blockcanary-android:1.5.0'
+    implementation 'com.github.markzhai:blockcanary-android:1.5.0'
 }
