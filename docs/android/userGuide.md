@@ -10,4 +10,4 @@
   * [Configuration](userGuide/proGuard/configuration.md)
   * [Tools - ReTrace](userGuide/proGuard/toolsReTrace.md)
 * [缩减、混淆处理和优化应用](userGuide/shrinkCode.md)
-
+  * [缩减apk大小](userGuide/shrinkApk.md)
