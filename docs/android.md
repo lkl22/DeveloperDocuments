@@ -38,7 +38,10 @@
 
 配置构建: [https://developer.android.google.cn/studio/build?hl=zh_cn](https://developer.android.google.cn/studio/build?hl=zh_cn)
 
-性能： [https://developer.android.google.cn/topic/performance/vitals](https://developer.android.google.cn/topic/performance/vitals)
+性能： 
+
+* [https://developer.android.google.cn/topic/performance/vitals](https://developer.android.google.cn/topic/performance/vitals)
+* [关于Android性能优化的若干方案](https://blog.csdn.net/xiangzhihong8/article/details/55292395)
 
 在线源码：
 

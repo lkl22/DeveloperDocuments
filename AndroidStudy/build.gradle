@@ -10,7 +10,7 @@ static def replaceFileText(file, oldText, newText) {
 
 gradle.startParameter.getTaskNames().each { taskName ->
     println("startParameter TaskName -> " + taskName)
-    replaceFileText(new File("gradle.properties"), "textReplaceTest=test", "textReplaceTest=test1")
+    replaceFileText(new File("gradle.properties"), "textReplaceTest=test", "textReplaceTest=abc")
 }
 
 buildscript {
