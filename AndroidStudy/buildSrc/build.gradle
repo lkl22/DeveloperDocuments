@@ -1,0 +1,26 @@
+apply plugin: 'groovy'
+
+repositories {
+    mavenLocal()
+    maven {
+        url uri("${rootProject.rootDir}/.repo")
+    }
+    maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://dl.google.com/dl/android/maven2/' }
+    jcenter()
+    google()
+}
+
+dependencies {
+    //gradle sdk
+    implementation gradleApi()
+    //groovy sdk
+    implementation localGroovy()
+
+    implementation 'com.android.tools.build:gradle:4.0.0'
+
+    compileOnly 'com.google.android:android:4.1.1.4'
+
+    implementation "pink.madis.apk.arsc:android-chunk-utils:0.0.7"
+}
