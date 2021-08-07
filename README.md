@@ -95,6 +95,8 @@
   * [Idea](docs/Java/idea.md)
     * [Tools](docs/Java/idea/tools.md)
     * [Issue](docs/Java/idea/issue.md)
+  * [Feature](docs/Java/feature.md)
+    * [Stream](docs/Java/feature/stream.md)
   * [Docker](docs/Java/docker.md)
     * [Install](docs/Java/docker/install.md)
     * [Services](docs/Java/docker/services.md)
