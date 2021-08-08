@@ -13,6 +13,7 @@
 * [Reduction operations](#Reductionoperations)
   * [Mutable reduction](#Mutablereduction)
   * [Reduction, concurrency, and ordering](#Reductionconcurrencyordering)
+* [关联性 - Associativity](#Associativity)
 * [参考文献](#参考文献)
 
 ## 简介
@@ -376,7 +377,23 @@ or:
 
 > 请注意，如果给定键的元素按它们在源中出现的顺序出现很重要，那么我们不能使用并发reduction，因为排序是并发插入的牺牲品之一。 然后我们将被限制实现顺序归约或基于合并的并行归约。
 
+## <a name="Associativity">关联性 - Associativity</a>
 
+如果满足以下条件，则运算符或函数 op 是关联的：
+
+```java
+     (a op b) op c == a op (b op c)
+```
+
+如果我们将其扩展为四个术语，则可以看出这对并行执行的重要性：
+
+```java
+     a op b op c op d == (a op b) op (c op d)
+```
+
+因此，我们可以与 `(c op d)` 并行执行 `(a op b)`，然后对结果调用 op。
+
+associative 运算的示例包括数字加法、最小值和最大值以及字符串连接。
 
 
 ## <a name="参考文献">参考文献</a>
