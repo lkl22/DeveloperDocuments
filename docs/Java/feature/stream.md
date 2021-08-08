@@ -96,6 +96,29 @@ int sumOfWeights = widgets.parallelStream()
 
 大多数流操作接受描述用户指定行为的参数，这些参数通常是 lambda 表达式。 为了保持正确的行为，这些行为参数必须是无干扰的，并且在大多数情况下必须是无状态的。 此类参数始终是函数式接口（例如 Function）的实例，并且通常是 lambda 表达式或方法引用。
 
+## 不干涉
+
+流使您能够对各种数据源执行可能并行的聚合操作，甚至包括非线程安全的集合，例如 `ArrayList`。 **我们只在流管道的执行过程中防止对数据源的干扰**。除了 escape-hatch 操作 `iterator()` 和 `spliterator()`，执行在调用终端操作时开始，并在终端操作完成时结束。**对于大多数数据源来说，防止干扰意味着确保数据源在流管道的执行过程中完全不被修改**。值得注意的例外是其源是并发集合的流，这些流专门设计用于处理并发修改。 并发流源是那些 Spliterator 报告 CONCURRENT 特性的源。
+
+因此，流管道中的行为参数的来源可能不是并发的，永远不要修改流的数据源。如果行为参数修改会导致修改流的数据源，则称行为参数会干扰非并发数据源。**对互不干扰的需求适用于所有管道，而不仅仅是并行管道。**除非流源是并发的，否则在流管道执行期间修改流的数据源可能会导致异常、不正确的答案或不一致的行为。
+
+**对于行为良好的流源，可以在终端操作开始之前修改源，这些修改将反映在涵盖的元素中**。 例如，考虑以下代码：
+
+```java
+     List<String> l = new ArrayList(Arrays.asList("one", "two"));
+     Stream<String> sl = l.stream();
+     l.add("three");
+     String s = sl.collect(joining(" "));
+```
+
+首先创建一个由两个字符串组成的列表：“one” 和 “two”。 然后从该列表创建一个流。 接下来通过添加第三个字符串 “three” 来修改列表。 最后，流的元素被 collected and joined 在一起。由于列表在终端 `collect` 操作开始之前被修改，结果将是“one two three”。 
+
+从 JDK 集合和大多数其他 JDK 类返回的所有流都以这种方式表现良好； 对于其他库生成的流，请参阅低级流构造以了解构建良好流的要求。
+
+
+
+
+
 ## 参考文献
 
 [https://docs.oracle.com/javase/8/docs/api/java/util/stream/package-summary.html](https://docs.oracle.com/javase/8/docs/api/java/util/stream/package-summary.html)
