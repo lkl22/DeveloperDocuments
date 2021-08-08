@@ -12,6 +12,7 @@
   * [Ordering](#Ordering)
 * [Reduction operations](#Reductionoperations)
   * [Mutable reduction](#Mutablereduction)
+  * [Reduction, concurrency, and ordering](#Reductionconcurrencyordering)
 * [参考文献](#参考文献)
 
 ## 简介
@@ -339,6 +340,41 @@ or:
 ```
 
 > 这里的等价一般是指根据 `Object.equals(Object)`。 但在某些情况下，可能会放宽等效性以说明顺序差异。
+
+### <a name="Reductionconcurrencyordering">Reduction, concurrency, and ordering</a>
+
+使用一些复杂的归约操作，例如生成 `Map` 的 `collect()`，例如：
+
+```java
+     Map<Buyer, List<Transaction>> salesByBuyer
+         = txns.parallelStream()
+               .collect(Collectors.groupingBy(Transaction::getBuyer));
+```
+
+并行执行操作实际上可能会适得其反。 这是因为组合步骤（通过键将一个 Map 合并到另一个 Map）对于某些 Map 实现来说可能很昂贵。
+
+然而，假设此归约中使用的结果容器是一个可并发修改的集合——例如 `ConcurrentHashMap`。 在这种情况下，累加器的并行调用实际上可以同时将它们的结果存入同一个共享结果容器中，从而无需组合器合并不同的结果容器。 这可能会提高并行执行性能。 我们称之为并发reduction。
+
+支持并发reduction的收集器标记有 `Collector.Characteristics.CONCURRENT` 特性。 但是，并发收集也有缺点。 **如果多个线程同时将结果存放到共享容器中，则存放结果的顺序是不确定的**。 因此，只有当排序对正在处理的流不重要时，才可能进行并发reduction。 
+
+`Stream.collect(Collector)` 实现只会在以下情况下执行并发reduction:
+
+* 流是并行的；
+* 收集器具有 `Collector.Characteristics.CONCURRENT` 特性，并且；
+* 流是无序的，或者收集器具有 `Collector.Characteristics.UNORDERED` 特性。
+
+您可以使用 `BaseStream.unordered()` 方法确保流是无序的。 例如：
+
+```java
+     Map<Buyer, List<Transaction>> salesByBuyer
+         = txns.parallelStream()
+               .unordered()
+               .collect(groupingByConcurrent(Transaction::getBuyer));
+```
+
+其中 `Collectors.groupingByConcurrent(java.util.function.Function<? super T, ? extends K>)` 是 `groupingBy` 的并发等价物。
+
+> 请注意，如果给定键的元素按它们在源中出现的顺序出现很重要，那么我们不能使用并发reduction，因为排序是并发插入的牺牲品之一。 然后我们将被限制实现顺序归约或基于合并的并行归约。
 
 
 
