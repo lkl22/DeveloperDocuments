@@ -11,6 +11,7 @@
   * [Side-effects](#Sideeffects)
   * [Ordering](#Ordering)
 * [Reduction operations](#Reductionoperations)
+  * [Mutable reduction](#Mutablereduction)
 * [参考文献](#参考文献)
 
 ## 简介
@@ -242,7 +243,106 @@ or:
 
 > 显式的 `map-reduce` 形式更具可读性，因此通常应该是首选。通用形式用于通过将映射和归约组合成单个函数来优化大量工作的情况。
 
+### <a name="Mutablereduction">Mutable reduction</a>
 
-## 参考文献
+可变归约(reduction)操作在处理流中的元素时将输入元素累积到可变结果容器中，例如 `Collection` 或 `StringBuilder`。
+
+如果我们想获取一个字符串流并将它们连接成一个长字符串，我们可以通过普通的归约来实现：
+
+```java
+     String concatenated = strings.reduce("", String::concat)
+```
+
+我们会得到想要的结果，它甚至可以并行工作。 但是，我们可能对性能不满意！ 这样的实现会做大量的字符串复制，运行时间在字符数上是 `O(n^2)`。 一种更高效的方法是将结果累积到 `StringBuilder` 中，它是一个用于累积字符串的可变容器。 我们可以使用与普通归约相同的技术来并行化可变归约。
+
+可变归约操作称为 `collect()`，因为它将所需的结果收集到一个结果容器中，例如 `Collection`。 
+
+`收集(collect)操作`需要三个函数：
+
+* 一个用于构造结果容器的新实例的`供应器(supplier)函数`
+* 一个将输入元素合并到结果容器中的 `accumulator函数`
+* 一个将一个结果容器的内容合并到另一个结果容器中的`组合(combining)函数`
+
+这种形式与普通归约的一般形式非常相似：
+
+```java
+<R> R collect(Supplier<R> supplier,
+               BiConsumer<R, ? super T> accumulator,
+               BiConsumer<R, R> combiner);
+```
+
+与 `reduce()` 一样，以这种抽象方式表达 `collect` 的一个好处是它可以直接进行并行化：我们可以并行累积部分结果，然后合并它们，只要累积和合并函数满足适当的要求。
+
+例如，要将流中元素的字符串表示收集到 `ArrayList` 中，我们可以编写明显的顺序 `for-each` 形式：
+
+```java
+     ArrayList<String> strings = new ArrayList<>();
+     for (T element : stream) {
+         strings.add(element.toString());
+     }
+```
+
+或者我们可以使用可并行化的 `collect形式`：
+
+```java
+     ArrayList<String> strings = stream.collect(() -> new ArrayList<>(),
+                                                (c, e) -> c.add(e.toString()),
+                                                (c1, c2) -> c1.addAll(c2));
+```
+
+或者，将映射操作从累加器函数中提取出来，我们可以更简洁地表示为：
+
+```java
+     List<String> strings = stream.map(Object::toString)
+                                  .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+```
+
+在这里，我们的供应商只是 `ArrayList` 构造函数，累加器将字符串化的元素添加到 ArrayList，并且组合器简单地使用 addAll 将字符串从一个容器复制到另一个容器中。
+
+**`collect` 的三个方面——供应商、累加器和组合器——是紧密耦合的**。 我们可以使用收集器的抽象来捕获所有三个方面。 上面将字符串收集到列表中的示例可以使用标准收集器重写为：
+
+```java
+     List<String> strings = stream.map(Object::toString)
+                                  .collect(Collectors.toList());
+```
+
+**将可变归约打包到收集器中还有另一个优势：可组合性**。 类 `Collectors` 包含许多预定义的收集器工厂，包括将一个收集器转换为另一个收集器的组合器。 例如，假设我们有一个收集器计算员工(employees)流的工资(salaries)总和，如下所示：
+
+```java
+     Collector<Employee, ?, Integer> summingSalaries
+         = Collectors.summingInt(Employee::getSalary);
+```
+
+（第二个类型参数的 ? 仅表示我们不关心此收集器使用的中间表示。）如果我们想创建一个收集器来按部门(department)列出工资总和，我们可以使用 `groupingBy` 重用 `summingSalaries`：
+
+```java
+     Map<Department, Integer> salariesByDept
+         = employees.stream().collect(Collectors.groupingBy(Employee::getDepartment,
+                                                            summingSalaries));
+```
+
+与常规归约操作一样，`collect()` 操作只能在满足适当条件的情况下并行化。 对于任何部分累积的结果，将其与空结果容器组合必须产生等效结果。也就是说，对于作为任何系列累加器和组合器调用的结果的部分累加结果 p，p 必须等价于 `combiner.apply(p, supply.get())`。
+
+此外，无论计算如何拆分，它都必须产生等效的结果。 对于任何输入元素 t1 和 t2，下面计算中的结果 r1 和 r2 必须相等：
+
+```java
+     A a1 = supplier.get();
+     accumulator.accept(a1, t1);
+     accumulator.accept(a1, t2);
+     R r1 = finisher.apply(a1);  // result without splitting
+
+     A a2 = supplier.get();
+     accumulator.accept(a2, t1);
+     A a3 = supplier.get();
+     accumulator.accept(a3, t2);
+     R r2 = finisher.apply(combiner.apply(a2, a3));  // result with splitting
+```
+
+> 这里的等价一般是指根据 `Object.equals(Object)`。 但在某些情况下，可能会放宽等效性以说明顺序差异。
+
+
+
+
+## <a name="参考文献">参考文献</a>
 
 [https://docs.oracle.com/javase/8/docs/api/java/util/stream/package-summary.html](https://docs.oracle.com/javase/8/docs/api/java/util/stream/package-summary.html)
