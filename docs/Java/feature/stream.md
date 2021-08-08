@@ -9,7 +9,8 @@
   * [不干涉](#不干涉)
   * [无状态行为](#无状态行为)
   * [Side-effects](#Sideeffects)
-* [Ordering](#Ordering)
+  * [Ordering](#Ordering)
+* [Reduction operations](#Reductionoperations)
 * [参考文献](#参考文献)
 
 ## 简介
@@ -175,6 +176,71 @@ int sumOfWeights = widgets.parallelStream()
 
 **对于并行流，放宽排序约束有时可以实现更高效的执行**。 如果元素的排序不相关，则可以更有效地实现某些聚合操作，例如过滤重复项 (`distinct()`) 或分组reductions (`Collectors.groupingBy()`)。 类似地，本质上与顺序相关的操作，例如 `limit()`，可能需要缓冲以确保正确排序，从而破坏了并行性的好处。 在流具有顺序但用户并不特别关心该顺序的情况下，使用 `unordered()` 显式对流进行 `de-ordering` 可能会提高某些有状态或终端操作的并行性能。 然而，大多数流管道，例如上面的“sum of weight of blocks”示例，即使在排序约束下仍然有效地并行化。
 
+## <a name="Reductionoperations">Reduction operations</a>
+
+`reduction操作（也称为折叠fold）`采用一系列输入元素，并通过重复应用组合操作将它们组合成单个汇总结果，例如查找一组数字的总和或最大值，或将元素累加到列表中 . 流类具有多种形式的通用 reduction操作，称为 `reduce()` 和 `collect()`，以及多种特殊归约形式，如 `sum()`、`max()` 或 `count()`。
+
+当然，这样的操作可以很容易地实现为简单的顺序循环，如：
+
+```java
+    int sum = 0;
+    for (int x : numbers) {
+       sum += x;
+    }
+```
+
+然而，有充分的理由更喜欢减少操作而不是像上面那样的突变累积。不仅 `reduce` “更抽象”——它作为一个整体而不是单个元素对流进行操作——而且一个正确构造的reduce操作本质上是可并行的，**只要用于处理元素的函数是关联的和无状态的**。
+
+例如，给定一个我们想要求和的数字流，我们可以这样写：
+
+```java
+    int sum = numbers.stream().reduce(0, (x,y) -> x+y);
+ 
+or:
+
+    int sum = numbers.stream().reduce(0, Integer::sum);
+```
+
+这些 `reduction操作` 几乎不需要修改就可以安全地并行运行：
+
+```java
+    int sum = numbers.parallelStream().reduce(0, Integer::sum);
+```
+
+`Reduction` 并行化很好，因为实现可以并行操作数据的子集，然后组合中间结果以获得最终的正确答案。（即使该语言具有“`parallel for-each`”构造，可变累积方法仍然需要开发人员为共享累积变量 sum 提供线程安全更新，然后所需的同步可能会消除并行性带来的任何性能增益 .) 使用 `reduce()` 可以消除并行化 `reduction操作` 的所有负担，并且**该库可以提供高效的并行实现，而无需额外的同步**。
+
+前面显示的“widgets”示例显示了reduction如何与其他操作相结合以用批量操作替换 for 循环。 如果 widgets 是一个 Widget 对象的集合，它有一个 getWeight 方法，我们可以找到最重的 widget：
+
+```java
+     OptionalInt heaviest = widgets.parallelStream()
+                                   .mapToInt(Widget::getWeight)
+                                   .max();
+```
+
+在更一般的形式中，对 <T> 类型元素的 `reduce` 操作产生 <U> 类型的结果需要三个参数：
+
+```java
+<U> U reduce(U identity,
+              BiFunction<U, ? super T, U> accumulator,
+              BinaryOperator<U> combiner);
+```
+
+* 这里，`identity` 元素既是 reduction 的初始值，又是没有输入元素时的默认结果。
+* `accumulator` 函数采用部分结果和下一个元素，并产生一个新的部分结果。
+* `combiner` 功能组合两个部分结果以产生新的部分结果。 （`combiner` 在并行 reductions 中是必需的，其中输入被分段，为每个分段计算部分堆积，然后将部分结果组合以产生最终结果。）
+
+更正式地说，identity 值必须是 combiner 功能的标识。这意味着对于所有 u，`combiner.apply(identity, u)` 等于 u。此外，`combiner` 函数必须是关联的并且必须与 `accumulator` 函数兼容：对于所有 u 和 t，`combiner.apply(u, accumulator.apply(identity, t))` 必须等于 `accumulator.apply(u, t)`。
+
+三参数形式是二参数形式的推广，将 mapping 步骤合并到 accumulation 步骤中。我们可以使用更通用的形式重新转换简单的 `sum-of-weights` 示例，如下所示：
+
+```java
+     int sumOfWeights = widgets.stream()
+                               .reduce(0,
+                                       (sum, b) -> sum + b.getWeight())
+                                       Integer::sum);
+```
+
+> 显式的 `map-reduce` 形式更具可读性，因此通常应该是首选。通用形式用于通过将映射和归约组合成单个函数来优化大量工作的情况。
 
 
 ## 参考文献
