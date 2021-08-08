@@ -14,6 +14,7 @@
   * [Mutable reduction](#Mutablereduction)
   * [Reduction, concurrency, and ordering](#Reductionconcurrencyordering)
 * [关联性 - Associativity](#Associativity)
+* [Low-level stream construction](#Lowlevelstreamconstruction)
 * [参考文献](#参考文献)
 
 ## 简介
@@ -395,6 +396,19 @@ or:
 
 associative 运算的示例包括数字加法、最小值和最大值以及字符串连接。
 
+## <a name="Lowlevelstreamconstruction">Low-level stream construction</a>
+
+到目前为止，所有流示例都使用了 `Collection.stream()` 或 `Arrays.stream(Object[])` 等方法来获取流。 这些流承载方法是如何实现的？
+
+`StreamSupport` 类有许多用于创建流的底层方法，所有方法都使用某种形式的 `Spliterator`。 拆分器是迭代器的并行模拟； **它描述了一个（可能是无限的）元素集合，支持顺序推进、批量遍历以及将输入的一部分拆分到另一个可以并行处理的拆分器中**。 在底层，所有流都由一个分离器驱动。
+
+实现拆分器有多种实现选择，几乎所有这些选择都是在使用该拆分器的流的实现简单性和运行时性能之间进行权衡。 创建拆分器的最简单但性能最低的方法是使用 `Spliterators.spliteratorUnknownSize(java.util.Iterator, int)` 从迭代器创建一个拆分器。 虽然这样的拆分器可以工作，但它可能会提供较差的并行性能，因为我们丢失了大小信息（底层数据集有多大），并且受限于简单的拆分算法。
+
+更高质量的拆分器将提供平衡和已知大小的拆分、准确的大小信息以及许多其他特性或数据，实现可以使用这些特性来优化执行。
+
+可变数据源的 `Spliterator` 有一个额外的挑战； 绑定到数据的时间，因为数据可能会在创建拆分器的时间和执行流管道的时间之间发生变化。 理想情况下，流的拆分器将报告 `IMMUTABLE` 或 `CONCURRENT` 的特征； 如果不是，它应该是后期绑定的。 如果源不能直接提供推荐的拆分器，它可以使用 Supplier 间接提供拆分器，并通过接受供应商（Supplier）的 `stream()` 版本构造一个流。 `spliterator` 仅在流管道的终端操作开始后才从供应商处获得。
+
+这些要求显著减少了流源突变和流管道执行之间潜在干扰的范围。基于具有所需特性的拆分器的流，或使用基于供应商的工厂形式的流，在终端操作开始之前不受数据源修改的影响（提供流操作的行为参数满足不干涉和无状态所需的标准）。
 
 ## <a name="参考文献">参考文献</a>
 
