@@ -5,6 +5,7 @@ java开发学习文档
   * [Tools](Java/idea/tools.md)
   * [Issue](Java/idea/issue.md)
 * [Feature](Java/feature.md)
+  * [Lambda Expressions](Java/feature/lambdaExpressions.md)
   * [Stream](Java/feature/stream.md)
 * [Docker](Java/docker.md)
   * [Install](Java/docker/install.md)

@@ -96,6 +96,7 @@
     * [Tools](docs/Java/idea/tools.md)
     * [Issue](docs/Java/idea/issue.md)
   * [Feature](docs/Java/feature.md)
+    * [Lambda Expressions](docs/Java/feature/lambdaExpressions.md)
     * [Stream](docs/Java/feature/stream.md)
   * [Docker](docs/Java/docker.md)
     * [Install](docs/Java/docker/install.md)
