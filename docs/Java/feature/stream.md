@@ -240,7 +240,7 @@ or:
 ```java
      int sumOfWeights = widgets.stream()
                                .reduce(0,
-                                       (sum, b) -> sum + b.getWeight())
+                                       (sum, b) -> sum + b.getWeight()
                                        Integer::sum);
 ```
 
