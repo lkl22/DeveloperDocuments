@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -13,6 +14,7 @@ public class StreamTest {
         createStream();
         intermediateOperation();
         terminalOperation();
+        consumableTest();
     }
 
     private static void createStream() {
@@ -112,5 +114,23 @@ public class StreamTest {
         OptionalInt findAny = Arrays.stream(array).parallel().findAny();
         OptionalInt findFirst = Arrays.stream(array).findFirst();
         System.out.println("findAny = " + findAny + " findFirst = " + findFirst);
+    }
+
+    private static void consumableTest() {
+        String[] array = new String[]{
+                "one, two", "four"
+        };
+
+        Stream<String> stream = Stream.of(array);
+        stream.findFirst();
+        stream = Stream.of(array);
+        stream.findAny();
+
+        Supplier<Stream<String>> streamSupplier =
+                () -> Stream.of(array)
+                        .filter(s -> s.startsWith("t"));
+
+        System.out.println(streamSupplier.get().anyMatch(s -> true));
+        System.out.println(streamSupplier.get().noneMatch(s -> true));
     }
 }
