@@ -1,0 +1,137 @@
+import groovy.json.JsonOutput
+
+//输出数据结构
+class TaskItem {
+    String name
+    List<String> inputs = new ArrayList<>()
+    List<String> outputs = new ArrayList<>()
+}
+
+class Dumper {
+    //正则表达式，用于过滤要dump inputs和outputs的task
+    //这里配置名称包含Jni的task，大家可以根据需要自行配置
+    String taskInOutDirDumpFilter = "^.*Jni.*|^.*transform.*"
+    String type
+    File logOutDir
+    List<TaskItem> taskList = new ArrayList<>()
+    File logfile
+    boolean isAvaliable = false
+
+    Dumper(String type, File dir) {
+        this.type = type
+        this.logOutDir = dir
+    }
+
+    def makeLogFile() {
+        logfile = new File(logOutDir, "taskDump-${type}.json")
+        if (!logOutDir.exists()) {
+            logOutDir.mkdirs()
+        }
+        if (logfile.exists()) {
+            logfile.delete()
+        }
+
+        logfile.createNewFile()
+    }
+
+    def collectData(Task t) {
+        t.doFirst {
+            try {
+                if (name == "pre${type}Build" && !isAvaliable) {
+                    isAvaliable = true
+                    makeLogFile()
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace()
+                return
+            }
+
+            if (!isAvaliable) {
+                return
+            }
+
+            TaskItem item = taskList.find {
+                it.name == path
+            }
+
+            if (item != null) {
+                return
+            }
+
+            item = new TaskItem()
+            item.name = path
+
+            taskList.add(item)
+
+            def matcher = name =~ taskInOutDirDumpFilter
+            if (matcher.size() > 0) {
+                println "-------match task path = ${path}"
+
+                t.inputs.each {
+                    it.files.each {
+                        item.inputs.add(it.absolutePath)
+                    }
+                }
+
+                t.outputs.each {
+                    it.files.each {
+                        item.outputs.add(it.absolutePath)
+                    }
+                }
+            }
+        }
+    }
+
+    def dumpData2File() {
+//        println " ------- dumpData2File " + logfile.getPath()
+        def s = JsonOutput.toJson(taskList)
+
+        logfile.write(s)
+    }
+}
+
+Map<String, Dumper> dumperMap = new HashMap<>()
+//数据dump目录
+def dumpDir = new File(buildDir, "taskDump")
+if (!dumpDir.exists()) {
+    dumpDir.mkdirs()
+}
+
+rootProject.childProjects.each {
+    it.value.afterEvaluate { Project project ->
+        def isAndroidLibrary = project.plugins.hasPlugin("com.android.library")
+        def isApplication = project.plugins.hasPlugin("com.android.application")
+        if (!(isAndroidLibrary || isApplication)) {
+            println("dumpTask -> is not android module.")
+            return
+        }
+        def variants = isAndroidLibrary ? project.android.libraryVariants : project.android.applicationVariants
+
+        variants.all { def variant ->
+            // Create variant and target names
+            def targetName = variant.name.capitalize()
+            def dumper = dumperMap.get(targetName)
+
+            if (dumper == null) {
+                dumper = new Dumper(targetName, dumpDir)
+                dumperMap.put(targetName, dumper)
+            }
+
+            project.tasks.each {
+                dumper.collectData(it)
+            }
+        }
+    }
+}
+
+gradle.buildFinished {
+    dumperMap.each {
+        if (it.value.isAvaliable) {
+            try {
+                it.value.dumpData2File()
+            } catch (Exception ex) {
+                println ex.getMessage()
+            }
+        }
+    }
+}
