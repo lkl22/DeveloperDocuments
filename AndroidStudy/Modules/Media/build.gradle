@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply from: project.file('../../GradleConfig/common-build.gradle')
+apply from: ('../../GradleConfig/upload-build.gradle')
 
 android {
     defaultConfig {
