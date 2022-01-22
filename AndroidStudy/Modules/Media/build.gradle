@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply from: project.file('../../GradleConfig/common-build.gradle')
 apply from: '../../GradleConfig/flavor-build.gradle'
 apply from: '../../GradleConfig/upload-build.gradle'
+apply from: '../../GradleConfig/maven-publish-build.gradle'
 
 android {
     defaultConfig {
