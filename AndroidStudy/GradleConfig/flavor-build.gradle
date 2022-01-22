@@ -1,0 +1,15 @@
+android {
+    flavorDimensions "env"
+    //配置多版本的apk
+    productFlavors {
+        dev {
+            dimension 'env'
+        }
+        mirror {
+            dimension 'env'
+        }
+        product {
+            dimension 'env'
+        }
+    }
+}
