@@ -15,6 +15,42 @@ task sourceJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
+def addDependency(Node dependenciesNode, Configuration configuration) {
+    configuration.allDependencies.withType(ModuleDependency) { ModuleDependency dependency ->
+        println "addDependencies ${dependency.group}:${dependency.name}:${dependency.version}"
+        if (dependency.version != "unspecified") {
+            // 排除以project形式引入的依赖项
+            Node dependencyNode = dependenciesNode.appendNode("dependency")
+            dependencyNode.appendNode("groupId", dependency.group)
+            dependencyNode.appendNode("artifactId", dependency.name)
+            dependencyNode.appendNode("version", dependency.version)
+            dependencyNode.appendNode("scope", "compile")
+
+            if (dependency.excludeRules.size() > 0) {
+                Node exclusionsNode = dependencyNode.appendNode("exclusions")
+                dependency.excludeRules.each { ExcludeRule excludeRule ->
+                    Node exclusionNode = exclusionsNode.appendNode("exclusion")
+                    exclusionNode.appendNode("groupId", excludeRule.group)
+                    exclusionNode.appendNode("artifactId", excludeRule.module)
+                }
+            }
+        }
+    }
+}
+
+def addDependencies(MavenPublication publication, String flavor) {
+    publication.pom.withXml {
+        Node dependenciesNode = asNode().appendNode("dependencies")
+        def configurationArray = ["implementation", "${flavor}Implementation", "api", "${flavor}Api", "compile"]
+        configurationArray.forEach { configurationName ->
+            Configuration configuration = configurations.getByName(configurationName)
+            if (configuration != null) {
+                addDependency(dependenciesNode, configuration)
+            }
+        }
+    }
+}
+
 def addMavenPublication = { MavenPublication publication, String flavor ->
     //全球唯一标识符
     publication.groupId = POM_GROUP_ID
@@ -30,6 +66,8 @@ def addMavenPublication = { MavenPublication publication, String flavor ->
     publication.artifact "$buildDir/outputs/aar/${project.name}-${flavor}-release.aar"
     // 运行任务，把源码打进去
     publication.artifact sourceJar
+
+    addDependencies(publication, flavor)
 }
 
 publishing {
@@ -44,10 +82,10 @@ publishing {
             def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
             def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
             url = POM_VERSION_NAME.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-//            credentials {
-//                username getRepositoryUserName()
-//                password getRepositoryPassword()
-//            }
+            credentials {
+                username getRepositoryUserName()
+                password getRepositoryPassword()
+            }
         }
     }
 }

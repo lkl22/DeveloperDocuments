@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply from: project.file('../GradleConfig/common-build.gradle')
 apply from: '../GradleConfig/flavor-build.gradle'
 //apply plugin: 'com.tencent.matrix-plugin'
-apply from: "dumpTask.gradle"
+//apply from: "dumpTask.gradle"
 
 //matrix {
 //    trace {
