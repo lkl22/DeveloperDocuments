@@ -1,7 +1,7 @@
 {
   "app": {
     "bundleName": "com.lkl.harmonystudy",
-    "vendor": "example",
+    "vendor": "lkl",
     "versionCode": 1000000,
     "versionName": "1.0.0",
     "icon": "$media:app_icon",
