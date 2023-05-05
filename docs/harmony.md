@@ -11,3 +11,22 @@
 [https://gitee.com/openharmony/docs?_from=gitee_search](https://gitee.com/openharmony/docs?_from=gitee_search)
 
 [https://developer.huawei.com/consumer/cn/](https://developer.huawei.com/consumer/cn/)
+
+[OpenHarmony 组件库](https://gitee.com/explore/harmony?_from=gitee_search)
+
+js:
+
+[https://wangdoc.com/javascript/async/promise](https://wangdoc.com/javascript/async/promise)
+
+[ES6 入门教程](https://es6.ruanyifeng.com/)
+
+[https://developer.mozilla.org/zh-CN/docs/Web/JavaScript](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript)
+
+TS:
+
+[TypeScript Handbook（中文版）](https://sososdk.gitee.io/typescript/)
+
+[The TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+
+[Announcing TypeScript 5.0](https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/)
+
