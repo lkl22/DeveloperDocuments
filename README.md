@@ -124,3 +124,6 @@
     * [Solidity](docs/blockchain/ethereum/solidity.md)
     * [Truffle](docs/blockchain/ethereum/truffle.md)
     * [Web3j](docs/blockchain/ethereum/web3j.md)
+* [工具](docs/tools.md)
+  * [搭建大型源码阅读环境 opengrok](docs/tools/opengrok.md)
+  * [cmd窗口中中文乱码](docs/tools/chcp.md)

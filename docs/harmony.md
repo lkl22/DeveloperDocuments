@@ -30,3 +30,4 @@ TS:
 
 [Announcing TypeScript 5.0](https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/)
 
+[ES6 教程](https://wangdoc.com/es6/)
