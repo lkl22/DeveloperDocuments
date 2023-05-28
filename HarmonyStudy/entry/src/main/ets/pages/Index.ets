@@ -1,6 +1,9 @@
 import hilog from '@ohos.hilog';
+import { LogUtil } from '../utils/LogUtil';
 import testNapi from 'libentry.so'
 import router from '@ohos.router'
+
+const TAG = 'indexPage';
 
 @Entry
 @Component
@@ -14,13 +17,22 @@ struct Index {
           .fontSize(50)
           .fontWeight(FontWeight.Bold)
           .onClick(() => {
-            router.pushUrl({url:"pages/statetest/StateTestPage"}).then(()=>{
-              hilog.error(0x0000, 'testTag', "router success.");
+            router.pushUrl({ url: "pages/statetest/StateTestPage" }).then(() => {
+              LogUtil.i(TAG, "router to StateTestPage success.");
             }).catch(err => {
-              hilog.error(0x0000, 'testTag', err);
-              console.error(`pushUrl failed, code is ${err.code}, message is ${err.message}`);
+              LogUtil.e(TAG, err);
             })
-            hilog.info(0x0000, 'testTag', 'Test NAPI 2 + 3 = %{public}d', testNapi.add(2, 3));
+            LogUtil.i(TAG, `Test NAPI 2 + 3 = ${testNapi.add(2, 3)}`);
+          })
+        Text('Singleton Test')
+          .fontSize(50)
+          .fontWeight(FontWeight.Bold)
+          .onClick(() => {
+            router.pushUrl({ url: "pages/singletonTest/SingletonTestPage" }).then(() => {
+              LogUtil.i(TAG, "router to SingletonTestPage success.");
+            }).catch(err => {
+              LogUtil.e(TAG, err);
+            })
           })
       }
       .width('100%')

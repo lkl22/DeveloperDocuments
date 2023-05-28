@@ -1,6 +1,7 @@
 
 * [Introduction](docs/introduction.md)
 * [Harmony](docs/harmony.md)
+  * [Singleton](docs/harmony/singleton.md)
 * [Android](docs/android.md)
   * [User Guide](docs/android/userGuide.md)
     * [Configure your build](docs/android/userGuide/buildConfigure.md)

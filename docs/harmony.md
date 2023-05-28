@@ -1,5 +1,7 @@
 # Harmony Developer
 
+* [Singleton](harmony/singleton.md)
+
 ## 参考文献
 
 官网：
@@ -31,3 +33,5 @@ TS:
 [Announcing TypeScript 5.0](https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/)
 
 [ES6 教程](https://wangdoc.com/es6/)
+
+[https://alsritter.icu/](https://alsritter.icu/)

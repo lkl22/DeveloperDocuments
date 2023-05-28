@@ -1,6 +1,7 @@
 {
   "src": [
     "pages/Index",
-    "pages/statetest/StateTestPage"
+    "pages/statetest/StateTestPage",
+    "pages/singletonTest/SingletonTestPage"
   ]
 }
