@@ -34,6 +34,16 @@ struct Index {
               LogUtil.e(TAG, err);
             })
           })
+        Text('Async Test')
+          .fontSize(50)
+          .fontWeight(FontWeight.Bold)
+          .onClick(() => {
+            router.pushUrl({ url: "pages/asyncTest/AsyncTestPage" }).then(() => {
+              LogUtil.i(TAG, "router to AsyncTestPage success.");
+            }).catch(err => {
+              LogUtil.e(TAG, err);
+            })
+          })
       }
       .width('100%')
     }

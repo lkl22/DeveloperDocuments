@@ -2,6 +2,7 @@
   "src": [
     "pages/Index",
     "pages/statetest/StateTestPage",
-    "pages/singletonTest/SingletonTestPage"
+    "pages/singletonTest/SingletonTestPage",
+    "pages/asyncTest/AsyncTestPage"
   ]
 }
