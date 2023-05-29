@@ -1,3 +1,5 @@
+import { BSingleton } from '../../single/BSingleton';
+import { ASingleton } from '../../single/ASingleton';
 import { LogUtil } from '../../utils/LogUtil';
 import { UserManager } from '../../single/UserManager';
 import { ClassManager } from '../../single/ClassManager';
@@ -12,6 +14,9 @@ export struct SingletonTestPage {
       Button('test singleton')
         .onClick(this.testSingleton.bind(this))
         .margin({ top: 12 });
+      Button('test inherit singleton')
+        .onClick(this.testInheritSingleton.bind(this))
+        .margin({ top: 12 });
     }
   }
 
@@ -25,5 +30,12 @@ export struct SingletonTestPage {
     let userManager2 = UserManager.getInstance();
     userManager1.setUserName('luck');
     LogUtil.i(TAG, `getUserName: ${userManager2.getUserName()}`);
+  }
+
+  private testInheritSingleton(): void {
+    let aSingleton = ASingleton.getInstance();
+    let bSingleton = BSingleton.getInstance();
+
+    LogUtil.e(TAG, `aSingleton === aSingleton: ${aSingleton === bSingleton}`);
   }
 }
