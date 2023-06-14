@@ -1,3 +1,4 @@
+import { LayoutConst } from '../../const/LayoutConst';
 import { BSingleton } from '../../single/BSingleton';
 import { ASingleton } from '../../single/ASingleton';
 import { LogUtil } from '../../utils/LogUtil';
@@ -18,6 +19,7 @@ export struct SingletonTestPage {
         .onClick(this.testInheritSingleton.bind(this))
         .margin({ top: 12 });
     }
+    .width(LayoutConst.MATCH_PARENT)
   }
 
   private testSingleton(): void {

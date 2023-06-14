@@ -3,6 +3,9 @@
     "pages/Index",
     "pages/statetest/StateTestPage",
     "pages/singletonTest/SingletonTestPage",
-    "pages/asyncTest/AsyncTestPage"
+    "pages/asyncTest/AsyncTestPage",
+    "pages/appStoreTest/AppStoreTest",
+    "pages/appStoreTest/AppStoreTest1",
+    "pages/appStoreTest/AppStoreTest2"
   ]
 }

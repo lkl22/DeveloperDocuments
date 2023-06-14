@@ -3,6 +3,7 @@
     "name": "entry",
     "type": "entry",
     "description": "$string:module_desc",
+    "srcEntrance": "./ets/abilityState/MyAbilityState.ets",
     "mainElement": "EntryAbility",
     "deviceTypes": [
       "phone"

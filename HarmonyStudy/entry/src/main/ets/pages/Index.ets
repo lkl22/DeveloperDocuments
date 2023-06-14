@@ -1,3 +1,4 @@
+import { LayoutConst } from '../const/LayoutConst';
 import hilog from '@ohos.hilog';
 import { LogUtil } from '../utils/LogUtil';
 import testNapi from 'libentry.so'
@@ -44,9 +45,19 @@ struct Index {
               LogUtil.e(TAG, err);
             })
           })
+        Text('App store Test')
+          .fontSize(50)
+          .fontWeight(FontWeight.Bold)
+          .onClick(() => {
+            router.pushUrl({ url: "pages/appStoreTest/AppStoreTest" }).then(() => {
+              LogUtil.i(TAG, "router to AppStoreTest success.");
+            }).catch(err => {
+              LogUtil.e(TAG, err);
+            })
+          })
       }
-      .width('100%')
+      .width(LayoutConst.MATCH_PARENT)
     }
-    .height('100%')
+    .height(LayoutConst.MATCH_PARENT)
   }
 }

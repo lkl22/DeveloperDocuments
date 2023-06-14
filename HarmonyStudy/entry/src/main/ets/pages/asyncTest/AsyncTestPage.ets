@@ -1,3 +1,4 @@
+import { LayoutConst } from '../../const/LayoutConst';
 import { LogUtil } from '../../utils/LogUtil';
 import { AsyncTest } from '../../async/AsyncTest';
 
@@ -20,7 +21,7 @@ export struct AsyncTestPage {
         .margin({ top: 12 });
     }.justifyContent(FlexAlign.Start)
     .alignItems(HorizontalAlign.Center)
-    .width('100%')
+    .width(LayoutConst.MATCH_PARENT)
   }
 
   private startWhileAsyncFunc() {
