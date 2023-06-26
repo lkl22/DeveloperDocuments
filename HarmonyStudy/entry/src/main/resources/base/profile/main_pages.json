@@ -6,6 +6,9 @@
     "pages/asyncTest/AsyncTestPage",
     "pages/appStoreTest/AppStoreTest",
     "pages/appStoreTest/AppStoreTest1",
-    "pages/appStoreTest/AppStoreTest2"
+    "pages/appStoreTest/AppStoreTest2",
+    "pages/ui/RowTestPage",
+    "pages/ui/UiTestPage"
+
   ]
 }
