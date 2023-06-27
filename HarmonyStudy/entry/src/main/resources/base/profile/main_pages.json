@@ -8,7 +8,7 @@
     "pages/appStoreTest/AppStoreTest1",
     "pages/appStoreTest/AppStoreTest2",
     "pages/ui/RowTestPage",
-    "pages/ui/UiTestPage"
-
+    "pages/ui/UiTestPage",
+    "pages/jsonTest/JsonTestPage"
   ]
 }

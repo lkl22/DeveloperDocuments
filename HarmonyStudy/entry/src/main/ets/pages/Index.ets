@@ -52,6 +52,14 @@ struct Index {
             LogUtil.e(TAG, err);
           })
         })
+      Button('Json Test')
+        .onClick(() => {
+          router.pushUrl({ url: "pages/jsonTest/JsonTestPage" }).then(() => {
+            LogUtil.i(TAG, "router to JsonTestPage success.");
+          }).catch(err => {
+            LogUtil.e(TAG, err);
+          })
+        })
     }
     .width(LayoutConst.MATCH_PARENT)
     .margin({
