@@ -51,9 +51,12 @@ export struct JsonTestPage {
           })
         Button('object')
           .onClick((event: ClickEvent) => {
-            let res = JsonUtil.parse<A>('{"n": 11, "b": true, "s": "string", "arr": [{"n": 11, "b": "true"}, {"n": 22, "b": "false"}]}');
+            let res = JsonUtil.parse<A>('{"n": 11, "b": true, "s": "string", "arr": "jjjj"}');
             LogUtil.d(TAG, `parse class A: ${typeof res.n} ${typeof res.b} ${typeof res.s} ${typeof res.arr} ${typeof res.arr[0]}`)
             this.res = `parse: ${typeof res} ${JSON.stringify(res)}`;
+
+            let classA = JsonUtil.parse<A>('{"n": 11, "b": true, "s": "string", "arr": [{"n": 11, "b": "true"}, {"n": 22, "b": "false"}]}');
+            LogUtil.d(TAG, `parse class A: ${typeof classA.n} ${typeof classA.b} ${typeof classA.s} ${typeof classA.arr} ${typeof classA.arr[0]}`)
 
             let classB = JsonUtil.parse<B>('{"n": 11, "b": "true"}');
             LogUtil.d(TAG, `parse: ${typeof classB} ${JSON.stringify(classB)}`);
