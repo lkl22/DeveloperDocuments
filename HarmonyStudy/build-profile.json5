@@ -22,6 +22,34 @@
           ]
         }
       ]
+    },
+    {
+      "name": "harLibrary",
+      "srcPath": "./lib/harLibrary"
+    },
+    {
+      "name": "hspLibrary",
+      "srcPath": "./lib/hspLibrary",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "FeatureModel",
+      "srcPath": "./feature/FeatureModel",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
     }
   ]
 }
