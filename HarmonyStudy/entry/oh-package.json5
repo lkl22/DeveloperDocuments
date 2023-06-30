@@ -9,6 +9,6 @@
   "version": "1.0.0",
   "dependencies": {
     '@study/har-library': '../lib/harLibrary',
-    '@study/hsp-library': '../lib/hspLibrary'
+    '@study/hsp-library': '../hspLibrary'
   }
 }

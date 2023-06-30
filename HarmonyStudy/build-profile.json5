@@ -29,7 +29,7 @@
     },
     {
       "name": "hspLibrary",
-      "srcPath": "./lib/hspLibrary",
+      "srcPath": "./hspLibrary",
       "targets": [
         {
           "name": "default",
