@@ -1,4 +1,4 @@
-import { LogUtil } from '../utils/LogUtil';
+import { LogUtil } from '@study/common-func';
 
 const TAG = 'AsyncTest';
 

@@ -1,7 +1,7 @@
 import { Student } from '../../bean/Student';
 import { LayoutConst } from '../../const/LayoutConst';
 import router from '@ohos.router';
-import { LogUtil } from '../../utils/LogUtil';
+import { LogUtil } from '@study/common-func';
 
 const TAG = 'AppStoreTest';
 

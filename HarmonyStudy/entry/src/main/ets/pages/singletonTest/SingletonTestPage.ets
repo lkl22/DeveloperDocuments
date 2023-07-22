@@ -1,7 +1,7 @@
 import { LayoutConst } from '../../const/LayoutConst';
 import { BSingleton } from '../../single/BSingleton';
 import { ASingleton } from '../../single/ASingleton';
-import { LogUtil } from '../../utils/LogUtil';
+import { LogUtil } from '@study/common-func';
 import { UserManager } from '../../single/UserManager';
 import { ClassManager } from '../../single/ClassManager';
 

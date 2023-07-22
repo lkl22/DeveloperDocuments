@@ -1,4 +1,4 @@
-import { LogUtil } from '../utils/LogUtil';
+import { LogUtil } from '@study/common-func';
 import UIAbility from '@ohos.app.ability.UIAbility';
 import window from '@ohos.window';
 

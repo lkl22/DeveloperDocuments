@@ -1,5 +1,5 @@
 import { LayoutConst } from '../../const/LayoutConst';
-import { LogUtil } from '../../utils/LogUtil';
+import { LogUtil } from '@study/common-func';
 import { AsyncTest } from '../../async/AsyncTest';
 
 const TAG = 'AsyncTestPage';

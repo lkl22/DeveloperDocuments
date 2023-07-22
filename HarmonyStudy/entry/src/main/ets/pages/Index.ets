@@ -1,6 +1,5 @@
 import { LayoutConst } from '../const/LayoutConst';
-import hilog from '@ohos.hilog';
-import { LogUtil } from '../utils/LogUtil';
+import { LogUtil } from '@study/common-func';
 import testNapi from 'libentry.so'
 import router from '@ohos.router'
 

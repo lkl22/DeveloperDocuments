@@ -1,6 +1,6 @@
 import router from '@ohos.router'
 import { LayoutConst } from '../../const/LayoutConst'
-import { LogUtil } from '../../utils/LogUtil'
+import { LogUtil } from '@study/common-func'
 
 const TAG = 'UiTestPage'
 

@@ -1,6 +1,5 @@
 import { LayoutConst } from '../../const/LayoutConst';
-import { JsonUtil } from '../../utils/JsonUtil';
-import { LogUtil } from '../../utils/LogUtil';
+import { JsonUtil, LogUtil } from '@study/common-func';
 
 const TAG = 'JsonTestPage';
 

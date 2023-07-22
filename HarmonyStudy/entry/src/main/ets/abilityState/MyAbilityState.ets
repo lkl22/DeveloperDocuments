@@ -1,4 +1,4 @@
-import { LogUtil } from '../utils/LogUtil';
+import { LogUtil } from '@study/common-func';
 import AbilityState from '@ohos.app.ability.AbilityStage';
 
 const TAG = 'MyAbilityState';

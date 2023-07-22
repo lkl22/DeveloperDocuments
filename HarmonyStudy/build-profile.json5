@@ -50,6 +50,10 @@
           ]
         }
       ]
+    },
+    {
+      "name": "CommonFunc",
+      "srcPath": "./lib/CommonFunc"
     }
   ]
 }
