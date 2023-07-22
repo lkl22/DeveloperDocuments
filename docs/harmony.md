@@ -18,6 +18,8 @@
 
 [弹框](https://docs.openharmony.cn/pages/v3.2/zh-cn/application-dev/reference/arkui-ts/ts-methods-alert-dialog-box.md/)
 
+[应用上下文Context](https://docs.openharmony.cn/pages/v4.0/zh-cn/application-dev/application-models/application-context-stage.md/)
+
 js:
 
 [https://wangdoc.com/javascript/async/promise](https://wangdoc.com/javascript/async/promise)

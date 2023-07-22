@@ -67,6 +67,14 @@ struct Index {
             LogUtil.e(TAG, err);
           })
         })
+      Button('Resource Test')
+        .onClick(() => {
+          router.pushUrl({ url: "pages/resourceTest/ResTestPage" }).then(() => {
+            LogUtil.i(TAG, "router to ResTestPage success.");
+          }).catch(err => {
+            LogUtil.e(TAG, err);
+          })
+        })
     }
     .width(LayoutConst.MATCH_PARENT)
     .margin({

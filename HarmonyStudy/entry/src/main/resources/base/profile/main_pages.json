@@ -10,6 +10,7 @@
     "pages/ui/RowTestPage",
     "pages/ui/UiTestPage",
     "pages/jsonTest/JsonTestPage",
-    "pages/dialog/DialogTestPage"
+    "pages/dialog/DialogTestPage",
+    "pages/resourceTest/ResTestPage"
   ]
 }
