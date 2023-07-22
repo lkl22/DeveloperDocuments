@@ -1,9 +1,9 @@
 import { LogUtil } from '../utils/LogUtil';
 
 export abstract class BaseAsyncSingleton {
-  public static async getInstance<T extends {}>(this: new () => T): T {
+  public static async getInstance<T extends BaseAsyncSingleton>(this: new () => T): Promise<T> {
     if (!Object.getOwnPropertyDescriptor(<any> this, 'instance')) {
-      let temp: T = new this();
+      let temp = new this();
       await temp.init();
       (<any> this).instance = temp;
     }
@@ -13,4 +13,4 @@ export abstract class BaseAsyncSingleton {
   protected abstract init(): Promise<void>;
 }
 
-const TAG = BaseSingleton.name;
+const TAG = BaseAsyncSingleton.name;

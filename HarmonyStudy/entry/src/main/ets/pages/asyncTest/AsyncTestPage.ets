@@ -1,8 +1,7 @@
 import { LayoutConst } from '../../const/LayoutConst';
-import { LogUtil } from '@study/common-func';
+import { AsyncFuncTimeoutUtil, LogUtil } from '@study/common-func';
 import { AsyncTest } from '../../async/AsyncTest';
-
-const TAG = 'AsyncTestPage';
+import systemDateTime from '@ohos.systemDateTime';
 
 @Entry
 @Component
@@ -10,26 +9,57 @@ export struct AsyncTestPage {
   @State message: string = '';
 
   build() {
-    Column() {
+    Column({ space: 16 }) {
       Text(this.message)
-        .fontSize(50)
       Button('start while async func.')
         .onClick(this.startWhileAsyncFunc.bind(this))
         .margin({ top: 12 });
-      Button('test inherit singleton')
-        .onClick(this.updateText.bind(this))
+      Button('test AsyncFuncTimeoutUtil')
+        .onClick((event: ClickEvent) => {
+          this.testAsyncFuncTimeoutUtil();
+        })
         .margin({ top: 12 });
-    }.justifyContent(FlexAlign.Start)
-    .alignItems(HorizontalAlign.Center)
+    }
     .width(LayoutConst.MATCH_PARENT)
+    .padding({
+      top: 16,
+      bottom: 16
+    })
   }
 
   private startWhileAsyncFunc() {
     AsyncTest.funcA();
   }
 
-  private updateText() {
-    this.message += '1';
-    LogUtil.i(TAG, this.message);
+  private async func(execTime: number = 1000): Promise<string> {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('func');
+      }, execTime);
+    });
+  }
+
+  private async testAsyncFuncTimeoutUtil() {
+    let curTime1 = await systemDateTime.getCurrentTime();
+    await this.func(6000);
+    let funcExecTime1 = await systemDateTime.getCurrentTime() - curTime1;
+
+    curTime1 = await systemDateTime.getCurrentTime();
+    await AsyncFuncTimeoutUtil.asyncFuncExec<string>(this.func(6000)).catch(err => {
+      LogUtil.e(TAG, `err: ${err.message}`);
+    });
+    let asyncFuncExecTime1 = await systemDateTime.getCurrentTime() - curTime1;
+    LogUtil.d(TAG, `funcExecTime: ${funcExecTime1} asyncFuncExecTime: ${asyncFuncExecTime1}\ndiff: ${asyncFuncExecTime1 - funcExecTime1}`);
+
+    let curTime = await systemDateTime.getCurrentTime();
+    await AsyncFuncTimeoutUtil.asyncFuncExec<string>(this.func());
+    let asyncFuncExecTime = await systemDateTime.getCurrentTime() - curTime;
+
+    curTime = await systemDateTime.getCurrentTime();
+    await this.func();
+    let funcExecTime = await systemDateTime.getCurrentTime() - curTime;
+    LogUtil.d(TAG, `funcExecTime: ${funcExecTime} asyncFuncExecTime: ${asyncFuncExecTime}\ndiff: ${asyncFuncExecTime - funcExecTime}`);
   }
 }
+
+const TAG: string = AsyncTestPage.name;
