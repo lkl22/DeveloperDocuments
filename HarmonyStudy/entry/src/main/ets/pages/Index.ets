@@ -60,6 +60,14 @@ struct Index {
             LogUtil.e(TAG, err);
           })
         })
+      Button('Dialog Test')
+        .onClick(() => {
+          router.pushUrl({ url: "pages/dialog/DialogTestPage" }).then(() => {
+            LogUtil.i(TAG, "router to DialogTestPage success.");
+          }).catch(err => {
+            LogUtil.e(TAG, err);
+          })
+        })
     }
     .width(LayoutConst.MATCH_PARENT)
     .margin({

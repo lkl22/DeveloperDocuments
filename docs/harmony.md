@@ -16,6 +16,8 @@
 
 [OpenHarmony 组件库](https://gitee.com/explore/harmony?_from=gitee_search)
 
+[弹框](https://docs.openharmony.cn/pages/v3.2/zh-cn/application-dev/reference/arkui-ts/ts-methods-alert-dialog-box.md/)
+
 js:
 
 [https://wangdoc.com/javascript/async/promise](https://wangdoc.com/javascript/async/promise)
