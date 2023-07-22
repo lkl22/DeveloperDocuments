@@ -20,6 +20,12 @@
 
 [应用上下文Context](https://docs.openharmony.cn/pages/v4.0/zh-cn/application-dev/application-models/application-context-stage.md/)
 
+[资源管理](https://docs.openharmony.cn/pages/v3.2/zh-cn/application-dev/reference/apis/js-apis-resource-manager.md/)
+
+[hvigor命令行](https://developer.harmonyos.com/cn/docs/documentation/doc-guides-V3/ide-command-line-hvigor-0000001553317645-V3)
+
+[编译构建](https://developer.harmonyos.com/cn/docs/documentation/doc-guides-V3/build_overview-0000001055075201-V3)
+
 js:
 
 [https://wangdoc.com/javascript/async/promise](https://wangdoc.com/javascript/async/promise)
