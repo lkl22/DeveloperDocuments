@@ -1,8 +1,6 @@
-import { LogUtil } from '@study/common-func';
+import { LogUtil } from '../utils/LogUtil';
 
-const TAG = 'Singleton';
-
-export default class Singleton {
+export abstract class BaseSingleton {
   public static getInstance<T extends {}>(this: new () => T): T {
     LogUtil.i(TAG, `${typeof this}`);
     if (!Object.getOwnPropertyDescriptor(<any> this, 'instance')) {
@@ -11,3 +9,5 @@ export default class Singleton {
     return (<any> this).instance;
   }
 }
+
+const TAG = BaseSingleton.name;

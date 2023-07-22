@@ -1,4 +1,4 @@
-import Singleton from './Singleton';
+import { BaseSingleton } from '@study/common-func';
 
-export class ASingleton extends Singleton {
+export class ASingleton extends BaseSingleton {
 }

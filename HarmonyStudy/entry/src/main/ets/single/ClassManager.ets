@@ -1,6 +1,6 @@
-import Singleton from './Singleton';
+import { BaseSingleton } from '@study/common-func';
 
-export class ClassManager extends Singleton {
+export class ClassManager extends BaseSingleton {
   private className;
 
   public setClassName(className: string): void {
