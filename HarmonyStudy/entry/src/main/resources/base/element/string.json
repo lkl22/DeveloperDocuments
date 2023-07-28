@@ -11,6 +11,18 @@
     {
       "name": "EntryAbility_label",
       "value": "label"
+    },
+    {
+      "name": "test_rich_text_1",
+      "value": "针对不同%s构建促销活动，提升用户购买力-%s。搜索"
+    },
+    {
+      "name": "user",
+      "value": "用户群体"
+    },
+    {
+      "name": "use_help",
+      "value": "使用入门"
     }
   ]
 }

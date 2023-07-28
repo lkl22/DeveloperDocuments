@@ -1,4 +1,4 @@
-import { LayoutConst } from '../../../../../lib/CommonUi/src/main/ets/const/LayoutConst';
+import { LayoutConst } from '@study/common-ui';
 import { LogUtil } from '@study/common-func';
 import testNapi from 'libentry.so'
 import router from '@ohos.router'
@@ -12,16 +12,16 @@ struct Index {
     Column({ space: 16 }) {
       Button('UI Test')
         .onClick(() => {
-          router.pushUrl({ url: "pages/ui/UiTestPage" }).then(() => {
-            LogUtil.i(TAG, "router to UiTestPage success.");
+          router.pushUrl({ url: 'pages/ui/UiTestPage' }).then(() => {
+            LogUtil.i(TAG, 'router to UiTestPage success.');
           }).catch(err => {
             LogUtil.e(TAG, err);
           })
         })
       Button('State Test')
         .onClick(() => {
-          router.pushUrl({ url: "pages/statetest/StateTestPage" }).then(() => {
-            LogUtil.i(TAG, "router to StateTestPage success.");
+          router.pushUrl({ url: 'pages/statetest/StateTestPage' }).then(() => {
+            LogUtil.i(TAG, 'router to StateTestPage success.');
           }).catch(err => {
             LogUtil.e(TAG, err);
           })
@@ -29,48 +29,56 @@ struct Index {
         })
       Button('Singleton Test')
         .onClick(() => {
-          router.pushUrl({ url: "pages/singletonTest/SingletonTestPage" }).then(() => {
-            LogUtil.i(TAG, "router to SingletonTestPage success.");
+          router.pushUrl({ url: 'pages/singletonTest/SingletonTestPage' }).then(() => {
+            LogUtil.i(TAG, 'router to SingletonTestPage success.');
           }).catch(err => {
             LogUtil.e(TAG, err);
           })
         })
       Button('Async Test')
         .onClick(() => {
-          router.pushUrl({ url: "pages/asyncTest/AsyncTestPage" }).then(() => {
-            LogUtil.i(TAG, "router to AsyncTestPage success.");
+          router.pushUrl({ url: 'pages/asyncTest/AsyncTestPage' }).then(() => {
+            LogUtil.i(TAG, 'router to AsyncTestPage success.');
           }).catch(err => {
             LogUtil.e(TAG, err);
           })
         })
       Button('App store Test')
         .onClick(() => {
-          router.pushUrl({ url: "pages/appStoreTest/AppStoreTest" }).then(() => {
-            LogUtil.i(TAG, "router to AppStoreTest success.");
+          router.pushUrl({ url: 'pages/appStoreTest/AppStoreTest' }).then(() => {
+            LogUtil.i(TAG, 'router to AppStoreTest success.');
           }).catch(err => {
             LogUtil.e(TAG, err);
           })
         })
       Button('Json Test')
         .onClick(() => {
-          router.pushUrl({ url: "pages/jsonTest/JsonTestPage" }).then(() => {
-            LogUtil.i(TAG, "router to JsonTestPage success.");
+          router.pushUrl({ url: 'pages/jsonTest/JsonTestPage' }).then(() => {
+            LogUtil.i(TAG, 'router to JsonTestPage success.');
           }).catch(err => {
             LogUtil.e(TAG, err);
           })
         })
       Button('Dialog Test')
         .onClick(() => {
-          router.pushUrl({ url: "pages/dialog/DialogTestPage" }).then(() => {
-            LogUtil.i(TAG, "router to DialogTestPage success.");
+          router.pushUrl({ url: 'pages/dialog/DialogTestPage' }).then(() => {
+            LogUtil.i(TAG, 'router to DialogTestPage success.');
           }).catch(err => {
             LogUtil.e(TAG, err);
           })
         })
       Button('Resource Test')
         .onClick(() => {
-          router.pushUrl({ url: "pages/resourceTest/ResTestPage" }).then(() => {
-            LogUtil.i(TAG, "router to ResTestPage success.");
+          router.pushUrl({ url: 'pages/resourceTest/ResTestPage' }).then(() => {
+            LogUtil.i(TAG, 'router to ResTestPage success.');
+          }).catch(err => {
+            LogUtil.e(TAG, err);
+          })
+        })
+      Button('RichText Test')
+        .onClick(() => {
+          router.pushUrl({ url: 'pages/richTextTest/RichTextTestPage' }).then(() => {
+            LogUtil.i(TAG, 'router to RichTextTestPage success.');
           }).catch(err => {
             LogUtil.e(TAG, err);
           })

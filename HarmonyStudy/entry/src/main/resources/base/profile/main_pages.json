@@ -11,6 +11,7 @@
     "pages/ui/UiTestPage",
     "pages/jsonTest/JsonTestPage",
     "pages/dialog/DialogTestPage",
-    "pages/resourceTest/ResTestPage"
+    "pages/resourceTest/ResTestPage",
+    "pages/richTextTest/RichTextTestPage"
   ]
 }

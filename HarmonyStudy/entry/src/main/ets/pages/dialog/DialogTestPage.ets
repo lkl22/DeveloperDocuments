@@ -134,7 +134,7 @@ export struct AsyncTestPage {
     }),
     cancel: this.existApp,
     autoCancel: true,
-    alignment: DialogAlignment.Default,
+    alignment: DialogAlignment.Bottom,
     offset: { dx: 0, dy: -20 },
     gridCount: 4,
     customStyle: false
