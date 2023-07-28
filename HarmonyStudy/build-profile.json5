@@ -54,6 +54,10 @@
     {
       "name": "CommonFunc",
       "srcPath": "./lib/CommonFunc"
+    },
+    {
+      "name": "CommonUi",
+      "srcPath": "./lib/CommonUi"
     }
   ]
 }

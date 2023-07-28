@@ -1,7 +1,7 @@
 import { School } from '../../bean/School';
 import { SchoolClass } from '../../bean/SchoolClass';
 import { Student } from '../../bean/Student';
-import { LayoutConst } from '../../const/LayoutConst';
+import { LayoutConst } from '@study/common-ui';
 
 const TAG = 'AppStoreTest2';
 

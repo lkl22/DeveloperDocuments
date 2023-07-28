@@ -10,6 +10,7 @@
   "dependencies": {
     '@study/hsp-library': '../hspLibrary',
     '@study/har-library': '../lib/harLibrary',
-    '@study/common-func': '../lib/CommonFunc'
+    '@study/common-func': '../lib/CommonFunc',
+    '@study/common-ui': '../lib/CommonUi'
   }
 }

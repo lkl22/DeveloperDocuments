@@ -1,5 +1,5 @@
 import { ResourceUtil, LogUtil } from '@study/common-func';
-import { LayoutConst } from '../../const/LayoutConst'
+import { LayoutConst } from '@study/common-ui'
 
 @Entry
 @Component

@@ -1,4 +1,4 @@
-import { LayoutConst } from '../const/LayoutConst';
+import { LayoutConst } from '../../../../../lib/CommonUi/src/main/ets/const/LayoutConst';
 import { LogUtil } from '@study/common-func';
 import testNapi from 'libentry.so'
 import router from '@ohos.router'

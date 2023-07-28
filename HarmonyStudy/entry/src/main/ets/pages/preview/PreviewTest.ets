@@ -1,4 +1,4 @@
-import { LayoutConst } from '../../const/LayoutConst';
+import { LayoutConst } from '@study/common-ui';
 import { ParamsComponent } from './ParamsComponent'
 
 @Preview

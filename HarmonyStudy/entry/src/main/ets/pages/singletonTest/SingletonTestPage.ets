@@ -1,4 +1,4 @@
-import { LayoutConst } from '../../const/LayoutConst';
+import { LayoutConst } from '@study/common-ui';
 import { BSingleton } from '../../single/BSingleton';
 import { ASingleton } from '../../single/ASingleton';
 import { LogUtil } from '@study/common-func';

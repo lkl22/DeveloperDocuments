@@ -1,5 +1,5 @@
 import { CommonDialog } from '../../component/dialog/CommonDialog';
-import { LayoutConst } from '../../const/LayoutConst'
+import { LayoutConst } from '@study/common-ui'
 
 @Entry
 @Component

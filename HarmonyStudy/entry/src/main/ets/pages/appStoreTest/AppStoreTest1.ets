@@ -1,5 +1,5 @@
 import { Student } from '../../bean/Student';
-import { LayoutConst } from '../../const/LayoutConst';
+import { LayoutConst } from '@study/common-ui';
 import router from '@ohos.router';
 import { LogUtil } from '@study/common-func';
 

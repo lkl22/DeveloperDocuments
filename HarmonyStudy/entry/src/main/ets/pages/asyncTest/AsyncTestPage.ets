@@ -1,4 +1,4 @@
-import { LayoutConst } from '../../const/LayoutConst';
+import { LayoutConst } from '@study/common-ui';
 import { AsyncFuncTimeoutUtil, LogUtil } from '@study/common-func';
 import { AsyncTest } from '../../async/AsyncTest';
 import systemDateTime from '@ohos.systemDateTime';

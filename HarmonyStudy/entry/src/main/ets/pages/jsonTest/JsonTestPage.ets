@@ -1,4 +1,4 @@
-import { LayoutConst } from '../../const/LayoutConst';
+import { LayoutConst } from '@study/common-ui';
 import { JsonUtil, LogUtil } from '@study/common-func';
 
 const TAG = 'JsonTestPage';
@@ -12,6 +12,7 @@ class A {
   n: number;
   b: boolean;
   s: string;
+  ss: string = 'sss';
   arr: [B];
 }
 
@@ -50,7 +51,7 @@ export struct JsonTestPage {
           })
         Button('object')
           .onClick((event: ClickEvent) => {
-            let res = JsonUtil.parse<A>('{"n": 11, "b": true, "s": "string", "arr": "jjjj"}');
+            let res = JsonUtil.parse<A>('{"n": 11, "b": true, "ss": "string", "arr": "jjjj"}');
             LogUtil.d(TAG, `parse class A: ${typeof res.n} ${typeof res.b} ${typeof res.s} ${typeof res.arr} ${typeof res.arr[0]}`)
             this.res = `parse: ${typeof res} ${JSON.stringify(res)}`;
 
