@@ -60,6 +60,14 @@ export struct JsonTestPage {
             let classB = JsonUtil.parse<B>('{"n": 11, "b": "true"}');
             LogUtil.d(TAG, `parse: ${typeof classB} ${JSON.stringify(classB)}`);
           })
+        Button('stringify')
+          .onClick((event: ClickEvent) => {
+            let a = new A();
+            a.n = 1;
+            a.b = null;
+            a.s = undefined;
+            this.res = `${JSON.stringify(a)}\n${JsonUtil.stringify(a)}`;
+          })
       }
       .width(LayoutConst.MATCH_PARENT);
     }

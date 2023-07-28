@@ -60,4 +60,13 @@ export class JsonUtil {
   public static parseBoolean(s: string): boolean {
     return s === 'true';
   }
+
+  public static stringify(data: object): string {
+    return JSON.stringify(data, (key, value) => {
+      if (value === null) {
+        return undefined;
+      }
+      return value;
+    })
+  }
 }
