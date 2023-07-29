@@ -1,11 +1,11 @@
 import { LogUtil } from '@study/common-func';
-import { CustomRichText, SpanStyle, Toast } from '@study/common-ui';
+import { CustomRichText, LayoutConst, SpanStyle, Toast } from '@study/common-ui';
 
 @Entry
 @Component
 export struct RichTextTestPage {
   build(): void {
-    Column() {
+    Column({ space: LayoutConst.SPACE }) {
       CustomRichText({
         originalString: {
           originalText: $r('app.string.test_rich_text_1')
@@ -71,6 +71,12 @@ export struct RichTextTestPage {
         }]
       })
     }
+    .margin({
+      top: $r('sys.float.ohos_id_default_padding_top'),
+      left: $r('sys.float.ohos_id_default_padding_start'),
+      bottom: $r('sys.float.ohos_id_default_padding_bottom_fixed'),
+      right: $r('sys.float.ohos_id_default_padding_end')
+    })
   }
 }
 
