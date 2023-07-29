@@ -85,12 +85,31 @@ export struct CustomRichText {
           return;
         }
         this.originalString.originalText = undefined;
+        let regex = /%\d+\$s|%s/gi;
+        // 提取占位符
+        let phCharList = originalString.match(regex);
+        let phCharLen = phCharList.length;
+
+        // 根据占位符拆分原始字符串
+        let arrStr = originalString.split(regex);
+
         let spans: TextInfo[] = [];
-        let arrStr = originalString.split(`%s`);
         let placeholderLen = this.placeholderStrings.length;
-        arrStr.forEach((val: string, idx: number, arr) => {
-          if (idx > 0 && idx <= placeholderLen) {
-            spans.push(this.placeholderStrings[idx-1]);
+        arrStr.forEach((val: string, index: number, arr) => {
+          if (index > 0 && index <= phCharLen) {
+            // 获取占位符
+            let phChar = phCharList[index - 1];
+            let pos = index;
+            if (phChar.length > 2) {
+              // 长度大于2的按正则匹配出来的结果里肯定有了数字了，这里直接取第一个并转为数字
+              pos = parseInt(phChar.match(/\d+/)[0]);
+            }
+            // 占位符中从数字1开始
+            if (pos > 0 && pos <= placeholderLen) {
+              spans.push(this.placeholderStrings[pos - 1]);
+            } else {
+              spans.push({ ...this.originalString, placeholderText: phChar });
+            }
           }
           spans.push({ ...this.originalString, placeholderText: val });
         });

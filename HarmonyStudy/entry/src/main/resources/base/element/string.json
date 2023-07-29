@@ -14,7 +14,19 @@
     },
     {
       "name": "test_rich_text_1",
-      "value": "针对不同%s构建促销活动，提升用户购买力-%s。搜索"
+      "value": "针对不同%1$s构建促销活动，提升用户购买力-%2$s。搜索"
+    },
+    {
+      "name": "test_rich_text_2",
+      "value": "针对不同%2$s构建促销活动，%3$s提升用户购买力-%1$s。搜索"
+    },
+    {
+      "name": "test_rich_text_3",
+      "value": "针对不同%s构建促销活动，%3$s提升用户购买力-%s。搜索"
+    },
+    {
+      "name": "test_rich_text_4",
+      "value": "针对不同%s构建促销活动，%1$s提升用户购买力-%2$s。搜%s索"
     },
     {
       "name": "user",
