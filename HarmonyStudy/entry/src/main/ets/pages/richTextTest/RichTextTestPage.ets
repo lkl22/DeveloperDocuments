@@ -8,13 +8,13 @@ export struct RichTextTestPage {
     Column({ space: LayoutConst.SPACE }) {
       CustomRichText({
         originalString: {
-          originalText: $r('app.string.test_rich_text_1')
+          text: $r('app.string.test_rich_text_1')
         },
         placeholderStrings: [{
-          placeholderText: $r('app.string.user'),
+          text: $r('app.string.user'),
           style: SpanStyle.BOLD
         }, {
-          placeholderText: $r('app.string.use_help'),
+          text: $r('app.string.use_help'),
           style: SpanStyle.HIGHLIGHT,
           clickEvent: () => {
             LogUtil.d(TAG, 'RichTextTestPage HIGHLIGHT text click.');
@@ -24,13 +24,13 @@ export struct RichTextTestPage {
       })
       CustomRichText({
         originalString: {
-          originalText: $r('app.string.test_rich_text_2')
+          text: $r('app.string.test_rich_text_2')
         },
         placeholderStrings: [{
-          placeholderText: $r('app.string.user'),
+          text: $r('app.string.user'),
           style: SpanStyle.BOLD
         }, {
-          placeholderText: $r('app.string.use_help'),
+          text: $r('app.string.use_help'),
           style: SpanStyle.HIGHLIGHT,
           clickEvent: () => {
             LogUtil.d(TAG, 'RichTextTestPage HIGHLIGHT text click.');
@@ -40,13 +40,13 @@ export struct RichTextTestPage {
       })
       CustomRichText({
         originalString: {
-          originalText: $r('app.string.test_rich_text_3')
+          text: $r('app.string.test_rich_text_3')
         },
         placeholderStrings: [{
-          placeholderText: $r('app.string.user'),
+          text: $r('app.string.user'),
           style: SpanStyle.BOLD
         }, {
-          placeholderText: $r('app.string.use_help'),
+          text: $r('app.string.use_help'),
           style: SpanStyle.HIGHLIGHT,
           clickEvent: () => {
             LogUtil.d(TAG, 'RichTextTestPage HIGHLIGHT text click.');
@@ -56,13 +56,13 @@ export struct RichTextTestPage {
       })
       CustomRichText({
         originalString: {
-          originalText: $r('app.string.test_rich_text_4')
+          text: $r('app.string.test_rich_text_4')
         },
         placeholderStrings: [{
-          placeholderText: $r('app.string.user'),
+          text: $r('app.string.user'),
           style: SpanStyle.BOLD
         }, {
-          placeholderText: $r('app.string.use_help'),
+          text: $r('app.string.use_help'),
           style: SpanStyle.HIGHLIGHT,
           clickEvent: () => {
             LogUtil.d(TAG, 'RichTextTestPage HIGHLIGHT text click.');
