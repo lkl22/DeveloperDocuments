@@ -1,21 +1,24 @@
 // Script for compiling build behavior. It is built in the build plug-in and cannot be modified currently.
 
 import path from 'path';
-import { hvigor, getHvigorNode } from '@ohos/hvigor';
+import { hvigor, getHvigorNode, parseJsonFile, HvigorLogger, LocalFileWriter } from '@ohos/hvigor';
 import fs from 'fs';
 
-const KEY_ENV = 'env';
-const KEY_BUILD_TYPE = 'buildType';
-const DEFAULT_ENV = 'product';
-const DEFAULT_BUILD_TYPE = 'release';
+const KEY_ENV: string = 'env';
+const KEY_BUILD_TYPE: string = 'buildType';
+
+const DEFAULT_ENV: string = 'product';
+const DEFAULT_BUILD_TYPE: string = 'release';
+
+const APP_CONFIG_FILE_NAME: string = 'appConfig.json';
 
 let hvigorNode = getHvigorNode(__filename);
 let extraConfig: Map<string, string> = hvigor.getExtraConfig();
 printMap(extraConfig);
-console.log(`script: path ${__filename} ${typeof hvigorNode}`);
+console.log(`script: path ${__filename} ${hvigorNode.getName()}`);
 
-let env = extraConfig.get(KEY_ENV);
-let buildType = extraConfig.get(KEY_BUILD_TYPE);
+let env: string = extraConfig.get(KEY_ENV);
+let buildType: string = extraConfig.get(KEY_BUILD_TYPE);
 console.log(`script: params from command env ${env} buildType ${buildType}`);
 
 let project = hvigorNode.getProject();
@@ -23,10 +26,8 @@ let projectDir = project.getNodeDir();
 console.log(`script: projectName ${project.getName()} dir: ${projectDir}`);
 
 if (!env || !buildType) {
-  let appConfigStr = fs.readFileSync(path.join(projectDir, 'appConfig.json'), 'utf8');
-  console.log(`script: appConfig file content:\n ${appConfigStr}`);
-  let appConfig = JSON.parse(appConfigStr);
-  console.log(`script: appConfig: ${appConfig.appBuild[KEY_ENV]} ${appConfig.appBuild[KEY_BUILD_TYPE]}`);
+  let appConfig = parseJsonFile(path.join(projectDir, APP_CONFIG_FILE_NAME));
+  console.log(`script: appConfig env ${appConfig.appBuild[KEY_ENV]} buildType ${appConfig.appBuild[KEY_BUILD_TYPE]}`);
   env = env ?? appConfig.appBuild[KEY_ENV];
   buildType = buildType ?? appConfig.appBuild[KEY_BUILD_TYPE];
   console.log(`script: params from appConfig env ${env} buildType ${buildType}`);
@@ -39,6 +40,10 @@ console.log(`script: final build params env ${env} buildType ${buildType}`);
 hvigorNode.task(() => {
   console.log('This is a preEnv task');
 }, 'preEnv');
+
+hvigorNode.afterEvaluate(() => {
+  hvigorNode.getTaskByName('default@PreBuild').dependsOn('preEnv');
+})
 
 function printMap(data: Map<K, V>): void {
   console.log('script: printMap start.');
