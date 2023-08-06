@@ -1,0 +1,6 @@
+{
+  "appBuild": {
+    "buildType": "release",
+    "env": "product"
+  }
+}
