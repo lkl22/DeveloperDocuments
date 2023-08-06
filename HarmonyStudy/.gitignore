@@ -10,3 +10,4 @@
 /.clang-tidy
 **package-lock.json5
 buildjs/
+AppScope/resources/rawfile/

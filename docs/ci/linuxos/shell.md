@@ -1,5 +1,8 @@
 # shell教程
 
+* [常用使用场景](#常用使用场景)
+  * [获取当前路径](#获取当前路径)
+  * [shell中大小写转换](#shell中大小写转换)
 * [Shell 变量](#Shell变量)
   * [使用变量](#使用变量)
   * [只读变量](#只读变量)
@@ -18,7 +21,33 @@
   * [文件测试](#文件测试)
 * [Linux sed 命令](#Linuxsed命令)
   * [数据的搜寻并替换](#数据的搜寻并替换)
+  * [去除字符串两侧的空格](#去除字符串两侧的空格)
+  * [将单词的首字母转换成大写](#将单词的首字母转换成大写)
 * [参考文献](#参考文献)
+
+## <a name="常用使用场景">常用使用场景</a>
+### <a name="获取当前路径">获取当前路径</a>
+
+> WORK_DIR=$(cd $(dirname $0); pwd)
+
+* `WORK_DIR` ： 变量，后续可用；
+* `$(dirname $0)` : 获取shell脚本所处的文件夹路径；
+* `cd $(dirname $0)` : 切换到shell脚本所处的文件夹；
+* `cd $(dirname $0); pwd` : 切换到shell脚本所处的文件夹后再执行pwd；
+
+### <a name="shell中大小写转换">shell中大小写转换</a>
+
+把VARIABLE的小写转换成大写
+```shell
+UPPERCASE=$(echo $VARIABLE | tr '[a-z]' '[A-Z]')  
+LOWERCASE=$(echo $VARIABLE | tr '[:upper:]' '[:lower:]'
+```
+
+把VARIABLE的大写转换成小写
+```shell
+LOWERCASE=$(echo $VARIABLE | tr '[A-Z]' '[a-z]') 
+LOWERCASE=$(echo $VARIABLE | tr '[:lower:]' '[:upper:]'
+```
 
 ## <a name="Shell变量">Shell 变量</a>
 
@@ -330,7 +359,7 @@ fi
 
 > sed 's/要被取代的字串/新的字串/g'
 
-#### shell实现trim函数－去除字符串两侧的空格
+### <a name="去除字符串两侧的空格">shell实现trim函数－去除字符串两侧的空格</a>
 
 shell实现trim函数效果去除字符串两侧的空格，以下三个命令等价，都能实现
 
@@ -342,7 +371,7 @@ shell实现trim函数效果去除字符串两侧的空格，以下三个命令�
 
 主要就是利用正则表达式，^\s*表示字符串前面的零个或多个空格，\s*$表示字符串后面的零个或多个空格。
 
-#### 将单词的首字母转换成大写
+### <a name="将单词的首字母转换成大写">将单词的首字母转换成大写</a>
 
 > echo foo | sed 's/^\w\\|\s\w/\U&/g'
 
