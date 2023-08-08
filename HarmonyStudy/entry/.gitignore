@@ -2,3 +2,4 @@
 /.preview
 /build
 /.cxx
+src/main/ets/propertyConfig/PropertyConfig.ets

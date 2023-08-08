@@ -1,7 +1,7 @@
 import path from 'path';
 import { HvigorLogger, LocalFileWriter, parseJsonFile } from '@ohos/hvigor';
-import * as FileUtil from '../script/ts/FileUtil';
-import * as TimeUtil from '../script/ts/TimeUtil';
+import * as FileUtil from './FileUtil';
+import * as TimeUtil from './TimeUtil';
 
 const KEY_ENV: string = 'env';
 const KEY_BUILD_TYPE: string = 'buildType';
@@ -98,7 +98,8 @@ export class PreEvnTask {
   private changeAppEnvConfig(): void {
     let srcDir = path.join(this.projectDir, 'appFlavorConfig', this.env);
     let dstDir = path.join(this.projectDir, 'AppScope');
-    FileUtil.copyDirs(srcDir, dstDir);
+    FileUtil.mkDirsSync(dstDir);
+    FileUtil.copyFolderSync(srcDir, dstDir);
     this.logger.info(`changeAppEnvConfig copy ${srcDir} to ${dstDir}`);
   }
 

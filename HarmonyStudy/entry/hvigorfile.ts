@@ -2,7 +2,7 @@
 
 import path from 'path';
 import { getHvigorNode, hvigor, HvigorLogger } from '@ohos/hvigor';
-import { PreEvnTask } from './preEnv';
+import { PreEvnTask } from '../script/ts/preEnv';
 
 let logger = HvigorLogger.getLogger('preEnv');
 let hvigorNode = getHvigorNode(__filename);
