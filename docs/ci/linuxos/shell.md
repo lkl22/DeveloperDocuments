@@ -382,3 +382,7 @@ shell实现trim函数效果去除字符串两侧的空格，以下三个命令�
 [Shell 教程 | 菜鸟教程](https://www.runoob.com/linux/linux-shell.html)
 
 [将单词的首字母转换成大写](http://blog.chinaunix.net/uid-24504673-id-338367.html)
+
+[Shell中将分隔符的字符串转为数组的几种方法](https://blog.csdn.net/Carey_Lu/article/details/118768496)
+
+[Shell 的加减乘除](https://blog.csdn.net/weixin_44935881/article/details/127176684)
