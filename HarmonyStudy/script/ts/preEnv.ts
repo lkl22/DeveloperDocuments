@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import { HvigorLogger, LocalFileWriter, parseJsonFile } from '@ohos/hvigor';
 import * as FileUtil from './FileUtil';
 import * as TimeUtil from './TimeUtil';
@@ -15,7 +16,17 @@ const APP_CONFIG_FILE_NAME: string = 'appConfig.json';
 export class PreEvnTask {
   private env: string;
   private buildType: string;
-  private flavorDimensions: {};
+  private flavorDimensions = {
+    env: [
+      "product",
+      "mirror",
+      "develop"
+    ],
+    buildType: [
+      "release",
+      "debug"
+    ]
+  };
 
   constructor(private projectDir: string, private moduleDir: string, private extraConfig: Map<string, string>,
               private logger: HvigorLogger) {
@@ -47,6 +58,12 @@ export class PreEvnTask {
     let sameKeys = this.getSameKeys(mergeConfig, envBuildTypeConfig);
     mergeConfig = { ...mergeConfig, ...envBuildTypeConfig };
     this.logger.info(`generatePropertyConfig final config: ${JSON.stringify(mergeConfig)} replaceKeys: ${sameKeys}.`);
+    mergeConfig = {
+      ...mergeConfig,
+      "ENV": this.env,
+      "BUILD_TYPE": this.buildType,
+      "BUILD_TIME": `${TimeUtil.nowTime()}`
+    }
     this.writeToFile(dstFp, mergeConfig);
     this.logger.info('generatePropertyConfig end.');
   }
@@ -56,7 +73,6 @@ export class PreEvnTask {
     Object.keys(mergeConfig).forEach(key => {
       fileContent += `  static readonly ${this.getCodeDefine(key, mergeConfig[key])};\n`
     });
-    fileContent += `  static readonly BUILD_TIME: string = '${TimeUtil.nowTime()}'\n`;
     fileContent += '}';
     LocalFileWriter.getInstance().writeStr(dstFp, fileContent);
   }
@@ -89,7 +105,7 @@ export class PreEvnTask {
     try {
       return parseJsonFile(path.join(this.moduleDir, 'src/flavor', flavor, 'propertyConfig.json'));
     } catch (err) {
-      this.logger.error(`getPropertyConfigFileContent failed: ${err.message}`);
+      this.logger.warn(`getPropertyConfigFileContent failed: ${err.message}`);
       return {};
     }
   }
@@ -109,17 +125,20 @@ export class PreEvnTask {
     this.buildType = this.extraConfig.get(KEY_BUILD_TYPE);
     this.logger.info(`preEnv: params from command env ${this.env} buildType ${this.buildType}`);
 
-    let appConfig = parseJsonFile(path.join(this.projectDir, APP_CONFIG_FILE_NAME));
-    this.flavorDimensions = appConfig[KEY_FLAVOR_DIMENSIONS];
-    if (!this.env || !this.buildType) {
-      this.logger.info(`preEnv: appConfig env ${appConfig.appBuild[KEY_ENV]} buildType ${appConfig.appBuild[KEY_BUILD_TYPE]}`);
-      this.env = this.env ?? appConfig.appBuild[KEY_ENV];
-      this.buildType = this.buildType ?? appConfig.appBuild[KEY_BUILD_TYPE];
-      this.logger.info(`preEnv: params from appConfig env ${this.env} buildType ${this.buildType}`);
+    let appConfigFp = path.join(this.projectDir, APP_CONFIG_FILE_NAME);
+    let existsAppConfig = fs.existsSync(appConfigFp);
+    if (existsAppConfig) {
+      let appConfig = parseJsonFile();
+      if (!this.env || !this.buildType) {
+        this.logger.info(`preEnv: appConfig env ${appConfig.appBuild[KEY_ENV]} buildType ${appConfig.appBuild[KEY_BUILD_TYPE]}`);
+        this.env = this.env ?? appConfig.appBuild[KEY_ENV];
+        this.buildType = this.buildType ?? appConfig.appBuild[KEY_BUILD_TYPE];
+        this.logger.info(`preEnv: params from appConfig env ${this.env} buildType ${this.buildType}`);
+      }
     }
-
     this.env = (this.env ?? DEFAULT_ENV).toLowerCase();
     this.buildType = (this.buildType ?? DEFAULT_BUILD_TYPE).toLowerCase();
+    this.logger.info(`preEnv: final build params env ${this.env} buildType ${this.buildType}`);
     if (!this.flavorDimensions[KEY_ENV].includes(this.env)) {
       this.logger.errorMessageExit(`preEnv: cur env error, not in ${JSON.stringify(this.flavorDimensions[KEY_ENV])}`);
       return
@@ -128,7 +147,19 @@ export class PreEvnTask {
       this.logger.errorMessageExit(`preEnv: cur buildType error, not in ${JSON.stringify(this.flavorDimensions[KEY_BUILD_TYPE])}`);
       return
     }
-    this.logger.info(`preEnv: final build params env ${this.env} buildType ${this.buildType}`);
+    if (!existsAppConfig) {
+      this.logger.info(`preEnv: start write config`);
+      let appConfig = {
+        appBuild: {
+          buildType: this.buildType,
+          env: this.env
+        },
+        flavorDimensions: this.flavorDimensions
+      };
+      this.logger.info(`preEnv: write config ${JSON.stringify(appConfig)}`);
+      LocalFileWriter.getInstance().write(appConfigFp, appConfig);
+    }
+    this.logger.info(`preEnv: parseBuildParams finish env ${this.env} buildType ${this.buildType}`);
   }
 }
 
