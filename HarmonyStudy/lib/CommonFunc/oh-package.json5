@@ -1,9 +1,10 @@
 {
+  "license": "Apache-2.0",
+  "devDependencies": {},
+  "author": "",
   "name": "@study/common-func",
-  "version": "1.0.0",
   "description": "Please describe the basic information.",
   "main": "index.ets",
-  "author": "",
-  "license": "Apache-2.0",
+  "version": "1.0.0",
   "dependencies": {}
 }

@@ -23,12 +23,22 @@ export class DecisionTree<Task, Ctx> {
       execNode = node;
     }
 
-    let nextTask = await execNode.action();
-    if (nextTask) {
-      this.start(nextTask, context);
-    } else {
+    this.execFlow(execNode, context);
+  }
+
+  private async execFlow(node?: TreeNode<Task, Ctx>, context?: Ctx): Promise<void> {
+    let nextTask = await node.action(context);
+    if (node.isLeafNode || !nextTask) {
       // Finished
-      LogUtil.i(TAG, '[start] All task finished.');
+      LogUtil.i(TAG, '[execFlow] All task finished.');
+      return;
     }
+    let nextNode = node.childNode.get(nextTask);
+    if (!nextNode) {
+      // Finished
+      LogUtil.i(TAG, '[execFlow] All task finished.');
+      return;
+    }
+    this.execFlow(nextNode, context);
   }
 }

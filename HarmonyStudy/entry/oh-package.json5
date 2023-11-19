@@ -8,9 +8,9 @@
   "repository": {},
   "version": "1.0.0",
   "dependencies": {
-//    '@study/hsp-library': '../hspLibrary',
-    '@study/har-library': '../lib/harLibrary',
-    '@study/common-func': '../lib/CommonFunc',
-    '@study/common-ui': '../lib/CommonUi'
+    // '@study/hsp-library': '../hspLibrary',
+    "@study/common-ui": "../lib/CommonUi",
+    "@study/common-func": "../lib/CommonFunc",
+    "@study/har-library": "../lib/harLibrary"
   }
 }

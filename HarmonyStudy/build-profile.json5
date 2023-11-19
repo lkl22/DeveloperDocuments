@@ -1,6 +1,20 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "/Users/likunlun/.ohos/config/auto_debug_HarmonyStudy_com.lkl.harmonystudy_540086000101000099.cer",
+          "storePassword": "0000001B369DB73925F650B153FB2605845B363E3E4F8614AF52D899303A8F550EDEB01159526382136F80",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B79B44E32486736B3C690D4297248C92E6B3AFF785B34B3EB15D3B5EF06383B53679A6BF214606F",
+          "profile": "/Users/likunlun/.ohos/config/auto_debug_HarmonyStudy_com.lkl.harmonystudy_540086000101000099.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "/Users/likunlun/.ohos/config/auto_debug_HarmonyStudy_com.lkl.harmonystudy_540086000101000099.p12"
+        }
+      }
+    ],
     "compileSdkVersion": 9,
     "compatibleSdkVersion": 9,
     "products": [

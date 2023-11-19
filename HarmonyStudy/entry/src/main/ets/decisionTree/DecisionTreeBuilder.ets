@@ -6,6 +6,7 @@ import { ActionFunc } from './TreeNode';
 export class DecisionTreeBuilder<Task, Ctx> {
   private rootNode?: TreeNode<Task, Ctx>;
 
+  // 存储所有的非叶子节点集合
   private treeMap: Map<Task, TreeNode<Task, Ctx>> = new Map<Task, TreeNode<Task, Ctx>>();
 
   private curNode?: TreeNode<Task, Ctx>;
@@ -35,22 +36,10 @@ export class DecisionTreeBuilder<Task, Ctx> {
     this.fillTree();
     let node = this.treeMap.get(task);
     if (!node) {
-      throw new Error(`[node] ${task} not in tree.`);
-    }
-    if (node.isLeafNode) {
-      throw new Error(`[node] ${task} is leaf node, can not add child node.`);
+      throw new Error(`[node] ${task} not in tree or is leaf node.`);
     }
     this.curNode = node;
     return node;
-  }
-
-  /**
-   * 补充树节点
-   */
-  private fillTree() {
-    this.curNode?.childNode.forEach((value: TreeNode<Task, Ctx>, key: Task) => {
-      this.treeMap.set(key, value);
-    });
   }
 
   build(): DecisionTree<Task, Ctx> {
@@ -58,6 +47,34 @@ export class DecisionTreeBuilder<Task, Ctx> {
       throw new Error(`[build] DecisionTree no root node.`);
     }
     this.fillTree();
+    this.checkNode();
     return new DecisionTree(this.rootNode, this.treeMap);
+  }
+
+  /**
+   * 补充树节点
+   */
+  private fillTree() {
+    this.curNode?.childNode.forEach((value: TreeNode<Task, Ctx>, key: Task) => {
+      if (!value.isLeafNode) {
+        this.treeMap.set(key, value);
+      }
+    });
+  }
+
+  private checkNode() {
+    let noChildNodes: Task[] = []
+    this.treeMap.forEach((value: TreeNode<Task, Ctx>, key: Task) => {
+      if (value.childNode.size < 1) {
+        noChildNodes.push(key);
+      }
+    });
+    if (noChildNodes.length > 0) {
+      let msg = '';
+      noChildNodes.forEach((task: Task) => {
+        msg += `${task} `;
+      });
+      throw new Error(`[checkNode] ${msg}no child node.`);
+    }
   }
 }
