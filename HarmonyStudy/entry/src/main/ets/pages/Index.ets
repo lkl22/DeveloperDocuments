@@ -12,6 +12,14 @@ struct Index {
     Column({ space: 16 }) {
       Button('UI Test')
         .onClick(() => {
+          router.pushUrl({ url: 'pages/decisionTree/DecisionTreePage' }).then(() => {
+            LogUtil.i(TAG, 'router to DecisionTreePage success.');
+          }).catch(err => {
+            LogUtil.e(TAG, err);
+          })
+        })
+      Button('UI Test')
+        .onClick(() => {
           router.pushUrl({ url: 'pages/ui/UiTestPage' }).then(() => {
             LogUtil.i(TAG, 'router to UiTestPage success.');
           }).catch(err => {

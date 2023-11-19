@@ -1,6 +1,7 @@
 {
   "src": [
     "pages/Index",
+    "pages/decisionTree/DecisionTreePage",
     "pages/statetest/StateTestPage",
     "pages/singletonTest/SingletonTestPage",
     "pages/asyncTest/AsyncTestPage",

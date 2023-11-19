@@ -126,9 +126,10 @@ export class PreEvnTask {
     this.logger.info(`preEnv: params from command env ${this.env} buildType ${this.buildType}`);
 
     let appConfigFp = path.join(this.projectDir, APP_CONFIG_FILE_NAME);
+    this.logger.info(`preEnv: params from appConfigFp ${appConfigFp}`);
     let existsAppConfig = fs.existsSync(appConfigFp);
     if (existsAppConfig) {
-      let appConfig = parseJsonFile();
+      let appConfig = parseJsonFile(appConfigFp);
       if (!this.env || !this.buildType) {
         this.logger.info(`preEnv: appConfig env ${appConfig.appBuild[KEY_ENV]} buildType ${appConfig.appBuild[KEY_BUILD_TYPE]}`);
         this.env = this.env ?? appConfig.appBuild[KEY_ENV];
