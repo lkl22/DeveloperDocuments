@@ -1,4 +1,7 @@
+import { LogUtil } from '@study/common-func/src/main/ets/utils/LogUtil';
 import { TreeNode } from './TreeNode';
+
+const TAG = 'DecisionTree';
 
 export class DecisionTree<Task, Ctx> {
   rootNode: TreeNode<Task, Ctx>;
@@ -20,7 +23,12 @@ export class DecisionTree<Task, Ctx> {
       execNode = node;
     }
 
-    let result = execNode.action();
-
+    let nextTask = await execNode.action();
+    if (nextTask) {
+      this.start(nextTask, context);
+    } else {
+      // Finished
+      LogUtil.i(TAG, '[start] All task finished.');
+    }
   }
 }

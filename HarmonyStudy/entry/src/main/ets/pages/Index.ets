@@ -10,7 +10,7 @@ const TAG = 'indexPage';
 struct Index {
   build() {
     Column({ space: 16 }) {
-      Button('UI Test')
+      Button('DecisionTree Test')
         .onClick(() => {
           router.pushUrl({ url: 'pages/decisionTree/DecisionTreePage' }).then(() => {
             LogUtil.i(TAG, 'router to DecisionTreePage success.');

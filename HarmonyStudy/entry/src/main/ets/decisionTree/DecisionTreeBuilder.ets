@@ -31,11 +31,14 @@ export class DecisionTreeBuilder<Task, Ctx> {
    *
    * @param task 节点task
    */
-  node(task: Task) {
+  node(task: Task): AddChildNode<Task, Ctx> {
     this.fillTree();
     let node = this.treeMap.get(task);
     if (!node) {
       throw new Error(`[node] ${task} not in tree.`);
+    }
+    if (node.isLeafNode) {
+      throw new Error(`[node] ${task} is leaf node, can not add child node.`);
     }
     this.curNode = node;
     return node;
