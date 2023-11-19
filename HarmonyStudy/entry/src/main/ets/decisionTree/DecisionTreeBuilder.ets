@@ -1,7 +1,10 @@
+import { LogUtil } from '@study/common-func/src/main/ets/utils/LogUtil';
 import { DecisionTree } from './DecisionTreeCore';
 import { AddChildNode } from './TreeNode';
 import { TreeNode } from './TreeNode';
 import { ActionFunc } from './TreeNode';
+
+const TAG = 'DecisionTreeBuilder';
 
 export class DecisionTreeBuilder<Task, Ctx> {
   private rootNode?: TreeNode<Task, Ctx>;
@@ -48,7 +51,25 @@ export class DecisionTreeBuilder<Task, Ctx> {
     }
     this.fillTree();
     this.checkNode();
-    return new DecisionTree(this.rootNode, this.treeMap);
+    let nodeUml = this.genNoteUml();
+    LogUtil.i(TAG, `nodeUml: ${nodeUml}`);
+    return new DecisionTree(this.rootNode, this.treeMap, nodeUml);
+  }
+
+  private genNoteUml(): string {
+    return `[*] --> ${this.rootNode.task}\n${this.traversalTree(this.rootNode!)}`;
+  }
+
+
+  private traversalTree(node: TreeNode<Task, Ctx>): string {
+    if (node.isLeafNode) {
+      return '';
+    }
+    let result = '';
+    node.childNode.forEach((value: TreeNode<Task, Ctx>, task: Task) => {
+      result += `${node.task} --> ${task}\n${this.traversalTree(value)}`;
+    })
+    return result;
   }
 
   /**
