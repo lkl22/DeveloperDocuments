@@ -2,15 +2,15 @@
   "string": [
     {
       "name": "module_desc",
-      "value": "module description"
+      "value": "模块描述"
     },
     {
       "name": "EntryAbility_desc",
-      "value": "description"
+      "value": "模块描述"
     },
     {
       "name": "EntryAbility_label",
-      "value": "label"
+      "value": "模块label"
     },
     {
       "name": "test_rich_text_1",
@@ -26,7 +26,7 @@
     },
     {
       "name": "test_rich_text_4",
-      "value": "%s针对不同%s构建促销活动，%1$s提升用户购买力-%2$s。 搜%s索%1$s%2$s"
+      "value": "%s针对不同%s构建促销活动，%1$s提升用户购买力-%2$s。搜%s索%1$s%2$s"
     },
     {
       "name": "user",
